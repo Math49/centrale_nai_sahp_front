@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
+import { usePanneauDossier } from '@/api/dossiers';
 import { useReferentiel } from '@/api/referentiel';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
@@ -29,6 +30,9 @@ function Saisie() {
   const referentiel = useReferentiel();
 
   const typeEntiteId = parametres.get('type');
+  const dossierId = parametres.get('dossier');
+
+  const dossier = usePanneauDossier(dossierId);
 
   const [source, definirSource] = useState<SourceActive>({
     source: '',
@@ -42,23 +46,63 @@ function Saisie() {
   // pouvoir retirer tout ce qu'elle a persisté, quel qu'en soit le niveau.
   const registre = useRegistreCascade();
 
-  const type = referentiel.data?.typesEntites.find(
-    (candidat) => candidat.id === typeEntiteId,
-  );
+  const types = referentiel.data?.typesEntites ?? [];
+  const type = types.find((candidat) => candidat.id === typeEntiteId);
 
+  const lienVers = (id: string) =>
+    dossierId
+      ? `/entites/nouveau?type=${id}&dossier=${dossierId}`
+      : `/entites/nouveau?type=${id}`;
+
+  // Sans type désigné, on ne devine pas : c'est lui qui décrit les champs.
   if (!typeEntiteId || (referentiel.isSuccess && !type)) {
     return (
       <>
-        <EnteteZone titre="Nouvelle fiche" />
-        <EtatVide
-          titre="Aucun type d’entité désigné."
-          explication="La saisie part toujours d’un type : c’est lui qui décrit les champs à remplir."
-          action={
-            <Link className={controles.bouton} href="/entites">
-              Revenir à l’annuaire
-            </Link>
+        <EnteteZone
+          titre="Nouvelle fiche"
+          sousTitre={
+            dossier.data
+              ? `La saisie sera rattachée au dossier ${dossier.data.nom}.`
+              : undefined
           }
         />
+
+        {types.length === 0 ? (
+          <EtatVide
+            titre="Aucun type d’entité n’est configuré."
+            explication="Le modèle se règle en administration."
+            action={
+              <Link className={controles.bouton} href="/entites">
+                Revenir à l’annuaire
+              </Link>
+            }
+          />
+        ) : (
+          <EtatVide
+            titre="Que décrit-on ?"
+            explication="La saisie part toujours d’un type : c’est lui qui décrit les champs à remplir."
+            action={
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 6,
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                {types.map((candidat) => (
+                  <Link
+                    key={candidat.id}
+                    className={controles.boutonDiscret}
+                    href={lienVers(candidat.id)}
+                  >
+                    {candidat.libelle}
+                  </Link>
+                ))}
+              </div>
+            }
+          />
+        )}
       </>
     );
   }
@@ -67,7 +111,11 @@ function Saisie() {
     <>
       <EnteteZone
         titre={`Nouvelle fiche — ${type?.libelle ?? '…'}`}
-        sousTitre="Les liens se construisent seuls : remplir un champ relationnel suffit à poser l’arête."
+        sousTitre={
+          dossier.data
+            ? `Saisie depuis le dossier ${dossier.data.nom} : la fiche entrera dans son suivi, et ses faits en hériteront la visibilité.`
+            : 'Les liens se construisent seuls : remplir un champ relationnel suffit à poser l’arête.'
+        }
       />
 
       {enregistrees.length > 0 && (
@@ -82,13 +130,16 @@ function Saisie() {
         // enregistrement, sans traîner l'état de la saisie précédente.
         key={`${typeEntiteId}-${enregistrees.length}`}
         typeEntiteId={typeEntiteId}
+        dossierId={dossierId ?? undefined}
         source={source}
         onSourceChange={definirSource}
         registre={registre}
         onEnregistre={(entite) =>
           definirEnregistrees((liste) => [...liste, entite])
         }
-        onAnnule={() => router.push('/entites')}
+        onAnnule={() =>
+          router.push(dossierId ? `/dossiers/${dossierId}` : '/entites')
+        }
       />
     </>
   );

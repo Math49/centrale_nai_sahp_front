@@ -574,6 +574,122 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/dossiers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Liste des dossiers
+         * @description Les dossiers privés en sont absents, sans mention. Le décompte des entités suivies ne compte que le visible.
+         */
+        get: operations["DossiersController_lister"];
+        put?: never;
+        /**
+         * Création d’un dossier
+         * @description Nom, entité pivot, visibilité et note. Le pivot est suivi dès la création.
+         */
+        post: operations["DossiersController_creer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dossiers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Panneau de dossier
+         * @description Ouvrir un dossier revient à ouvrir la fiche de son entité pivot ; ce panneau est ce que la fiche affiche en plus lorsqu’on y arrive par le dossier.
+         */
+        get: operations["DossiersController_panneau"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["DossiersController_modifier"];
+        trace?: never;
+    };
+    "/dossiers/{id}/suivi": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ajout d’une entité au suivi
+         * @description Aucune duplication : l’entité reste unique, une même fiche peut être suivie par plusieurs dossiers.
+         */
+        post: operations["DossiersController_suivre"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dossiers/{id}/suivi/{entiteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["DossiersController_nePlusSuivre"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dossiers/{id}/habilitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Whitelist du dossier
+         * @description L’habilitation est nominative, jamais déduite d’un grade. Elle s’ajoute aux gardiens qu’un agent doit franchir.
+         */
+        post: operations["DossiersController_habiliter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dossiers/{id}/habilitations/{agentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["DossiersController_retirerHabilitation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/faits": {
         parameters: {
             query?: never;
@@ -938,6 +1054,14 @@ export interface components {
             /** @description Une valeur unique du type est identique — c’est un doublon sûr */
             valeurUniqueIdentique: boolean;
         };
+        RattachementDto: {
+            /** Format: uuid */
+            id: string;
+            nom: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            estPivot: boolean;
+        };
         FaitDeChampDto: {
             /** Format: uuid */
             id: string;
@@ -1031,6 +1155,8 @@ export interface components {
             /** @description Faux sur une entité restreinte non habilitée : l’objet est visible, son contenu non */
             contenuLisible: boolean;
             note: string | null;
+            /** @description Dossiers qui suivent cette entité, filtrés. Une entité peut appartenir à plusieurs dossiers, et la fiche l’indique. */
+            dossiers: components["schemas"]["RattachementDto"][];
             champs: components["schemas"]["ChampDeFicheDto"][];
             /** @description Onglets configurés pour ce type d’entité, déjà peuplés de leurs liens */
             onglets: components["schemas"]["OngletPeupleDto"][];
@@ -1120,6 +1246,92 @@ export interface components {
              * @enum {string}
              */
             visibilite?: "public" | "restreint" | "prive";
+        };
+        DossierResumeDto: {
+            /** Format: uuid */
+            id: string;
+            nom: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** @enum {string} */
+            etat: "actif" | "archive";
+            /** Format: uuid */
+            entitePivotId: string;
+            entitePivotLibelle: string;
+            /** @description Entités suivies **visibles par cet agent** */
+            nombreSuivis: number;
+            /** Format: date-time */
+            creeLe: string;
+        };
+        EntiteSuivieDto: {
+            /** Format: uuid */
+            id: string;
+            libelle: string;
+            typeCode: string;
+            estPivot: boolean;
+            /** Format: date-time */
+            ajouteLe: string;
+        };
+        AgentHabiliteDto: {
+            /** Format: uuid */
+            agentId: string;
+            /** @description « agent supprimé » si le compte est anonymisé */
+            libelle: string;
+            matricule: string;
+            /** Format: date-time */
+            accordeLe: string;
+        };
+        PanneauDossierDto: {
+            /** Format: uuid */
+            id: string;
+            nom: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** @enum {string} */
+            etat: "actif" | "archive";
+            /** Format: uuid */
+            entitePivotId: string;
+            entitePivotLibelle: string;
+            /** @description Entités suivies **visibles par cet agent** */
+            nombreSuivis: number;
+            /** Format: date-time */
+            creeLe: string;
+            /** @description Faux sur un dossier restreint sans habilitation : le nom s’affiche, le reste non */
+            contenuLisible: boolean;
+            note: string | null;
+            suivis: components["schemas"]["EntiteSuivieDto"][];
+            /** @description Whitelist. Vide tant que le contenu n’est pas lisible. */
+            habilitations: components["schemas"]["AgentHabiliteDto"][];
+        };
+        CreationDossierDto: {
+            /** @example Madrina */
+            nom: string;
+            /**
+             * Format: uuid
+             * @description Obligatoire : un dossier sans entité pivot n’existe pas. Ouvrir le dossier revient à ouvrir sa fiche.
+             */
+            entitePivotId: string;
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+            /** @description Champ libre, sans source ni fiabilité — ce n’est pas un fait */
+            note?: string;
+        };
+        ModificationDossierDto: {
+            nom?: string;
+            note?: string;
+            /**
+             * @description Exige la permission visibilite.definir
+             * @enum {string}
+             */
+            visibilite?: "public" | "restreint" | "prive";
+        };
+        DesignationEntiteDto: {
+            /** Format: uuid */
+            entiteId: string;
+        };
+        DesignationAgentDto: {
+            /** Format: uuid */
+            agentId: string;
         };
         CreationFaitDto: {
             /** Format: uuid */
@@ -2141,6 +2353,201 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["FicheEntiteDto"];
                 };
+            };
+        };
+    };
+    DossiersController_lister: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DossierResumeDto"][];
+                };
+            };
+        };
+    };
+    DossiersController_creer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationDossierDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanneauDossierDto"];
+                };
+            };
+            /** @description Un dossier porte déjà ce nom */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DossiersController_panneau: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanneauDossierDto"];
+                };
+            };
+            /** @description Inconnu, ou privé sans habilitation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DossiersController_modifier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationDossierDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanneauDossierDto"];
+                };
+            };
+        };
+    };
+    DossiersController_suivre: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DesignationEntiteDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DossiersController_nePlusSuivre: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                entiteId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description L’entité pivot ne se retire pas du suivi */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DossiersController_habiliter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DesignationAgentDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DossiersController_retirerHabilitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                agentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

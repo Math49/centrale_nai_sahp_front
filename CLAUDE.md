@@ -115,6 +115,25 @@ vient du formulaire d'origine et se propage à toute la cascade.
 
 Le **compteur d'impact** reflète l'état réel, pas un total figé à l'ouverture.
 
+## Dossiers
+
+**Ouvrir un dossier revient à ouvrir la fiche de son entité pivot.**
+`/dossiers/:id` ne rend rien : elle redirige vers
+`/entites/:pivotId?dossier=:id`.
+
+C'est ce paramètre qui fait apparaître le **panneau de dossier**, visible
+uniquement lorsqu'on accède à la fiche par cette entrée. La même fiche ouverte
+depuis l'annuaire n'en montre rien : le dossier contextualise une consultation,
+il ne s'attache pas à l'entité.
+
+La **mention du double rattachement**, elle, s'affiche toujours — une entité
+peut appartenir à plusieurs dossiers, et sa fiche le dit quelle que soit la
+porte d'entrée.
+
+Le dossier de saisie se propage à toute la cascade du formulaire, comme la
+source active : les faits en héritent la visibilité, et l'entité créée entre
+dans son suivi.
+
 ## Référentiel
 
 `useReferentiel()` met le catalogue en cache **une demi-heure** : il ne bouge
@@ -163,7 +182,7 @@ npm run contrat    # régénère le client typé
 | 3 — Référentiel et administration (front) | fait |
 | 6 — Moteur de formulaire dynamique | fait |
 | 7 — Fiche entité (front) | fait |
-| 8 — Dossiers (front) | à faire |
+| 8 — Dossiers (front) | fait |
 | 9 — Graphe (front) | à faire |
 | 10 — Signaux et accueil (front) | à faire |
 | 11 — Traçabilité (front) | à faire |

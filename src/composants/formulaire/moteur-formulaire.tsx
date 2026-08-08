@@ -87,6 +87,13 @@ interface Proprietes {
   source: SourceActive;
   onSourceChange: (source: SourceActive) => void;
   registre: RegistreCascade;
+
+  /**
+   * Dossier de saisie. Les faits en héritent la visibilité et l'entité entre
+   * dans son suivi ; l'entité, elle, ne porte que la sienne.
+   */
+  dossierId?: string;
+
   profondeur?: number;
   heritage?: HeritageCascade;
   onEnregistre: (entite: EntiteEnregistree) => void;
@@ -109,6 +116,7 @@ export function MoteurFormulaire({
   source,
   onSourceChange,
   registre,
+  dossierId,
   profondeur = 0,
   heritage,
   onEnregistre,
@@ -184,6 +192,7 @@ export function MoteurFormulaire({
 
       const entite = await creerEntite.mutateAsync({
         typeEntiteId,
+        dossierId,
         ...source,
         champs,
         liens: directs,
@@ -195,6 +204,7 @@ export function MoteurFormulaire({
           nature: 'lien',
           typeLienId: inverse.typeLienId,
           cibleId: entite.id,
+          dossierId,
           ...source,
         });
       }
@@ -398,6 +408,7 @@ export function MoteurFormulaire({
           source={source}
           onSourceChange={onSourceChange}
           registre={registre}
+          dossierId={dossierId}
           profondeur={profondeur + 1}
           onEnregistre={(entite) => {
             const candidat = candidats.find(
@@ -428,6 +439,7 @@ function SousFormulaire({
   source,
   onSourceChange,
   registre,
+  dossierId,
   profondeur,
   onEnregistre,
   onAnnule,
@@ -438,6 +450,8 @@ function SousFormulaire({
   source: SourceActive;
   onSourceChange: (source: SourceActive) => void;
   registre: RegistreCascade;
+  /** Le dossier de saisie se propage à toute la cascade, comme la source. */
+  dossierId?: string;
   profondeur: number;
   onEnregistre: (entite: EntiteEnregistree) => void;
   onAnnule: () => void;
@@ -462,6 +476,7 @@ function SousFormulaire({
           source={source}
           onSourceChange={onSourceChange}
           registre={registre}
+          dossierId={dossierId}
           profondeur={profondeur}
           heritage={{ libelleLien, libelleParent }}
           onEnregistre={onEnregistre}

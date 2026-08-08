@@ -41,6 +41,26 @@
   color: var(--texte-faible);
 }
 
+.rattachements {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: var(--texte-faible);
+}
+
+.rattachement {
+  color: var(--texte-attenue);
+  border-bottom: 1px solid var(--bordure-forte);
+}
+
+.rattachement:hover {
+  color: var(--accent-vif);
+  border-bottom-color: var(--accent);
+}
+
+.pivot {
+  color: var(--texte-faible);
+}
+
 .actionsEntete {
   display: flex;
   gap: 8px;

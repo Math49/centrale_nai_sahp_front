@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
 
 import {
   useArchiverEntite,
@@ -16,6 +16,7 @@ import { useSession } from '@/auth/use-session';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
 import { Modale } from '@/composants/modale';
+import { PanneauDossier } from '@/composants/panneau-dossier';
 import {
   LegendeFiabilite,
   PastilleFiabilite,
@@ -27,8 +28,20 @@ import styles from './fiche.module.css';
 const HISTORIQUE = 'historique';
 
 export default function PageFiche() {
+  return (
+    <Suspense fallback={<p className={controles.remarque}>Chargement…</p>}>
+      <Fiche />
+    </Suspense>
+  );
+}
+
+function Fiche() {
   const parametres = useParams<{ id: string }>();
   const id = parametres.id;
+
+  // Le panneau de dossier n'apparaît que lorsqu'on accède à la fiche **par le
+  // dossier**. La même fiche ouverte depuis l'annuaire n'en montre rien.
+  const dossierOuvert = useSearchParams().get('dossier');
 
   const { agent } = useSession();
   const fiche = useEntite(id);
@@ -71,6 +84,8 @@ export default function PageFiche() {
 
   return (
     <>
+      {dossierOuvert && <PanneauDossier dossierId={dossierOuvert} />}
+
       <header className={styles.entete}>
         <div className={styles.identite}>
           <span className={styles.typeEntite}>{entite.typeLibelle}</span>
@@ -84,6 +99,28 @@ export default function PageFiche() {
               <span className={styles.restreint}>contenu restreint</span>
             )}
           </div>
+
+          {/* Une entité peut appartenir à plusieurs dossiers ; la fiche le dit,
+              qu'on y soit arrivé par l'un d'eux ou non. */}
+          {entite.dossiers.length > 0 && (
+            <p className={styles.rattachements}>
+              Suivie par{' '}
+              {entite.dossiers.map((dossier, rang) => (
+                <span key={dossier.id}>
+                  {rang > 0 && ', '}
+                  <Link
+                    className={styles.rattachement}
+                    href={`/entites/${id}?dossier=${dossier.id}`}
+                  >
+                    {dossier.nom}
+                  </Link>
+                  {dossier.estPivot && (
+                    <span className={styles.pivot}> (pivot)</span>
+                  )}
+                </span>
+              ))}
+            </p>
+          )}
         </div>
 
         <div className={styles.actionsEntete}>

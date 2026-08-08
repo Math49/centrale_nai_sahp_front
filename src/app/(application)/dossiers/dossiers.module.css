@@ -1,0 +1,139 @@
+.barre {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  margin-bottom: 18px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.pivotChoisi {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  background: var(--accent-fond);
+  border: 1px solid var(--accent-bordure);
+  border-radius: var(--rayon);
+  font-size: 0.88rem;
+}
+
+.retirer {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--texte-faible);
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+.retirer:hover {
+  color: var(--texte);
+}
+
+.suggestions {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 4px;
+  background: var(--surface-haute);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon);
+}
+
+.suggestion {
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  background: none;
+  border: none;
+  border-radius: var(--rayon);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.suggestion:hover {
+  background: var(--surface-survol);
+}
+
+.note {
+  width: 100%;
+  padding: 10px;
+  background: var(--fond);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.note:focus {
+  border-color: var(--accent-bordure);
+}
+
+.liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+  overflow: hidden;
+}
+
+.ligne {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.ligne:last-child {
+  border-bottom: none;
+}
+
+.identite {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nom {
+  font-size: 0.95rem;
+  border-bottom: 1px solid transparent;
+  align-self: flex-start;
+}
+
+.nom:hover {
+  color: var(--accent-vif);
+  border-bottom-color: var(--accent);
+}
+
+.pivot {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}
+
+.suivis {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--texte-faible);
+  white-space: nowrap;
+}

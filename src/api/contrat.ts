@@ -434,6 +434,143 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/entites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Annuaire filtrable */
+        get: operations["EntitesController_lister"];
+        put?: never;
+        /**
+         * Création d’une entité et de ses premiers faits
+         * @description Source, fiabilité et date de constatation données au niveau de la requête servent de valeurs par défaut à chaque fait — c’est le bandeau de source active.
+         */
+        post: operations["EntitesController_creer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/entites/similaires": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Détection de doublons à la frappe
+         * @description Similarité trigramme du libellé, et identité exacte d’une valeur unique du type — ce second signal ne laisse aucun doute.
+         */
+        get: operations["EntitesController_similaires"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/entites/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fiche assemblée
+         * @description Champs projetés avec les faits qui les soutiennent, et liens lus depuis cette fiche — un lien est une arête unique, vue des deux côtés.
+         */
+        get: operations["EntitesController_lire"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["EntitesController_modifier"];
+        trace?: never;
+    };
+    "/entites/{id}/archiver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archivage
+         * @description Rien n’est jamais supprimé : l’entité sort des écrans courants et reste consultable, ses faits intacts.
+         */
+        post: operations["EntitesController_archiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/entites/{id}/desarchiver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EntitesController_desarchiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/faits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ajout d’un fait à une entité existante
+         * @description Un lien créé ici est lisible depuis ses deux extrémités : une seule arête est stockée.
+         */
+        post: operations["FaitsController_creer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/faits/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Correction d’un fait
+         * @description La cible d’un lien ne se corrige pas : un lien mal posé s’infirme et se refait.
+         */
+        patch: operations["FaitsController_modifier"];
+        trace?: never;
+    };
     "/sante": {
         parameters: {
             query?: never;
@@ -733,6 +870,239 @@ export interface components {
         CompositionOngletDto: {
             /** @description Jeu complet, dans l'ordre voulu. Il remplace le précédent. */
             typesLiens: components["schemas"]["LienDOngletDto"][];
+        };
+        EntiteResumeeDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            typeEntiteId: string;
+            typeCode: string;
+            libelle: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** @enum {string} */
+            etat: "actif" | "archive";
+            /** Format: date-time */
+            modifieLe: string;
+        };
+        SuggestionDoublonDto: {
+            /** Format: uuid */
+            id: string;
+            libelle: string;
+            typeCode: string;
+            /** @description Similarité trigramme du libellé, entre 0 et 1 */
+            proximite: number;
+            /** @description Une valeur unique du type est identique — c’est un doublon sûr */
+            valeurUniqueIdentique: boolean;
+        };
+        FaitDeChampDto: {
+            /** Format: uuid */
+            id: string;
+            valeur: Record<string, never>;
+            source: string;
+            fiabilite: number;
+            /** Format: date */
+            dateConstatation: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+        };
+        ChampDeFicheDto: {
+            /** Format: uuid */
+            definitionChampId: string;
+            cle: string;
+            libelle: string;
+            /** @enum {string} */
+            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier";
+            multiple: boolean;
+            /** @description Valeur projetée, celle qui s’affiche en évidence */
+            valeur: Record<string, never>;
+            /** @description Les faits qui la soutiennent. Plus d’un signale un recoupement de sources. */
+            faits: components["schemas"]["FaitDeChampDto"][];
+            /** @description Plusieurs sources distinctes affirment la même valeur */
+            multiSources: boolean;
+        };
+        ExtremiteDto: {
+            /** Format: uuid */
+            id: string;
+            libelle: string;
+            typeCode: string;
+        };
+        LienDeFicheDto: {
+            /**
+             * Format: uuid
+             * @description Identifiant du fait
+             */
+            faitId: string;
+            /**
+             * @description Le même fait, vu depuis l’une ou l’autre extrémité. Une seule arête existe en base.
+             * @enum {string}
+             */
+            sens: "direct" | "inverse";
+            /** Format: uuid */
+            typeLienId: string;
+            /** @description Libellé lu depuis cette fiche */
+            libelle: string;
+            autreEntite: components["schemas"]["ExtremiteDto"];
+            source: string;
+            fiabilite: number;
+            /** Format: date */
+            dateConstatation: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+        };
+        FicheEntiteDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            typeEntiteId: string;
+            typeCode: string;
+            libelle: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** @enum {string} */
+            etat: "actif" | "archive";
+            /** Format: date-time */
+            modifieLe: string;
+            typeLibelle: string;
+            /** @description Projection des faits, maintenue par trigger */
+            valeurs: {
+                [key: string]: unknown;
+            };
+            note: string | null;
+            champs: components["schemas"]["ChampDeFicheDto"][];
+            liens: components["schemas"]["LienDeFicheDto"][];
+            /** Format: date-time */
+            creeLe: string;
+            /** Format: uuid */
+            fusionneeVersId: string | null;
+        };
+        ChampSaisiDto: {
+            /** @example Rapport d'intervention n°2291 */
+            source?: string;
+            fiabilite?: number;
+            /**
+             * Format: date
+             * @example 2026-08-07
+             */
+            dateConstatation?: string;
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+            /** Format: uuid */
+            definitionChampId: string;
+            /** @description Texte, nombre, booléen ou valeur de liste, selon le type du champ */
+            valeur: Record<string, never>;
+        };
+        LienSaisiDto: {
+            /** @example Rapport d'intervention n°2291 */
+            source?: string;
+            fiabilite?: number;
+            /**
+             * Format: date
+             * @example 2026-08-07
+             */
+            dateConstatation?: string;
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+            /** Format: uuid */
+            typeLienId: string;
+            /** Format: uuid */
+            cibleId: string;
+        };
+        CreationEntiteDto: {
+            /** @example Rapport d'intervention n°2291 */
+            source?: string;
+            fiabilite?: number;
+            /**
+             * Format: date
+             * @example 2026-08-07
+             */
+            dateConstatation?: string;
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+            /** Format: uuid */
+            typeEntiteId: string;
+            /** @description Champ libre, sans source ni fiabilité — ce n’est pas un fait */
+            note?: string;
+            champs?: components["schemas"]["ChampSaisiDto"][];
+            liens?: components["schemas"]["LienSaisiDto"][];
+        };
+        ModificationEntiteDto: {
+            note?: string;
+            /**
+             * @description Exige la permission visibilite.definir
+             * @enum {string}
+             */
+            visibilite?: "public" | "restreint" | "prive";
+        };
+        CreationFaitDto: {
+            /** Format: uuid */
+            sujetId: string;
+            /** @enum {string} */
+            nature: "champ" | "lien";
+            /**
+             * Format: uuid
+             * @description Si nature = champ
+             */
+            definitionChampId?: string;
+            /** @description Si nature = champ */
+            valeur?: Record<string, never>;
+            /**
+             * Format: uuid
+             * @description Si nature = lien
+             */
+            typeLienId?: string;
+            /**
+             * Format: uuid
+             * @description Si nature = lien
+             */
+            cibleId?: string;
+            /** @example Rapport d'intervention n°2291 */
+            source: string;
+            fiabilite: number;
+            /**
+             * Format: date
+             * @example 2026-08-07
+             */
+            dateConstatation: string;
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+        };
+        FaitDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            sujetId: string;
+            /** @enum {string} */
+            nature: "champ" | "lien";
+            /** Format: uuid */
+            definitionChampId: string | null;
+            valeur: Record<string, never> | null;
+            /** Format: uuid */
+            typeLienId: string | null;
+            /** Format: uuid */
+            cibleId: string | null;
+            source: string;
+            fiabilite: number;
+            /** Format: date */
+            dateConstatation: string;
+            /** @enum {string} */
+            etat: "actif" | "infirme" | "archive";
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** Format: date-time */
+            creeLe: string;
+            /** Format: date-time */
+            modifieLe: string;
+        };
+        ModificationFaitDto: {
+            /** @description Champ seulement — la cible d’un lien ne se corrige pas */
+            valeur?: Record<string, never>;
+            source?: string;
+            fiabilite?: number;
+            /** Format: date */
+            dateConstatation?: string;
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
         };
         SanteReponseDto: {
             /**
@@ -1453,6 +1823,219 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    EntitesController_lister: {
+        parameters: {
+            query?: {
+                type?: string;
+                q?: string;
+                etat?: "actif" | "archive";
+                decalage?: unknown;
+                limite?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntiteResumeeDto"][];
+                };
+            };
+        };
+    };
+    EntitesController_creer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationEntiteDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FicheEntiteDto"];
+                };
+            };
+            /** @description Valeur unique déjà attribuée */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EntitesController_similaires: {
+        parameters: {
+            query: {
+                q: string;
+                type?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SuggestionDoublonDto"][];
+                };
+            };
+        };
+    };
+    EntitesController_lire: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FicheEntiteDto"];
+                };
+            };
+        };
+    };
+    EntitesController_modifier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationEntiteDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FicheEntiteDto"];
+                };
+            };
+        };
+    };
+    EntitesController_archiver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FicheEntiteDto"];
+                };
+            };
+        };
+    };
+    EntitesController_desarchiver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FicheEntiteDto"];
+                };
+            };
+        };
+    };
+    FaitsController_creer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationFaitDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FaitDto"];
+                };
+            };
+        };
+    };
+    FaitsController_modifier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationFaitDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FaitDto"];
+                };
             };
         };
     };

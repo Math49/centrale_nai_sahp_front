@@ -1,0 +1,333 @@
+.formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Bandeau de source active ── */
+
+.bandeau {
+  position: sticky;
+  top: 52px;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--surface-haute);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-large);
+}
+
+.bandeauTitre {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+  padding-bottom: 8px;
+}
+
+.bandeauChamp {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1 1 180px;
+}
+
+.bandeauChamp:first-of-type {
+  flex: 2 1 260px;
+}
+
+/* ── Blocs ── */
+
+.bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+}
+
+.blocTitre {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.obligatoire {
+  color: var(--accent);
+}
+
+.marqueur {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: 999px;
+  font-size: 0.66rem;
+  color: var(--texte-faible);
+}
+
+.bascule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apercuLibelle {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--texte-attenue);
+}
+
+/* ── Champs relationnels ── */
+
+.relation {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  position: relative;
+}
+
+.relationType {
+  color: var(--texte-faible);
+}
+
+.puces {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.puce,
+.puceHeritee {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: var(--surface-haute);
+}
+
+/* Chip hérité : marqué d'un cadenas, et retirable volontairement. */
+.puceHeritee {
+  border-color: var(--accent-bordure);
+  background: var(--accent-fond);
+  color: var(--accent-vif);
+}
+
+.retirerPuce {
+  background: none;
+  border: none;
+  color: var(--texte-faible);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.retirerPuce:hover {
+  color: var(--texte);
+}
+
+.rechercheRelation {
+  display: flex;
+  gap: 8px;
+  position: relative;
+}
+
+.rechercheRelation input {
+  flex: 1;
+}
+
+.suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  background: var(--surface-haute);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.suggestion {
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  background: none;
+  border: none;
+  border-radius: var(--rayon);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.suggestion:hover {
+  background: var(--surface-survol);
+}
+
+.suggestionVide {
+  padding: 8px;
+  font-size: 0.8rem;
+  color: var(--texte-faible);
+}
+
+/* ── Doublons ── */
+
+.doublonPossible,
+.doublonCertain {
+  padding: 10px 12px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon);
+  background: var(--surface-haute);
+}
+
+.doublonPossible {
+  border-left: 2px solid var(--fiabilite-3);
+}
+
+/* Une valeur unique identique ne laisse aucun doute : le marquage est plus net. */
+.doublonCertain {
+  border-left: 2px solid var(--fiabilite-1);
+}
+
+.doublonTitre {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+}
+
+.doublonListe {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.doublonChoix {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 8px;
+  background: var(--fond);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  cursor: pointer;
+  text-align: left;
+}
+
+.doublonChoix:hover {
+  border-color: var(--accent-bordure);
+}
+
+.doublonMotif {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}
+
+.doublonAction {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--accent-vif);
+  white-space: nowrap;
+}
+
+/* ── Pied ── */
+
+.pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+}
+
+.compteur {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--texte-attenue);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Cascade ── */
+
+.filDAriane {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--accent-fond);
+  border: 1px solid var(--accent-bordure);
+  border-radius: var(--rayon);
+  font-size: 0.82rem;
+  color: var(--texte-attenue);
+}
+
+.voileCascade {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: start center;
+  padding: 32px 20px;
+  overflow-y: auto;
+  background: rgba(5, 6, 8, 0.76);
+}
+
+.boiteCascade {
+  width: 100%;
+  max-width: 760px;
+  padding: 20px;
+  background: var(--fond);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-large);
+}
+
+.enteteCascade {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.titreCascade {
+  font-size: 1rem;
+}
+
+.niveauCascade {
+  padding: 2px 8px;
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+}

@@ -1,0 +1,95 @@
+'use client';
+
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
+
+import { useReferentiel } from '@/api/referentiel';
+import controles from '@/composants/controles.module.css';
+import { EtatVide } from '@/composants/etat-vide';
+import type { SourceActive } from '@/composants/formulaire/bandeau-source';
+import {
+  MoteurFormulaire,
+  useRegistreCascade,
+  type EntiteEnregistree,
+} from '@/composants/formulaire/moteur-formulaire';
+import { EnteteZone } from '@/composants/zone';
+
+export default function PageNouvelleEntite() {
+  return (
+    <Suspense fallback={<p className={controles.remarque}>Chargement…</p>}>
+      <Saisie />
+    </Suspense>
+  );
+}
+
+function Saisie() {
+  const parametres = useSearchParams();
+  const router = useRouter();
+  const referentiel = useReferentiel();
+
+  const typeEntiteId = parametres.get('type');
+
+  const [source, definirSource] = useState<SourceActive>({
+    source: '',
+    fiabilite: 4,
+    dateConstatation: new Date().toISOString().slice(0, 10),
+  });
+
+  const [enregistrees, definirEnregistrees] = useState<EntiteEnregistree[]>([]);
+
+  // Le registre vit ici, à la racine de la cascade : abandonner une branche doit
+  // pouvoir retirer tout ce qu'elle a persisté, quel qu'en soit le niveau.
+  const registre = useRegistreCascade();
+
+  const type = referentiel.data?.typesEntites.find(
+    (candidat) => candidat.id === typeEntiteId,
+  );
+
+  if (!typeEntiteId || (referentiel.isSuccess && !type)) {
+    return (
+      <>
+        <EnteteZone titre="Nouvelle fiche" />
+        <EtatVide
+          titre="Aucun type d’entité désigné."
+          explication="La saisie part toujours d’un type : c’est lui qui décrit les champs à remplir."
+          action={
+            <Link className={controles.bouton} href="/entites">
+              Revenir à l’annuaire
+            </Link>
+          }
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <EnteteZone
+        titre={`Nouvelle fiche — ${type?.libelle ?? '…'}`}
+        sousTitre="Les liens se construisent seuls : remplir un champ relationnel suffit à poser l’arête."
+      />
+
+      {enregistrees.length > 0 && (
+        <p className={controles.remarque} style={{ marginBottom: 14 }}>
+          Enregistré :{' '}
+          {enregistrees.map((entite) => entite.libelle).join(' · ')}
+        </p>
+      )}
+
+      <MoteurFormulaire
+        // Remonter la clé force un formulaire vierge après chaque
+        // enregistrement, sans traîner l'état de la saisie précédente.
+        key={`${typeEntiteId}-${enregistrees.length}`}
+        typeEntiteId={typeEntiteId}
+        source={source}
+        onSourceChange={definirSource}
+        registre={registre}
+        onEnregistre={(entite) =>
+          definirEnregistrees((liste) => [...liste, entite])
+        }
+        onAnnule={() => router.push('/entites')}
+      />
+    </>
+  );
+}

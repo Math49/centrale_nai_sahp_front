@@ -85,6 +85,36 @@ Toute la partie dynamique — types d'entités, champs, types de liens, onglets 
 n'est **pas** dans le contrat : elle se récupère par `GET /referentiel` et
 alimente le moteur de formulaire dynamique (lot 6).
 
+## Moteur de formulaire dynamique
+
+`src/composants/formulaire/` — la pièce la plus réutilisée du front. Il lit le
+référentiel et produit le formulaire de n'importe quel type d'entité.
+
+Quatre règles y sont tenues :
+
+- **L'agent ne trace jamais un lien.** Il remplit un champ relationnel, et
+  l'arête existe. Ces champs proposent toujours de sélectionner une fiche
+  existante *ou* d'en créer une sur place.
+- **Ordre d'écriture imposé.** Une relation où la nouvelle entité est le
+  *sujet* part avec sa création ; une relation où elle est la *cible* attend que
+  la fiche existe et devient un fait posé ensuite. `planDEcriture()` fait ce
+  tri, et c'est là qu'il faut regarder quand un lien part du mauvais côté.
+- **Profondeur limitée à deux niveaux.** Au-delà, l'agent enregistre et poursuit
+  depuis la fiche créée.
+- **Le sous-formulaire est bloquant** : ni le voile ni la touche d'échappement
+  ne le referment. On en sort par validation, qui persiste, ou par annulation,
+  qui retire ce que la branche a écrit.
+
+L'**enregistrement est progressif** : chaque sous-formulaire validé persiste son
+entité. D'où le `RegistreCascade`, tenu à la racine : abandonner une branche
+doit pouvoir retirer tout ce qu'elle a écrit, à n'importe quel niveau, et à
+rebours — une entité créée plus tard peut désigner une plus ancienne.
+
+Le **bandeau de source active** est figé dans les sous-formulaires : la source
+vient du formulaire d'origine et se propage à toute la cascade.
+
+Le **compteur d'impact** reflète l'état réel, pas un total figé à l'ouverture.
+
 ## Référentiel
 
 `useReferentiel()` met le catalogue en cache **une demi-heure** : il ne bouge
@@ -122,7 +152,7 @@ npm run contrat    # régénère le client typé
 | --- | --- |
 | 2 — Socle front | fait |
 | 3 — Référentiel et administration (front) | fait |
-| 6 — Moteur de formulaire dynamique | à faire |
+| 6 — Moteur de formulaire dynamique | fait |
 | 7 — Fiche entité (front) | à faire |
 | 8 — Dossiers (front) | à faire |
 | 9 — Graphe (front) | à faire |

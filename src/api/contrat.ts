@@ -498,6 +498,26 @@ export interface paths {
         patch: operations["EntitesController_modifier"];
         trace?: never;
     };
+    "/entites/{id}/annuler-creation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Annulation d’une saisie en cascade
+         * @description Retire une entité que le sous-formulaire venait de persister et que l’agent abandonne. Réservée à son auteur, dans l’heure, sur une entité que rien d’autre ne désigne — au-delà, seul l’archivage sort.
+         */
+        post: operations["EntitesController_annulerCreation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/entites/{id}/archiver": {
         parameters: {
             query?: never;
@@ -901,7 +921,7 @@ export interface components {
         FaitDeChampDto: {
             /** Format: uuid */
             id: string;
-            valeur: Record<string, never>;
+            valeur: (string | number | boolean | unknown[]) | null;
             source: string;
             fiabilite: number;
             /** Format: date */
@@ -923,7 +943,7 @@ export interface components {
             typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier";
             multiple: boolean;
             /** @description Valeur projetée, celle qui s’affiche en évidence */
-            valeur: Record<string, never>;
+            valeur: (string | number | boolean | unknown[]) | null;
             /** @description Les faits qui la soutiennent. Plus d’un signale un recoupement de sources. */
             faits: components["schemas"]["FaitDeChampDto"][];
             /** @description Plusieurs sources distinctes affirment la même valeur */
@@ -1002,7 +1022,7 @@ export interface components {
             /** Format: uuid */
             definitionChampId: string;
             /** @description Texte, nombre, booléen ou valeur de liste, selon le type du champ */
-            valeur: Record<string, never>;
+            valeur: string | number | boolean;
         };
         LienSaisiDto: {
             /** @example Rapport d'intervention n°2291 */
@@ -1062,7 +1082,7 @@ export interface components {
              */
             definitionChampId?: string;
             /** @description Si nature = champ */
-            valeur?: Record<string, never>;
+            valeur?: string | number | boolean;
             /**
              * Format: uuid
              * @description Si nature = lien
@@ -1098,7 +1118,7 @@ export interface components {
             nature: "champ" | "lien";
             /** Format: uuid */
             definitionChampId: string | null;
-            valeur: Record<string, never> | null;
+            valeur: (string | number | boolean | unknown[]) | null;
             /** Format: uuid */
             typeLienId: string | null;
             /** Format: uuid */
@@ -1125,7 +1145,7 @@ export interface components {
         };
         ModificationFaitDto: {
             /** @description Champ seulement — la cible d’un lien ne se corrige pas */
-            valeur?: Record<string, never>;
+            valeur?: string | number | boolean;
             source?: string;
             fiabilite?: number;
             /** Format: date */
@@ -1982,6 +2002,32 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["FicheEntiteDto"];
                 };
+            };
+        };
+    };
+    EntitesController_annulerCreation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Trop ancienne, déjà référencée, ou saisie par un autre agent */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

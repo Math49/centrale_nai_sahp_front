@@ -1,0 +1,106 @@
+.barre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.filtre {
+  padding: 5px 10px;
+  background: none;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  color: var(--texte-attenue);
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.filtre:hover {
+  background: var(--surface-survol);
+  color: var(--texte);
+}
+
+.filtre[aria-pressed='true'] {
+  border-color: var(--accent-bordure);
+  background: var(--accent-fond);
+  color: var(--accent-vif);
+}
+
+.barre input {
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+  margin-left: auto;
+}
+
+.creations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.liste {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+  overflow: hidden;
+}
+
+.ligne {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.ligne:last-child {
+  border-bottom: none;
+}
+
+.libelle {
+  font-size: 0.9rem;
+}
+
+.type {
+  font-size: 0.78rem;
+  color: var(--texte-faible);
+}
+
+/* La couleur est réservée à la fiabilité et à la visibilité : les pastilles
+ * de visibilité portent la famille froide, et toujours leur texte. */
+.restreint,
+.prive {
+  margin-left: auto;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  border: 1px solid currentColor;
+}
+
+.restreint {
+  color: var(--visibilite-restreint);
+}
+
+.prive {
+  color: var(--visibilite-prive);
+}
+
+.archive {
+  padding: 1px 8px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  color: var(--texte-faible);
+}

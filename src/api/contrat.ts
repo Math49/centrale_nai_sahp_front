@@ -441,7 +441,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Annuaire filtrable */
+        /**
+         * Annuaire filtrable
+         * @description Les entités privées en sont absentes, sans mention — un décompte manquant révélerait leur existence.
+         */
         get: operations["EntitesController_lister"];
         put?: never;
         /**
@@ -464,7 +467,7 @@ export interface paths {
         };
         /**
          * Détection de doublons à la frappe
-         * @description Similarité trigramme du libellé, et identité exacte d’une valeur unique du type — ce second signal ne laisse aucun doute.
+         * @description Similarité trigramme du libellé, et identité exacte d’une valeur unique du type. Ne propose jamais une entité privée.
          */
         get: operations["EntitesController_similaires"];
         put?: never;
@@ -484,7 +487,7 @@ export interface paths {
         };
         /**
          * Fiche assemblée
-         * @description Champs projetés avec les faits qui les soutiennent, et liens lus depuis cette fiche — un lien est une arête unique, vue des deux côtés.
+         * @description Champs projetés depuis les seuls faits visibles par l’agent, et liens lus depuis cette fiche — un lien est une arête unique, vue des deux côtés.
          */
         get: operations["EntitesController_lire"];
         put?: never;
@@ -905,6 +908,11 @@ export interface components {
             dateConstatation: string;
             /** @enum {string} */
             visibilite: "public" | "restreint" | "prive";
+            /**
+             * @description La plus restrictive parmi le fait, son dossier de saisie, son sujet et sa cible
+             * @enum {string}
+             */
+            visibiliteEffective: "public" | "restreint" | "prive";
         };
         ChampDeFicheDto: {
             /** Format: uuid */
@@ -949,6 +957,8 @@ export interface components {
             dateConstatation: string;
             /** @enum {string} */
             visibilite: "public" | "restreint" | "prive";
+            /** @enum {string} */
+            visibiliteEffective: "public" | "restreint" | "prive";
         };
         FicheEntiteDto: {
             /** Format: uuid */
@@ -964,10 +974,12 @@ export interface components {
             /** Format: date-time */
             modifieLe: string;
             typeLibelle: string;
-            /** @description Projection des faits, maintenue par trigger */
+            /** @description Projection des faits **visibles par cet agent** — recomposée à la lecture, et non recopiée depuis la colonne, qui ignore la visibilité */
             valeurs: {
                 [key: string]: unknown;
             };
+            /** @description Faux sur une entité restreinte non habilitée : l’objet est visible, son contenu non */
+            contenuLisible: boolean;
             note: string | null;
             champs: components["schemas"]["ChampDeFicheDto"][];
             liens: components["schemas"]["LienDeFicheDto"][];
@@ -1021,6 +1033,11 @@ export interface components {
             visibilite?: "public" | "restreint" | "prive";
             /** Format: uuid */
             typeEntiteId: string;
+            /**
+             * Format: uuid
+             * @description Dossier depuis lequel la saisie a lieu. Ses faits en héritent la visibilité ; l’entité, elle, ne porte que la sienne.
+             */
+            dossierId?: string;
             /** @description Champ libre, sans source ni fiabilité — ce n’est pas un fait */
             note?: string;
             champs?: components["schemas"]["ChampSaisiDto"][];
@@ -1066,6 +1083,11 @@ export interface components {
             dateConstatation: string;
             /** @enum {string} */
             visibilite?: "public" | "restreint" | "prive";
+            /**
+             * Format: uuid
+             * @description Dossier de saisie — le fait en hérite la visibilité
+             */
+            dossierId?: string;
         };
         FaitDto: {
             /** Format: uuid */
@@ -1089,6 +1111,13 @@ export interface components {
             etat: "actif" | "infirme" | "archive";
             /** @enum {string} */
             visibilite: "public" | "restreint" | "prive";
+            /**
+             * @description Calculée en base : la plus restrictive des quatre gardiens
+             * @enum {string}
+             */
+            visibiliteEffective: "public" | "restreint" | "prive";
+            /** Format: uuid */
+            dossierId: string | null;
             /** Format: date-time */
             creeLe: string;
             /** Format: date-time */
@@ -1921,6 +1950,13 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["FicheEntiteDto"];
                 };
+            };
+            /** @description Inconnue, ou privée sans habilitation — jamais 403, qui confirmerait son existence */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

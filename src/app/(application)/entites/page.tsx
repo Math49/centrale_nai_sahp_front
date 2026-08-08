@@ -103,7 +103,12 @@ export default function PageEntites() {
             <ul className={styles.liste}>
               {(entites.data ?? []).map((entite) => (
                 <li key={entite.id} className={styles.ligne}>
-                  <span className={styles.libelle}>{entite.libelle}</span>
+                  <Link
+                    className={styles.libelle}
+                    href={`/entites/${entite.id}`}
+                  >
+                    {entite.libelle}
+                  </Link>
                   <span className={styles.type}>
                     {nommer(entite.typeEntiteId)}
                   </span>
@@ -125,10 +130,6 @@ export default function PageEntites() {
               ))}
             </ul>
           )}
-
-          <p className={controles.remarque}>
-            La fiche d’une entité s’ouvrira au lot 7.
-          </p>
         </>
       )}
     </>

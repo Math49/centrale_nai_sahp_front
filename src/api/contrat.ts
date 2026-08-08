@@ -498,6 +498,26 @@ export interface paths {
         patch: operations["EntitesController_modifier"];
         trace?: never;
     };
+    "/entites/{id}/historique": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Onglet Historique
+         * @description Faits infirmés ou archivés — jamais supprimés, toujours consultables — et traces d’écriture du journal d’audit.
+         */
+        get: operations["EntitesController_historique"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/entites/{id}/annuler-creation": {
         parameters: {
             query?: never;
@@ -980,6 +1000,16 @@ export interface components {
             /** @enum {string} */
             visibiliteEffective: "public" | "restreint" | "prive";
         };
+        OngletPeupleDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example Membres */
+            libelle: string;
+            ordre: number;
+            /** @description Ne compte que les liens visibles par cet agent — un compteur exhaustif révélerait ce qui est masqué */
+            compteur: number;
+            liens: components["schemas"]["LienDeFicheDto"][];
+        };
         FicheEntiteDto: {
             /** Format: uuid */
             id: string;
@@ -1002,11 +1032,31 @@ export interface components {
             contenuLisible: boolean;
             note: string | null;
             champs: components["schemas"]["ChampDeFicheDto"][];
+            /** @description Onglets configurés pour ce type d’entité, déjà peuplés de leurs liens */
+            onglets: components["schemas"]["OngletPeupleDto"][];
+            /** @description Liens qu’aucun onglet ne regroupe — ils resteraient invisibles sinon, ce qui ferait passer une erreur de configuration pour une absence de donnée */
+            liensHorsOnglet: components["schemas"]["LienDeFicheDto"][];
+            /** @description Tous les liens visibles, à plat */
             liens: components["schemas"]["LienDeFicheDto"][];
             /** Format: date-time */
             creeLe: string;
             /** Format: uuid */
             fusionneeVersId: string | null;
+        };
+        EvenementHistoriqueDto: {
+            id: string;
+            /**
+             * @description Un fait sorti du graphe actif, ou une trace d’écriture du journal d’audit
+             * @enum {string}
+             */
+            nature: "fait" | "modification";
+            libelle: string;
+            source: string | null;
+            fiabilite: number | null;
+            /** @description « agent supprimé » lorsque le compte a été anonymisé */
+            auteur: string | null;
+            /** Format: date-time */
+            survenuLe: string;
         };
         ChampSaisiDto: {
             /** @example Rapport d'intervention n°2291 */
@@ -2001,6 +2051,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FicheEntiteDto"];
+                };
+            };
+        };
+    };
+    EntitesController_historique: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvenementHistoriqueDto"][];
                 };
             };
         };

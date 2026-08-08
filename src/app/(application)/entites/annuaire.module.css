@@ -71,6 +71,12 @@
 
 .libelle {
   font-size: 0.9rem;
+  border-bottom: 1px solid transparent;
+}
+
+.libelle:hover {
+  color: var(--accent-vif);
+  border-bottom-color: var(--accent);
 }
 
 .type {

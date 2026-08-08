@@ -12,6 +12,12 @@ export type SuggestionDoublon = components['schemas']['SuggestionDoublonDto'];
 export type CreationEntite = components['schemas']['CreationEntiteDto'];
 export type CreationFait = components['schemas']['CreationFaitDto'];
 
+export type EvenementHistorique =
+  components['schemas']['EvenementHistoriqueDto'];
+export type ChampDeFiche = components['schemas']['ChampDeFicheDto'];
+export type LienDeFiche = components['schemas']['LienDeFicheDto'];
+export type OngletPeuple = components['schemas']['OngletPeupleDto'];
+
 export const CLE_ENTITES = ['entites'] as const;
 
 async function attendre<T>(
@@ -55,6 +61,49 @@ export function useEntite(id: string | null) {
         'fiche indisponible',
       ),
   });
+}
+
+/**
+ * Onglet Historique — soumis à la permission `historique.consulter`.
+ *
+ * `actif` reste faux tant que l'agent ne l'a pas ouvert : l'onglet ne se
+ * charge pas tout seul, et un agent sans la permission n'y déclenche jamais de
+ * requête refusée.
+ */
+export function useHistorique(id: string, actif: boolean) {
+  return useQuery({
+    queryKey: [...CLE_ENTITES, id, 'historique'],
+    enabled: actif,
+    queryFn: () =>
+      attendre(
+        api.GET('/entites/{id}/historique', { params: { path: { id } } }),
+        'historique indisponible',
+      ),
+  });
+}
+
+export function useModifierEntite() {
+  return useEcriture(
+    ({ id, ...corps }: { id: string; note?: string; visibilite?: string }) =>
+      attendre(
+        api.PATCH('/entites/{id}', {
+          params: { path: { id } },
+          body: corps as components['schemas']['ModificationEntiteDto'],
+        }),
+        'modification impossible',
+      ),
+  );
+}
+
+export function useArchiverEntite() {
+  return useEcriture(({ id, archiver }: { id: string; archiver: boolean }) =>
+    attendre(
+      archiver
+        ? api.POST('/entites/{id}/archiver', { params: { path: { id } } })
+        : api.POST('/entites/{id}/desarchiver', { params: { path: { id } } }),
+      'changement d’état impossible',
+    ),
+  );
 }
 
 /**

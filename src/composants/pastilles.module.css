@@ -1,0 +1,68 @@
+/* La couleur est réservée à deux informations : la fiabilité, en famille
+ * chaude et ordonnée, et la visibilité, en famille froide. Les deux cohabitent
+ * sur une même fiche — les confondre rendrait « restreint » lisible comme
+ * « douteux ». */
+
+.fiabilite {
+  display: inline-block;
+  padding: 1px 7px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.fiabilite[data-niveau='4'] {
+  color: var(--fiabilite-4);
+}
+.fiabilite[data-niveau='3'] {
+  color: var(--fiabilite-3);
+}
+.fiabilite[data-niveau='2'] {
+  color: var(--fiabilite-2);
+}
+.fiabilite[data-niveau='1'] {
+  color: var(--fiabilite-1);
+}
+
+.visibilite {
+  display: inline-block;
+  padding: 1px 7px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.visibilite[data-niveau='restreint'] {
+  color: var(--visibilite-restreint);
+}
+.visibilite[data-niveau='prive'] {
+  color: var(--visibilite-prive);
+}
+
+.legende {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--bordure);
+  margin-top: 8px;
+}
+
+.legendeTitre {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}
+
+.legendeNote {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}

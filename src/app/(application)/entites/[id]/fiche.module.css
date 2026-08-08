@@ -1,0 +1,230 @@
+.entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.identite {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.typeEntite {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}
+
+.titre {
+  font-size: 1.5rem;
+}
+
+.marques {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.archive,
+.restreint {
+  padding: 1px 7px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  color: var(--texte-faible);
+}
+
+.actionsEntete {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+}
+
+.blocTitre {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}
+
+/* ── Champs ── */
+
+.champs {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.champLibelle {
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+}
+
+/* La valeur prime toujours sur ses métadonnées. */
+.champValeur {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+}
+
+/* Un champ non renseigné reste affiché : l'absence est une information. */
+.vide {
+  color: var(--texte-faible);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.multiSources {
+  padding: 1px 7px;
+  border: 1px solid var(--accent-bordure);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  color: var(--accent-vif);
+  cursor: default;
+}
+
+/* ── Onglets ── */
+
+.onglets {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+  padding-bottom: 2px;
+  /* Les onglets débordent en défilement horizontal, sans repli ni menu. */
+  overflow-x: auto;
+  border-bottom: 1px solid var(--bordure);
+}
+
+.onglet {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--texte-attenue);
+  cursor: pointer;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.onglet:hover {
+  color: var(--texte);
+}
+
+.onglet[aria-current='true'] {
+  color: var(--accent-vif);
+  border-bottom-color: var(--accent);
+}
+
+/* Le compteur donne l'échelle de la fiche sans avoir à cliquer. */
+.compteur {
+  padding: 0 6px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  color: var(--texte-faible);
+}
+
+/* ── Liens et historique ── */
+
+.liens,
+.historique {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lien {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  border-radius: var(--rayon);
+}
+
+.lien:hover {
+  background: var(--surface-survol);
+}
+
+.lienLibelle {
+  font-size: 0.78rem;
+  color: var(--texte-faible);
+  min-width: 130px;
+}
+
+.lienCible {
+  font-size: 0.92rem;
+  border-bottom: 1px solid transparent;
+}
+
+.lienCible:hover {
+  border-bottom-color: var(--accent);
+  color: var(--accent-vif);
+}
+
+.lienDate,
+.auteur {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}
+
+.auteur {
+  margin-left: 0;
+}
+
+/* ── Note ── */
+
+.note {
+  width: 100%;
+  padding: 10px;
+  background: var(--fond);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.note:focus {
+  border-color: var(--accent-bordure);
+}

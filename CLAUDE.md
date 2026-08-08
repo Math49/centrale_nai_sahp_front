@@ -136,6 +136,15 @@ refusée, pas pour la garantir.
   aucune donnée d'enquête n'y transite.
 - Un module CSS par composant, jetons partagés dans `globals.css`.
 
+## Un piège d'outillage
+
+**Ne jamais lancer `npm run build` pendant que `npm run dev` tourne** : les deux
+écrivent dans le même `.next`, et le serveur de développement se retrouve avec
+des chunks manquants. Les routes statiques n'en souffrent pas, les routes
+dynamiques rendent un 500 « Cannot find module ./vendor-chunks/… » qui n'a rien
+à voir avec le code. On s'en sort en arrêtant le serveur, en supprimant `.next`,
+et en redémarrant.
+
 ## Commandes
 
 ```bash
@@ -153,7 +162,7 @@ npm run contrat    # régénère le client typé
 | 2 — Socle front | fait |
 | 3 — Référentiel et administration (front) | fait |
 | 6 — Moteur de formulaire dynamique | fait |
-| 7 — Fiche entité (front) | à faire |
+| 7 — Fiche entité (front) | fait |
 | 8 — Dossiers (front) | à faire |
 | 9 — Graphe (front) | à faire |
 | 10 — Signaux et accueil (front) | à faire |

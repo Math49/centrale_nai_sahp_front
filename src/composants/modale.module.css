@@ -1,0 +1,55 @@
+.voile {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(5, 6, 8, 0.72);
+}
+
+.boite {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  background: var(--surface-haute);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-large);
+}
+
+.titre {
+  font-size: 1rem;
+}
+
+.corps {
+  font-size: 0.85rem;
+  color: var(--texte-attenue);
+}
+
+.corps p {
+  margin: 0 0 8px;
+}
+
+.corps p:last-child {
+  margin-bottom: 0;
+}
+
+.irreversible {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--bordure-forte);
+  border-left: 2px solid var(--fiabilite-2);
+  border-radius: var(--rayon);
+  background: var(--surface);
+  font-size: 0.8rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}

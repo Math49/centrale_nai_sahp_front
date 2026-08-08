@@ -21,6 +21,22 @@
   border-bottom: none;
 }
 
+/* Une rubrique construite est cliquable sur toute sa surface. */
+.ouvrable {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex: 1;
+  margin: -14px -16px;
+  padding: 14px 16px;
+  transition: background var(--transition);
+}
+
+.ouvrable:hover {
+  background: var(--surface-survol);
+}
+
 .libelle {
   margin: 0;
   font-size: 0.92rem;

@@ -85,6 +85,17 @@ Toute la partie dynamique — types d'entités, champs, types de liens, onglets 
 n'est **pas** dans le contrat : elle se récupère par `GET /referentiel` et
 alimente le moteur de formulaire dynamique (lot 6).
 
+## Référentiel
+
+`useReferentiel()` met le catalogue en cache **une demi-heure** : il ne bouge
+qu'en administration, et toute écriture depuis `src/api/referentiel.ts`
+l'invalide. Ne pas le recharger à la main ailleurs.
+
+`liensDisponiblesPour(type, liens)` dit quels types de liens un onglet de ce
+type peut regrouper, et dans quel sens. La règle est la même côté API, qui
+tranche : le front s'en sert pour ne pas proposer une composition qui sera
+refusée, pas pour la garantir.
+
 ## Conventions
 
 - **Français partout** : composants, variables, fichiers, commentaires.
@@ -110,7 +121,7 @@ npm run contrat    # régénère le client typé
 | Lot | État |
 | --- | --- |
 | 2 — Socle front | fait |
-| 3 — Référentiel et administration (front) | à faire |
+| 3 — Référentiel et administration (front) | fait |
 | 6 — Moteur de formulaire dynamique | à faire |
 | 7 — Fiche entité (front) | à faire |
 | 8 — Dossiers (front) | à faire |

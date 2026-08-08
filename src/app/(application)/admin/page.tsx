@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { useSession } from '@/auth/use-session';
 import { EnteteZone } from '@/composants/zone';
 import styles from './admin.module.css';
@@ -11,6 +13,8 @@ interface Rubrique {
   /** Vide : accessible à qui voit la zone. */
   permissions: string[];
   superAdminSeul?: boolean;
+  /** Absent tant que l'écran n'est pas construit. */
+  chemin?: string;
 }
 
 const RUBRIQUES: Rubrique[] = [
@@ -20,6 +24,7 @@ const RUBRIQUES: Rubrique[] = [
     lot: 'Lot 3',
     permissions: [],
     superAdminSeul: true,
+    chemin: '/admin/types-entites',
   },
   {
     libelle: 'Types de liens',
@@ -27,6 +32,7 @@ const RUBRIQUES: Rubrique[] = [
     lot: 'Lot 3',
     permissions: [],
     superAdminSeul: true,
+    chemin: '/admin/types-liens',
   },
   {
     libelle: 'Mise en page des fiches',
@@ -35,6 +41,7 @@ const RUBRIQUES: Rubrique[] = [
     lot: 'Lot 3',
     permissions: [],
     superAdminSeul: true,
+    chemin: '/admin/fiches',
   },
   {
     libelle: 'Rôles et permissions',
@@ -98,15 +105,31 @@ export default function PageAdmin() {
       />
 
       <ul className={styles.liste}>
-        {rubriques.map((rubrique) => (
-          <li key={rubrique.libelle} className={styles.rubrique}>
-            <div>
-              <p className={styles.libelle}>{rubrique.libelle}</p>
-              <p className={styles.description}>{rubrique.description}</p>
-            </div>
-            <span className={styles.lot}>{rubrique.lot}</span>
-          </li>
-        ))}
+        {rubriques.map((rubrique) => {
+          const entete = (
+            <>
+              <div>
+                <p className={styles.libelle}>{rubrique.libelle}</p>
+                <p className={styles.description}>{rubrique.description}</p>
+              </div>
+              <span className={styles.lot}>
+                {rubrique.chemin ? 'ouvrir →' : rubrique.lot}
+              </span>
+            </>
+          );
+
+          return (
+            <li key={rubrique.libelle} className={styles.rubrique}>
+              {rubrique.chemin ? (
+                <Link href={rubrique.chemin} className={styles.ouvrable}>
+                  {entete}
+                </Link>
+              ) : (
+                entete
+              )}
+            </li>
+          );
+        })}
       </ul>
     </>
   );

@@ -191,6 +191,249 @@ export interface paths {
         patch: operations["RolesController_modifier"];
         trace?: never;
     };
+    "/referentiel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Catalogue complet en une requête */
+        get: operations["ReferentielController_catalogue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/types-entites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Création d'un type d'entité */
+        post: operations["ReferentielController_creerTypeEntite"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/types-entites/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Suppression d'un type d'entité
+         * @description Refusée dès qu'une entité de ce type existe : le référentiel ne se vide pas sous les données qui en dépendent.
+         */
+        delete: operations["ReferentielController_supprimerTypeEntite"];
+        options?: never;
+        head?: never;
+        patch: operations["ReferentielController_modifierTypeEntite"];
+        trace?: never;
+    };
+    "/referentiel/types-entites/ordre": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ordre d'affichage des types d'entités */
+        post: operations["ReferentielController_ordonnerTypesEntites"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/types-entites/apercu-gabarit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Aperçu d'un gabarit de libellé
+         * @description Vérifie sa forme et montre ce qu'il produirait.
+         */
+        post: operations["ReferentielController_apercuGabarit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/champs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReferentielController_creerChamp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/champs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["ReferentielController_supprimerChamp"];
+        options?: never;
+        head?: never;
+        patch: operations["ReferentielController_modifierChamp"];
+        trace?: never;
+    };
+    "/referentiel/types-entites/{id}/champs/ordre": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReferentielController_ordonnerChamps"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/types-liens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Création d'un type de lien
+         * @description Ses contraintes de domaine sont définitives : des liens déjà posés les respectent.
+         */
+        post: operations["ReferentielController_creerTypeLien"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/types-liens/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["ReferentielController_supprimerTypeLien"];
+        options?: never;
+        head?: never;
+        patch: operations["ReferentielController_modifierTypeLien"];
+        trace?: never;
+    };
+    "/referentiel/onglets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReferentielController_creerOnglet"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/onglets/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["ReferentielController_supprimerOnglet"];
+        options?: never;
+        head?: never;
+        patch: operations["ReferentielController_modifierOnglet"];
+        trace?: never;
+    };
+    "/referentiel/types-entites/{id}/onglets/ordre": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReferentielController_ordonnerOnglets"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referentiel/onglets/{id}/types-liens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Composition d'un onglet
+         * @description Jeu complet, dans l'ordre. Le sens doit placer le type d'entité de l'onglet du bon côté du lien.
+         */
+        put: operations["ReferentielController_composerOnglet"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sante": {
         parameters: {
             query?: never;
@@ -312,6 +555,184 @@ export interface components {
             libelle?: string;
             /** @description Jeu complet, il remplace le précédent */
             permissions?: string[];
+        };
+        DefinitionChampDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            typeEntiteId: string;
+            /** @example plaque */
+            cle: string;
+            /** @example Plaque */
+            libelle: string;
+            /** @enum {string} */
+            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier";
+            obligatoire: boolean;
+            estUnique: boolean;
+            multiple: boolean;
+            /** @description Valeurs autorisées, pour une liste fermée uniquement */
+            options: string[] | null;
+            ordre: number;
+        };
+        OngletTypeLienDto: {
+            /** Format: uuid */
+            typeLienId: string;
+            /**
+             * @description « inverse » affiche le lien vu de l'autre extrémité : l'onglet Membres du groupe montre le côté inverse de « membre de »
+             * @enum {string}
+             */
+            sens: "direct" | "inverse";
+            ordre: number;
+        };
+        OngletDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            typeEntiteId: string;
+            /** @example Membres */
+            libelle: string;
+            ordre: number;
+            typesLiens: components["schemas"]["OngletTypeLienDto"][];
+        };
+        TypeEntiteDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example vehicule */
+            code: string;
+            /** @example Véhicule */
+            libelle: string;
+            /** @example Véhicules */
+            libellePluriel: string;
+            /** @example car */
+            icone: string;
+            /** @example {plaque} */
+            modeleLibelle: string;
+            ordre: number;
+            champs: components["schemas"]["DefinitionChampDto"][];
+            onglets: components["schemas"]["OngletDto"][];
+        };
+        TypeLienDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example proprietaire_de */
+            code: string;
+            /** @example propriétaire de */
+            libelle: string;
+            /** @example appartient à */
+            libelleInverse: string;
+            /** Format: uuid */
+            typeEntiteSourceId: string;
+            /** Format: uuid */
+            typeEntiteCibleId: string;
+            multiple: boolean;
+            ordre: number;
+        };
+        ReferentielDto: {
+            typesEntites: components["schemas"]["TypeEntiteDto"][];
+            typesLiens: components["schemas"]["TypeLienDto"][];
+        };
+        CreationTypeEntiteDto: {
+            /** @example vehicule */
+            code: string;
+            /** @example Véhicule */
+            libelle: string;
+            /** @example Véhicules */
+            libellePluriel: string;
+            /**
+             * @description Nom d'icône du design system
+             * @example car
+             */
+            icone: string;
+            /**
+             * @description Gabarit de libellé, citant des clés de champs entre accolades
+             * @example {plaque}
+             */
+            modeleLibelle: string;
+        };
+        ModificationTypeEntiteDto: {
+            libelle?: string;
+            libellePluriel?: string;
+            icone?: string;
+            modeleLibelle?: string;
+        };
+        OrdreDto: {
+            /** @description Identifiants dans l'ordre voulu. Le jeu doit être complet. */
+            ids: string[];
+        };
+        ApercuGabaritDto: {
+            /** @example {prenom} {nom} */
+            modeleLibelle: string;
+        };
+        ResultatApercuDto: {
+            /** @example Tyron Banks */
+            apercu: string;
+            clesCitees: string[];
+        };
+        CreationChampDto: {
+            /** Format: uuid */
+            typeEntiteId: string;
+            /** @example plaque */
+            cle: string;
+            /** @example Plaque */
+            libelle: string;
+            /** @enum {string} */
+            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier";
+            /** @default false */
+            obligatoire: boolean;
+            /** @default false */
+            estUnique: boolean;
+            /** @default false */
+            multiple: boolean;
+            /** @description Obligatoire et réservé au type « liste » */
+            options?: string[];
+        };
+        ModificationChampDto: {
+            libelle?: string;
+            obligatoire?: boolean;
+            estUnique?: boolean;
+            multiple?: boolean;
+            options?: string[];
+        };
+        CreationTypeLienDto: {
+            /** @example proprietaire_de */
+            code: string;
+            /** @example propriétaire de */
+            libelle: string;
+            /**
+             * @description Le même lien, lu depuis la cible
+             * @example appartient à
+             */
+            libelleInverse: string;
+            /** Format: uuid */
+            typeEntiteSourceId: string;
+            /** Format: uuid */
+            typeEntiteCibleId: string;
+            /** @default true */
+            multiple: boolean;
+        };
+        ModificationTypeLienDto: {
+            libelle?: string;
+            libelleInverse?: string;
+            multiple?: boolean;
+        };
+        CreationOngletDto: {
+            /** Format: uuid */
+            typeEntiteId: string;
+            /** @example Membres */
+            libelle: string;
+        };
+        ModificationOngletDto: {
+            libelle?: string;
+        };
+        LienDOngletDto: {
+            /** Format: uuid */
+            typeLienId: string;
+            /** @enum {string} */
+            sens: "direct" | "inverse";
+        };
+        CompositionOngletDto: {
+            /** @description Jeu complet, dans l'ordre voulu. Il remplace le précédent. */
+            typesLiens: components["schemas"]["LienDOngletDto"][];
         };
         SanteReponseDto: {
             /**
@@ -616,6 +1037,422 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["RoleDto"];
                 };
+            };
+        };
+    };
+    ReferentielController_catalogue: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferentielDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_creerTypeEntite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationTypeEntiteDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeEntiteDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_supprimerTypeEntite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Type encore utilisé */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReferentielController_modifierTypeEntite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationTypeEntiteDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeEntiteDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_ordonnerTypesEntites: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrdreDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReferentielController_apercuGabarit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApercuGabaritDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResultatApercuDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_creerChamp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationChampDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefinitionChampDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_supprimerChamp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReferentielController_modifierChamp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationChampDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefinitionChampDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_ordonnerChamps: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrdreDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReferentielController_creerTypeLien: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationTypeLienDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeLienDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_supprimerTypeLien: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReferentielController_modifierTypeLien: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationTypeLienDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeLienDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_creerOnglet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationOngletDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OngletDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_supprimerOnglet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReferentielController_modifierOnglet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationOngletDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OngletDto"];
+                };
+            };
+        };
+    };
+    ReferentielController_ordonnerOnglets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrdreDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReferentielController_composerOnglet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompositionOngletDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OngletDto"];
+                };
+            };
+            /** @description Sens incohérent avec le domaine du lien */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

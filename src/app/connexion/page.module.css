@@ -1,0 +1,52 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.carte {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+}
+
+.entete {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.titre {
+  font-size: 1.15rem;
+}
+
+.sigle {
+  color: var(--texte-attenue);
+}
+
+.service {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+}
+
+.formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mention {
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--bordure);
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}

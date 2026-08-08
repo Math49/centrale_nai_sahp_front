@@ -1,0 +1,69 @@
+.application {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* La barre est permanente : recherche globale et navigation restent joignables
+ * depuis n'importe quel écran. */
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 20px;
+  height: 52px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.marque {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.nom {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+
+.sigle {
+  color: var(--texte-attenue);
+}
+
+.navigation {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.zone {
+  padding: 6px 12px;
+  border-radius: var(--rayon);
+  color: var(--texte-attenue);
+  transition: var(--transition);
+  transition-property: color, background;
+}
+
+.zone:hover {
+  color: var(--texte);
+  background: var(--surface-survol);
+}
+
+.zone[aria-current='page'] {
+  color: var(--accent-vif);
+  background: var(--accent-fond);
+}
+
+.contenu {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 20px 64px;
+}

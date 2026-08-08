@@ -1,0 +1,50 @@
+.bloc {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+  padding-left: 14px;
+  border-left: 1px solid var(--bordure);
+}
+
+.identite {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.nom {
+  font-size: 0.85rem;
+}
+
+.grade {
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+}
+
+/* Le super-admin est signalé sans couleur d'accent : ce n'est pas une
+ * distinction flatteuse mais un pouvoir, et ses consultations sont
+ * journalisées comme telles. */
+.superAdmin {
+  color: var(--texte-attenue);
+  letter-spacing: 0.02em;
+}
+
+.deconnexion {
+  background: none;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  color: var(--texte-attenue);
+  cursor: pointer;
+  transition: var(--transition);
+  transition-property: color, border-color, background;
+}
+
+.deconnexion:hover {
+  color: var(--texte);
+  border-color: var(--bordure-forte);
+  background: var(--surface-survol);
+}

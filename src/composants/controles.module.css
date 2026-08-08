@@ -1,0 +1,86 @@
+.groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.etiquette {
+  font-size: 0.78rem;
+  color: var(--texte-attenue);
+}
+
+.champ {
+  height: 36px;
+  padding: 0 10px;
+  background: var(--fond);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  outline: none;
+  transition: border-color var(--transition);
+  width: 100%;
+}
+
+.champ:focus {
+  border-color: var(--accent-bordure);
+}
+
+.champ:disabled {
+  opacity: 0.5;
+}
+
+/* Les identifiants se saisissent en monospace, comme ils s'affichent. */
+.champMono {
+  composes: champ;
+  font-family: var(--police-mono);
+}
+
+.bouton {
+  height: 36px;
+  padding: 0 16px;
+  background: var(--accent-fond);
+  border: 1px solid var(--accent-bordure);
+  border-radius: var(--rayon);
+  color: var(--accent-vif);
+  cursor: pointer;
+  transition: var(--transition);
+  transition-property: background, border-color, color;
+}
+
+.bouton:hover:not(:disabled) {
+  background: rgba(111, 157, 196, 0.2);
+  border-color: var(--accent);
+}
+
+.bouton:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.boutonDiscret {
+  composes: bouton;
+  background: none;
+  border-color: var(--bordure);
+  color: var(--texte-attenue);
+}
+
+.boutonDiscret:hover:not(:disabled) {
+  background: var(--surface-survol);
+  border-color: var(--bordure-forte);
+  color: var(--texte);
+}
+
+/* Un message d'erreur porte du texte, jamais de la seule couleur. */
+.erreur {
+  padding: 8px 10px;
+  border: 1px solid var(--bordure-forte);
+  border-left: 2px solid var(--fiabilite-1);
+  border-radius: var(--rayon);
+  background: var(--surface-haute);
+  font-size: 0.82rem;
+  color: var(--texte);
+}
+
+.remarque {
+  font-size: 0.8rem;
+  color: var(--texte-faible);
+}

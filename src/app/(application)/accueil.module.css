@@ -1,0 +1,20 @@
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.colonne {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Les libellés de section sont la seule exception à la casse de phrase. */
+.section {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}

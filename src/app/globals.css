@@ -1,0 +1,140 @@
+/*
+ * Centrale N&I — jetons de style.
+ *
+ * Trois règles gouvernent ce fichier :
+ *
+ *   1. Thème sombre unique. Fond quasi noir, gris froids.
+ *   2. La couleur est réservée à deux informations, la fiabilité et la
+ *      visibilité. Partout ailleurs : gris, et une seule teinte d'accent,
+ *      un bleu acier repris du métal du badge.
+ *   3. Les identifiants — plaques, matricules, numéros, dates techniques —
+ *      sont en monospace.
+ *
+ * Les familles chaudes sont réservées à la fiabilité, les froides à la
+ * visibilité : deux échelles qui coexistent souvent sur une même fiche ne
+ * doivent pas se confondre.
+ */
+
+:root {
+  /* Fonds, du plus profond au plus élevé */
+  --fond: #0a0b0d;
+  --surface: #101216;
+  --surface-haute: #161a20;
+  --surface-survol: #1c2128;
+
+  /* Traits */
+  --bordure: #232830;
+  --bordure-forte: #2f3742;
+
+  /* Textes */
+  --texte: #e4e8ee;
+  --texte-attenue: #9aa4b2;
+  --texte-faible: #6b7683;
+
+  /* Accent unique — bleu acier */
+  --accent: #6f9dc4;
+  --accent-vif: #8fb8d9;
+  --accent-sourd: #3d6182;
+  --accent-fond: rgba(111, 157, 196, 0.12);
+  --accent-bordure: rgba(111, 157, 196, 0.35);
+
+  /* Fiabilité — échelle chaude ordonnée, 4 vers 1 */
+  --fiabilite-4: #4a9d6e;
+  --fiabilite-3: #a89440;
+  --fiabilite-2: #b5723c;
+  --fiabilite-1: #b4534b;
+
+  /* Visibilité — échelle froide. Public reste neutre. */
+  --visibilite-public: #6b7683;
+  --visibilite-restreint: #7d7fbd;
+  --visibilite-prive: #a06fb8;
+
+  /* Typographie */
+  --police: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --police-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Rythme */
+  --rayon: 4px;
+  --rayon-large: 8px;
+  --transition: 120ms ease;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--police);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Casse de phrase partout : aucune capitale décorative. Les libellés de
+ * section sont la seule exception, traitée au cas par cas. */
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+h2 {
+  font-size: 1.1rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Tout identifiant passe par cette classe : plaques, matricules, numéros de
+ * dossier, dates techniques. */
+.mono {
+  font-family: var(--police-mono);
+  font-variant-ligatures: none;
+  letter-spacing: 0.01em;
+}
+
+/* Un focus toujours visible : l'application se pilote beaucoup au clavier. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--accent-bordure);
+}
+
+/* Barres de défilement discrètes, dans les gris de l'interface. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bordure-forte) transparent;
+}

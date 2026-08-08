@@ -1,0 +1,23 @@
+.entete {
+  margin-bottom: 22px;
+}
+
+.titre {
+  font-size: 1.25rem;
+}
+
+.sousTitre {
+  margin: 4px 0 0;
+  color: var(--texte-faible);
+  font-size: 0.85rem;
+}
+
+.lot {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 8px;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+}

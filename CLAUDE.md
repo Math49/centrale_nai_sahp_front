@@ -183,7 +183,7 @@ npm run contrat    # régénère le client typé
 | 6 — Moteur de formulaire dynamique | fait |
 | 7 — Fiche entité (front) | fait |
 | 8 — Dossiers (front) | fait |
-| 9 — Graphe (front) | à faire |
+| 9 — Graphe (front) | fait |
 | 10 — Signaux et accueil (front) | à faire |
 | 11 — Traçabilité (front) | à faire |
 

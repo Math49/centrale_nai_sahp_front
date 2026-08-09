@@ -730,6 +730,66 @@ export interface paths {
         patch: operations["FaitsController_modifier"];
         trace?: never;
     };
+    "/graphe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Exploration par expansion
+         * @description Voisinage d’une entité, élagué pour cet agent **avant** traversée. Chaque nœud rapporte le nombre de voisins qu’il reste à déplier.
+         */
+        get: operations["GrapheController_voisinage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/graphe/chemin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Recherche de chemin
+         * @description Deux résultats : le trajet le plus court et le plus solide. Un chemin passant par un lien masqué n’existe pas pour l’agent concerné — la plateforme ne dit jamais qu’un chemin existe mais reste inaccessible.
+         */
+        get: operations["GrapheController_chemin"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/graphe/positions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Disposition mémorisée
+         * @description Par dossier lorsqu’un dossier est indiqué, globalement sinon. Le repositionnement affecte tous les agents : c’est une disposition partagée, d’où la permission.
+         */
+        post: operations["GrapheController_enregistrerPositions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sante": {
         parameters: {
             query?: never;
@@ -1414,6 +1474,69 @@ export interface components {
             dateConstatation?: string;
             /** @enum {string} */
             visibilite?: "public" | "restreint" | "prive";
+        };
+        NoeudGrapheDto: {
+            /** Format: uuid */
+            id: string;
+            libelle: string;
+            typeCode: string;
+            /** Format: uuid */
+            typeEntiteId: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** @description Voisins atteignables mais non affichés — le badge d’expansion. Ne compte jamais ce qui est masqué à cet agent. */
+            voisinsNonAffiches: number;
+            /** @description Relie plusieurs entités appartenant à des dossiers différents */
+            recurrence: boolean;
+            x: number | null;
+            y: number | null;
+        };
+        AreteGrapheDto: {
+            /**
+             * Format: uuid
+             * @description Identifiant du fait
+             */
+            id: string;
+            /** Format: uuid */
+            sujetId: string;
+            /** Format: uuid */
+            cibleId: string;
+            /** Format: uuid */
+            typeLienId: string;
+            libelle: string;
+            fiabilite: number;
+        };
+        VoisinageDto: {
+            noeuds: components["schemas"]["NoeudGrapheDto"][];
+            aretes: components["schemas"]["AreteGrapheDto"][];
+        };
+        CheminDto: {
+            noeuds: components["schemas"]["NoeudGrapheDto"][];
+            aretes: components["schemas"]["AreteGrapheDto"][];
+            /** @description Nombre de sauts */
+            longueur: number;
+            /** @description La fiabilité du chemin est celle de son maillon le plus faible */
+            maillonLeFaible: number;
+        };
+        CheminsDto: {
+            /** @description Le trajet le plus court. Nul si aucun chemin n’existe. */
+            plusCourt: components["schemas"]["CheminDto"] | null;
+            /** @description Le trajet dont le maillon le plus faible est le plus élevé. Nul lorsqu’il coïncide avec le plus court — un seul est alors affiché. */
+            plusSolide: components["schemas"]["CheminDto"] | null;
+        };
+        PositionDto: {
+            /** Format: uuid */
+            entiteId: string;
+            x: number;
+            y: number;
+        };
+        DispositionDto: {
+            /**
+             * Format: uuid
+             * @description Disposition propre à ce dossier. Absent : disposition globale.
+             */
+            dossierId?: string;
+            positions: components["schemas"]["PositionDto"][];
         };
         SanteReponseDto: {
             /**
@@ -2596,6 +2719,76 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["FaitDto"];
                 };
+            };
+        };
+    };
+    GrapheController_voisinage: {
+        parameters: {
+            query: {
+                depuis: string;
+                /** @description Nombre de sauts, 1 à 4 */
+                profondeur?: number;
+                /** @description Niveau minimal des arêtes retenues, 1 à 4 */
+                fiabilite?: number;
+                dossier?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoisinageDto"];
+                };
+            };
+        };
+    };
+    GrapheController_chemin: {
+        parameters: {
+            query: {
+                de: string;
+                vers: string;
+                fiabilite?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheminsDto"];
+                };
+            };
+        };
+    };
+    GrapheController_enregistrerPositions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DispositionDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

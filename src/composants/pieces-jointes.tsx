@@ -6,6 +6,7 @@ import {
   useApercuFichier,
   useDeposerFichier,
   useFichiers,
+  useSupprimerFichier,
   type Fichier,
 } from '@/api/fichiers';
 import controles from './controles.module.css';
@@ -36,9 +37,12 @@ export function PiecesJointes({
 }) {
   const fichiers = useFichiers(entiteId);
   const deposer = useDeposerFichier();
+  const supprimer = useSupprimerFichier();
 
   const champ = useRef<HTMLInputElement>(null);
   const [aConfirmer, definirAConfirmer] = useState<File | null>(null);
+  const [fichierASupprimer, definirFichierASupprimer] =
+    useState<Fichier | null>(null);
 
   const trop = aConfirmer && aConfirmer.size > PLAFOND_MO * 1024 * 1024;
 
@@ -80,7 +84,12 @@ export function PiecesJointes({
       ) : (
         <ul className={styles.galerie}>
           {(fichiers.data ?? []).map((fichier) => (
-            <Vignette key={fichier.id} fichier={fichier} />
+            <Vignette
+              key={fichier.id}
+              fichier={fichier}
+              peutSupprimer={peutDeposer}
+              onSupprimer={() => definirFichierASupprimer(fichier)}
+            />
           ))}
         </ul>
       )}
@@ -132,11 +141,48 @@ export function PiecesJointes({
           )}
         </Modale>
       )}
+
+      {fichierASupprimer && (
+        <Modale
+          titre="Supprimer cette image ?"
+          libelleConfirmation="Supprimer"
+          enCours={supprimer.isPending}
+          irreversible
+          onAnnuler={() => definirFichierASupprimer(null)}
+          onConfirmer={() =>
+            supprimer.mutate(
+              { id: fichierASupprimer.id, entiteId },
+              {
+                onSuccess: () => definirFichierASupprimer(null),
+              },
+            )
+          }
+        >
+          <p>
+            <strong>{fichierASupprimer.nomOrigine}</strong>
+          </p>
+          <p className={controles.remarque}>
+            L’image disparaîtra de cette fiche. Si un fait l’utilise encore, la
+            suppression sera refusée.
+          </p>
+          {supprimer.isError && (
+            <p className={controles.erreur}>{supprimer.error.message}</p>
+          )}
+        </Modale>
+      )}
     </>
   );
 }
 
-function Vignette({ fichier }: { fichier: Fichier }) {
+function Vignette({
+  fichier,
+  peutSupprimer,
+  onSupprimer,
+}: {
+  fichier: Fichier;
+  peutSupprimer: boolean;
+  onSupprimer: () => void;
+}) {
   const apercu = useApercuFichier(fichier.id);
 
   return (
@@ -166,6 +212,15 @@ function Vignette({ fichier }: { fichier: Fichier }) {
         {' · '}
         <span className="mono">{(fichier.taille / 1024).toFixed(0)} ko</span>
       </p>
+      {peutSupprimer && (
+        <button
+          type="button"
+          className={controles.boutonDiscret}
+          onClick={onSupprimer}
+        >
+          Supprimer
+        </button>
+      )}
     </li>
   );
 }

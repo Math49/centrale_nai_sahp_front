@@ -75,6 +75,24 @@ export function useDeposerFichier() {
   });
 }
 
+export function useSupprimerFichier() {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id }: { id: string; entiteId: string }) =>
+      attendre(
+        api.DELETE('/fichiers/{id}', {
+          params: { path: { id } },
+        }),
+        'suppression impossible',
+      ),
+    onSuccess: (_resultat, variables) =>
+      client.invalidateQueries({
+        queryKey: [...CLE_FICHIERS, variables.entiteId],
+      }),
+  });
+}
+
 /**
  * L'octet d'une image, en URL locale.
  *

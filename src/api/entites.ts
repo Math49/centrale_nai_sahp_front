@@ -100,6 +100,29 @@ export function useModifierEntite() {
   );
 }
 
+export function useModifierFait() {
+  return useEcriture(
+    ({
+      id,
+      ...corps
+    }: {
+      id: string;
+      valeur?: string | number | boolean;
+      source?: string;
+      fiabilite?: number;
+      dateConstatation?: string;
+      visibilite?: string;
+    }) =>
+      attendre(
+        api.PATCH('/faits/{id}', {
+          params: { path: { id } },
+          body: corps as components['schemas']['ModificationFaitDto'],
+        }),
+        'modification impossible',
+      ),
+  );
+}
+
 export function useArchiverEntite() {
   return useEcriture(({ id, archiver }: { id: string; archiver: boolean }) =>
     attendre(

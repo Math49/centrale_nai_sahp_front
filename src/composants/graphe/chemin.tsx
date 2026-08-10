@@ -9,14 +9,14 @@ import { PastilleFiabilite } from '@/composants/pastilles';
 import styles from './graphe.module.css';
 
 /**
- * Restitution d'un chemin â€” mÃªme rendu sur l'accueil et sur le graphe.
+ * Restitution d'un chemin - même rendu sur l'accueil et sur le graphe.
  *
- * Extrait plutÃ´t que recopiÃ© : deux exemplaires finiraient par diverger, et
- * c'est ici que se lit l'invariant Â« un chemin vaut son maillon le plus
- * faible Â».
+ * Extrait plutôt que recopié : deux exemplaires finiraient par diverger, et
+ * c'est ici que se lit l'invariant « un chemin vaut son maillon le plus
+ * faible ».
  *
- * L'absence de chemin est un rÃ©sultat comme un autre. La centrale ne dit jamais
- * qu'un chemin existe mais reste hors de portÃ©e : ce serait dÃ©jÃ  l'avoir dit.
+ * L'absence de chemin est un résultat comme un autre. La centrale ne dit jamais
+ * qu'un chemin existe mais reste hors de portée : ce serait déjà l'avoir dit.
  */
 export function ResultatChemin({
   titre,
@@ -31,7 +31,7 @@ export function ResultatChemin({
         {titre}
         {chemin && (
           <span className={styles.cheminMesure}>
-            {chemin.longueur} saut{chemin.longueur > 1 ? 's' : ''} Â· maillon le
+            {chemin.longueur} saut{chemin.longueur > 1 ? 's' : ''} · maillon le
             plus faible <PastilleFiabilite niveau={chemin.maillonLeFaible} />
           </span>
         )}
@@ -39,7 +39,7 @@ export function ResultatChemin({
 
       {chemin === null ? (
         <p className={controles.remarque}>
-          Aucun chemin entre ces deux donnÃ©es.
+          Aucun chemin entre ces deux données.
         </p>
       ) : (
         <ol className={styles.trajet}>
@@ -48,7 +48,7 @@ export function ResultatChemin({
               <span className={styles.etape}>{noeud.libelle}</span>
               {rang < chemin.aretes.length && (
                 <div className={styles.fleche}>
-                  â†“ {chemin.aretes[rang].libelle}{' '}
+                  ↓ {chemin.aretes[rang].libelle}{' '}
                   <PastilleFiabilite niveau={chemin.aretes[rang].fiabilite} />
                 </div>
               )}
@@ -61,10 +61,10 @@ export function ResultatChemin({
 }
 
 /**
- * Les deux chemins, cÃ´te Ã  cÃ´te.
+ * Les deux chemins, côte à côte.
  *
- * Lorsqu'ils coÃ¯ncident, l'API renvoie `plusSolide` Ã  nul et un seul est
- * affichÃ© â€” la place laissÃ©e le dit plutÃ´t que de la laisser vide.
+ * Lorsqu'ils coïncident, l'API renvoie `plusSolide` à nul et un seul est
+ * affiché - la place laissée le dit plutôt que de la laisser vide.
  */
 export function DeuxChemins({
   plusCourt,
@@ -84,7 +84,7 @@ export function DeuxChemins({
           <div className={styles.chemin}>
             <p className={styles.cheminTitre}>Le plus solide</p>
             <p className={controles.remarque}>
-              Identique au plus court â€” un seul est affichÃ©.
+              Identique au plus court - un seul est affiché.
             </p>
           </div>
         )
@@ -93,7 +93,7 @@ export function DeuxChemins({
   );
 }
 
-/** SÃ©lecteur d'entitÃ© Ã  la frappe, commun aux deux extrÃ©mitÃ©s d'un chemin. */
+/** Sélecteur d'entité à la frappe, commun aux deux extrémités d'un chemin. */
 export function ChoixEntite({
   etiquette,
   valeurId,
@@ -118,7 +118,7 @@ export function ChoixEntite({
         className={controles.champ}
         value={recherche}
         onChange={(evenement) => definirRecherche(evenement.target.value)}
-        placeholder={choisie?.libelle ?? 'Rechercher une entitÃ©'}
+        placeholder={choisie?.libelle ?? 'Rechercher une entité'}
       />
 
       {recherche.trim().length > 0 && (

@@ -2,16 +2,18 @@
 
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import {
   useArchiverEntite,
   useEntite,
   useHistorique,
   useModifierEntite,
+  useModifierFait,
   type ChampDeFiche,
   type LienDeFiche,
 } from '@/api/entites';
+import { useReferentiel, type DefinitionChamp } from '@/api/referentiel';
 import { useSession } from '@/auth/use-session';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
@@ -19,7 +21,9 @@ import { BoutonInfirmer } from '@/composants/infirmation';
 import { Modale } from '@/composants/modale';
 import { PanneauDossier } from '@/composants/panneau-dossier';
 import { PiecesJointes } from '@/composants/pieces-jointes';
+import { ChampDynamique } from '@/composants/formulaire/champ-dynamique';
 import {
+  NIVEAUX_FIABILITE,
   LegendeFiabilite,
   PastilleFiabilite,
   PastilleVisibilite,
@@ -28,6 +32,14 @@ import styles from './fiche.module.css';
 
 /** Onglet toujours présent, en plus de ceux que l'administration configure. */
 const HISTORIQUE = 'historique';
+const VISIBILITES = ['public', 'restreint', 'prive'] as const;
+const FIABILITES = [4, 3, 2, 1] as const;
+
+const LIBELLES_VISIBILITE: Record<(typeof VISIBILITES)[number], string> = {
+  public: 'Public',
+  restreint: 'Restreint',
+  prive: 'Privé',
+};
 
 export default function PageFiche() {
   return (
@@ -46,12 +58,22 @@ function Fiche() {
   const dossierOuvert = useSearchParams().get('dossier');
 
   const { agent } = useSession();
+  const referentiel = useReferentiel();
   const fiche = useEntite(id);
   const modifier = useModifierEntite();
+  const modifierFait = useModifierFait();
   const archiver = useArchiverEntite();
 
   const [ongletActif, definirOngletActif] = useState<string | null>(null);
   const [note, definirNote] = useState<string | null>(null);
+  const [visibilite, definirVisibilite] = useState<string | null>(null);
+  const [editionChamp, definirEditionChamp] = useState<{
+    faitId: string;
+    champ: ChampDeFiche;
+    definition: DefinitionChamp;
+    valeur: unknown;
+    fiabilite: number;
+  } | null>(null);
   const [confirmation, definirConfirmation] = useState(false);
 
   const peutVoirLHistorique =
@@ -61,12 +83,28 @@ function Fiche() {
   // d'elle-même. Le masquer évite seulement de proposer une porte close.
   const peutInfirmer =
     agent?.superAdmin || agent?.permissions.includes('fait.infirmer') || false;
+  const peutModifierFait =
+    agent?.superAdmin || agent?.permissions.includes('fait.modifier') || false;
   const peutFusionner =
     agent?.superAdmin || agent?.permissions.includes('entite.fusionner');
   const peutDeposer =
     agent?.superAdmin || agent?.permissions.includes('fait.creer') || false;
 
   const historique = useHistorique(id, ongletActif === HISTORIQUE);
+  const entite = fiche.data;
+  const type = referentiel.data?.typesEntites.find(
+    (candidat) => candidat.id === entite?.typeEntiteId,
+  );
+
+  useEffect(() => {
+    if (!entite) {
+      return;
+    }
+
+    definirNote(null);
+    definirVisibilite(null);
+    definirEditionChamp(null);
+  }, [entite]);
 
   if (fiche.isError) {
     return (
@@ -86,12 +124,14 @@ function Fiche() {
     return <p className={controles.remarque}>Chargement…</p>;
   }
 
-  const entite = fiche.data;
   const onglets = entite.onglets;
   const actif = ongletActif ?? onglets[0]?.id ?? HISTORIQUE;
 
   const noteAffichee = note ?? entite.note ?? '';
   const noteModifiee = note !== null && note !== (entite.note ?? '');
+  const visibiliteAffichee = visibilite ?? entite.visibilite;
+  const visibiliteModifiee =
+    visibilite !== null && visibilite !== entite.visibilite;
 
   return (
     <>
@@ -171,13 +211,39 @@ function Fiche() {
         <h2 className={styles.blocTitre}>Identité</h2>
 
         <dl className={styles.champs}>
-          {entite.champs.map((champ) => (
-            <LigneChamp
-              key={champ.definitionChampId}
-              champ={champ}
-              peutInfirmer={peutInfirmer}
-            />
-          ))}
+          {entite.champs.map((champ) => {
+            const definition = type?.champs.find(
+              (candidat) => candidat.id === champ.definitionChampId,
+            );
+            const peutModifierChamp =
+              peutModifierFait &&
+              definition !== undefined &&
+              champ.faits[0] !== undefined;
+
+            return (
+              <LigneChamp
+                key={champ.definitionChampId}
+                champ={champ}
+                peutInfirmer={peutInfirmer}
+                peutModifier={peutModifierChamp}
+                onModifier={() => {
+                  const fait = champ.faits[0];
+
+                  if (!definition || !fait) {
+                    return;
+                  }
+
+                  definirEditionChamp({
+                    faitId: fait.id,
+                    champ,
+                    definition,
+                    valeur: fait.valeur,
+                    fiabilite: fait.fiabilite,
+                  });
+                }}
+              />
+            );
+          })}
         </dl>
       </section>
 
@@ -244,21 +310,47 @@ function Fiche() {
         <h2 className={styles.blocTitre}>Note</h2>
         <p className={controles.remarque}>
           Champ libre, sans historique ni signature. Elle ne porte ni source ni
-          fiabilité : ce n’est pas un fait.
+          fiabilité : ce n’est pas un fait. La visibilité se règle ici aussi.
         </p>
-        <textarea
-          className={styles.note}
-          value={noteAffichee}
-          onChange={(evenement) => definirNote(evenement.target.value)}
-          rows={4}
-          placeholder="Ce que l’enquête retient, sans prétendre le prouver."
-        />
-        {noteModifiee && (
+        <div className={styles.edition}>
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Visibilité</span>
+            <select
+              className={controles.champ}
+              value={visibiliteAffichee}
+              onChange={(evenement) =>
+                definirVisibilite(evenement.target.value)
+              }
+            >
+              {VISIBILITES.map((niveau) => (
+                <option key={niveau} value={niveau}>
+                  {LIBELLES_VISIBILITE[niveau]}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Note</span>
+            <textarea
+              className={styles.note}
+              value={noteAffichee}
+              onChange={(evenement) => definirNote(evenement.target.value)}
+              rows={4}
+              placeholder="Ce que l’enquête retient, sans prétendre le prouver."
+            />
+          </label>
+        </div>
+
+        {(noteModifiee || visibiliteModifiee) && (
           <div className={styles.actionsEntete}>
             <button
               type="button"
               className={controles.boutonDiscret}
-              onClick={() => definirNote(null)}
+              onClick={() => {
+                definirNote(null);
+                definirVisibilite(null);
+              }}
             >
               Abandonner
             </button>
@@ -268,18 +360,87 @@ function Fiche() {
               disabled={modifier.isPending}
               onClick={() =>
                 modifier.mutate(
-                  { id, note: noteAffichee },
-                  { onSuccess: () => definirNote(null) },
+                  {
+                    id,
+                    ...(noteModifiee ? { note: noteAffichee } : {}),
+                    ...(visibiliteModifiee
+                      ? { visibilite: visibiliteAffichee }
+                      : {}),
+                  },
+                  {
+                    onSuccess: () => {
+                      definirNote(null);
+                      definirVisibilite(null);
+                    },
+                  },
                 )
               }
             >
-              Enregistrer la note
+              Enregistrer les modifications
             </button>
           </div>
         )}
       </section>
 
       <LegendeFiabilite />
+
+      {editionChamp && (
+        <Modale
+          titre={`Modifier « ${editionChamp.champ.libelle} »`}
+          libelleConfirmation="Enregistrer"
+          enCours={modifierFait.isPending}
+          onAnnuler={() => definirEditionChamp(null)}
+          onConfirmer={() =>
+            modifierFait.mutate(
+              {
+                id: editionChamp.faitId,
+                valeur: editionChamp.valeur,
+                fiabilite: editionChamp.fiabilite,
+              },
+              { onSuccess: () => definirEditionChamp(null) },
+            )
+          }
+        >
+          <p className={controles.remarque}>
+            La valeur affichée changera à partir du fait sélectionné. Les autres
+            sources restent intactes.
+          </p>
+
+          <ChampDynamique
+            champ={editionChamp.definition}
+            valeur={editionChamp.valeur}
+            onChange={(valeur) =>
+              definirEditionChamp({ ...editionChamp, valeur })
+            }
+          />
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Fiabilité</span>
+            <select
+              className={controles.champ}
+              value={editionChamp.fiabilite}
+              onChange={(evenement) =>
+                definirEditionChamp({
+                  ...editionChamp,
+                  fiabilite: Number(evenement.target.value),
+                })
+              }
+            >
+              {FIABILITES.map((niveau) => (
+                <option key={niveau} value={niveau}>
+                  {niveau} — {NIVEAUX_FIABILITE[niveau]}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {modifierFait.isError && (
+            <p className={controles.erreur} role="alert">
+              {modifierFait.error.message}
+            </p>
+          )}
+        </Modale>
+      )}
 
       {confirmation && (
         <Modale
@@ -320,9 +481,13 @@ function Fiche() {
 function LigneChamp({
   champ,
   peutInfirmer,
+  peutModifier,
+  onModifier,
 }: {
   champ: ChampDeFiche;
   peutInfirmer: boolean;
+  peutModifier: boolean;
+  onModifier: () => void;
 }) {
   const meilleur = champ.faits[0];
 
@@ -363,6 +528,16 @@ function LigneChamp({
             faitId={meilleur.id}
             quoi={`${champ.libelle} — ${String(meilleur.valeur ?? '')}`}
           />
+        )}
+
+        {peutModifier && meilleur && (
+          <button
+            type="button"
+            className={controles.boutonDiscret}
+            onClick={onModifier}
+          >
+            Modifier
+          </button>
         )}
       </dd>
     </div>

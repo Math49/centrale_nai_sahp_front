@@ -249,6 +249,12 @@
   border-color: var(--accent-bordure);
 }
 
+.edition {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
 /*
  * Bandeau de redirection d'une fiche absorbée par une fusion.
  *

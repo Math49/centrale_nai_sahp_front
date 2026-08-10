@@ -874,7 +874,11 @@ export interface paths {
          * @description Le type est vérifié **sur le contenu** et non sur l’extension, la taille est plafonnée, et les métadonnées — EXIF, GPS, commentaires — sont retirées sans réencoder l’image.
          */
         post: operations["FichiersController_deposer"];
-        delete?: never;
+        /**
+         * Suppression d’une image
+         * @description L’image disparaît du volume et de la base, sauf si un fait l’utilise encore.
+         */
+        delete: operations["FichiersController_supprimer"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3315,6 +3319,39 @@ export interface operations {
             };
             /** @description Au-delà du plafond de taille */
             413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FichiersController_supprimer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Fichier inconnu ou fiche inaccessible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Image encore utilisée par un fait */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

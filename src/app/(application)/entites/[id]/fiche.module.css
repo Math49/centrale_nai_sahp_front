@@ -248,3 +248,20 @@
 .note:focus {
   border-color: var(--accent-bordure);
 }
+
+/*
+ * Bandeau de redirection d'une fiche absorbée par une fusion.
+ *
+ * Il ne crie pas : la fiche reste consultable et son contenu est intact. Il
+ * indique seulement où l'enquête s'est poursuivie.
+ */
+.redirection {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  background: var(--surface-haute);
+  border: 1px solid var(--bordure-forte);
+  border-left: 2px solid var(--accent-sourd);
+  border-radius: var(--rayon);
+  font-size: 0.85rem;
+  color: var(--texte-attenue);
+}

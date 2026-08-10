@@ -4,6 +4,66 @@
  */
 
 export interface paths {
+    "/journal/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Journal d’audit
+         * @description Toute écriture y figure. Les libellés d’agent et de cible sont recalculés à la lecture, jamais recopiés à l’écriture — une trace figée survivrait à une anonymisation.
+         */
+        get: operations["JournalController_audit"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/journal/consultations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Journal de consultation
+         * @description Toute lecture de fiche, **y compris celle d’un super-admin**, qui y est signalée comme telle. `derogation` distingue la lecture permise par habilitation de celle qui n’a été possible que par dérogation.
+         */
+        get: operations["JournalController_consultations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/journal/orphelines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Entités orphelines
+         * @description Entités sans aucun lien actif, qu’une saisie en cascade interrompue peut laisser derrière elle. Liste discrète : elles ne remontent jamais en signal sur l’accueil — ce n’est pas un rapprochement, c’est du ménage.
+         */
+        get: operations["JournalController_orphelines"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -13,7 +73,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Connexion par matricule et mot de passe */
+        /**
+         * Connexion par matricule et mot de passe
+         * @description Pose un cookie de session `httpOnly`, valable le temps du jeton.
+         */
         post: operations["AuthController_connecter"];
         delete?: never;
         options?: never;
@@ -28,7 +91,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Identité et permissions de l'agent connecté */
+        /**
+         * Identité et permissions de l'agent connecté
+         * @description Le front s’en sert au démarrage pour savoir s’il a une session : le cookie étant `httpOnly`, il ne peut pas le lire lui-même.
+         */
         get: operations["AuthController_moi"];
         put?: never;
         post?: never;
@@ -49,9 +115,29 @@ export interface paths {
         put?: never;
         /**
          * Changement de mot de passe
-         * @description Invalide tous les jetons de l'agent, y compris celui de l'appel : le jeton neuf renvoyé remplace le précédent.
+         * @description Invalide tous les jetons de l'agent, y compris celui de l'appel : le jeton neuf renvoyé remplace le précédent, et le cookie est reposé.
          */
         post: operations["AuthController_changerMotDePasse"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/deconnexion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Déconnexion
+         * @description Retire le cookie de session. Le jeton reste valide jusqu’à sa péremption — pour le révoquer immédiatement, c’est `token_version` qu’il faut incrémenter, ce que fait un changement de mot de passe.
+         */
+        post: operations["AuthController_deconnecter"];
         delete?: never;
         options?: never;
         head?: never;
@@ -538,6 +624,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/entites/{id}/fusion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Fusion de doublons
+         * @description L’entité de l’URL est absorbée par celle du corps, qui reçoit ses faits, ses fichiers, ses suivis et ses habilitations. L’absorbée reste en base, archivée, et **redirige** : un ancien lien vers elle continue de mener quelque part. La fiche renvoyée est celle qui subsiste.
+         */
+        post: operations["EntitesController_fusionner"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/entites/{id}/archiver": {
         parameters: {
             query?: never;
@@ -730,6 +836,70 @@ export interface paths {
         patch: operations["FaitsController_modifier"];
         trace?: never;
     };
+    "/faits/{id}/infirmer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Infirmation
+         * @description Un fait contredit sort du graphe actif et reste consultable dans l’onglet Historique. Il n’est jamais supprimé — ce que le service a cru un moment fait partie de ce qu’il a su.
+         */
+        post: operations["FaitsController_infirmer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/entites/{id}/fichiers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Images d’une entité
+         * @description Les images d’une fiche inaccessible sont introuvables — 404, jamais 403.
+         */
+        get: operations["FichiersController_lister"];
+        put?: never;
+        /**
+         * Dépôt d’une image
+         * @description Le type est vérifié **sur le contenu** et non sur l’extension, la taille est plafonnée, et les métadonnées — EXIF, GPS, commentaires — sont retirées sans réencoder l’image.
+         */
+        post: operations["FichiersController_deposer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/fichiers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Téléchargement authentifié
+         * @description Aucun dossier n’est servi en statique : les droits sont vérifiés avant que l’octet ne parte.
+         */
+        get: operations["FichiersController_telecharger"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/graphe": {
         parameters: {
             query?: never;
@@ -742,6 +912,26 @@ export interface paths {
          * @description Voisinage d’une entité, élagué pour cet agent **avant** traversée. Chaque nœud rapporte le nombre de voisins qu’il reste à déplier.
          */
         get: operations["GrapheController_voisinage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/graphe/complet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Vue entière
+         * @description Tout ce que l’agent peut voir, à toute profondeur, élagué **avant** constitution. Les fiches isolées y figurent : une entité sans lien fait partie de ce que le service sait.
+         */
+        get: operations["GrapheController_vueEntiere"];
         put?: never;
         post?: never;
         delete?: never;
@@ -790,6 +980,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/accueil": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Écran d’accueil, assemblé
+         * @description Signaux, dossiers de l’agent et dernière activité en une requête. Tout y est calculé **après** filtrage de visibilité : un signal portant sur un objet inaccessible ne remonte pas, sa seule mention en révélerait l’existence.
+         */
+        get: operations["SignauxController_accueil"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/signaux": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Signaux seuls
+         * @description Recoupement, récurrence et vieillissement. Les trois familles se calculent sur ce que cet agent voit, et sur rien d’autre.
+         */
+        get: operations["SignauxController_liste"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/recherche": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Recherche globale
+         * @description Entités et dossiers. Les objets inaccessibles en sont absents, sans mention ni décompte : un total qui ne tombe pas juste est déjà une information.
+         */
+        get: operations["SignauxController_rechercher"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sante": {
         parameters: {
             query?: never;
@@ -811,6 +1061,54 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        EntreeAuditDto: {
+            /** @description Identifiant de l’entrée, sérialisé en texte */
+            id: string;
+            /** Format: uuid */
+            agentId: string | null;
+            /** @description « agent supprimé » si le compte est anonymisé */
+            agentLibelle: string;
+            action: string;
+            cibleTable: string;
+            /** Format: uuid */
+            cibleId: string | null;
+            /** @description Libellé de la cible, lorsqu’elle est retrouvable */
+            cibleLibelle: string | null;
+            avant?: {
+                [key: string]: unknown;
+            };
+            apres?: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            effectueLe: string;
+        };
+        EntreeConsultationDto: {
+            id: string;
+            /** Format: uuid */
+            agentId: string;
+            agentLibelle: string;
+            /** @enum {string} */
+            nature: "entite" | "dossier";
+            /** Format: uuid */
+            objetId: string;
+            objetLibelle: string | null;
+            /** @description Lecture rendue possible par une permission dérogatoire */
+            derogation: boolean;
+            /** @description Lecture d’un super-admin, signalée comme telle */
+            superAdmin: boolean;
+            /** Format: date-time */
+            consulteLe: string;
+        };
+        EntiteOrphelineDto: {
+            /** Format: uuid */
+            id: string;
+            libelle: string;
+            typeCode: string;
+            /** Format: date-time */
+            creeLe: string;
+            auteur: string | null;
+        };
         ConnexionDto: {
             /** @example 2291 */
             matricule: string;
@@ -1307,6 +1605,13 @@ export interface components {
              */
             visibilite?: "public" | "restreint" | "prive";
         };
+        FusionDto: {
+            /**
+             * Format: uuid
+             * @description La fiche qui subsiste
+             */
+            versId: string;
+        };
         DossierResumeDto: {
             /** Format: uuid */
             id: string;
@@ -1475,6 +1780,24 @@ export interface components {
             /** @enum {string} */
             visibilite?: "public" | "restreint" | "prive";
         };
+        InfirmationDto: {
+            /** @description Ce qui contredit le fait */
+            motif: string;
+        };
+        FichierDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            entiteId: string;
+            /** @description Nom du fichier tel que l’agent l’a déposé */
+            nomOrigine: string;
+            /** @enum {string} */
+            mime: "image/jpeg" | "image/png" | "image/webp";
+            /** @description Taille après retrait des métadonnées, en octets */
+            taille: number;
+            /** Format: date-time */
+            deposeLe: string;
+        };
         NoeudGrapheDto: {
             /** Format: uuid */
             id: string;
@@ -1538,6 +1861,69 @@ export interface components {
             dossierId?: string;
             positions: components["schemas"]["PositionDto"][];
         };
+        SignalDto: {
+            /** @description Clé stable, pour que le front puisse suivre un signal */
+            id: string;
+            /** @enum {string} */
+            famille: "recoupement" | "recurrence" | "vieillissement";
+            /** Format: uuid */
+            entiteId: string;
+            entiteLibelle: string;
+            typeCode: string;
+            /** @description Ce que la centrale a remarqué, en une phrase */
+            resume: string;
+            /** @description Ce sur quoi elle s’appuie */
+            detail: string;
+            /**
+             * Format: uuid
+             * @description Le fait en cause, pour le vieillissement
+             */
+            faitId: string | null;
+        };
+        DossierDeLAgentDto: {
+            /** Format: uuid */
+            id: string;
+            nom: string;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** Format: uuid */
+            entitePivotId: string;
+            entitePivotLibelle: string;
+            /**
+             * @description Habilité nommément, ou auteur du dossier
+             * @enum {string}
+             */
+            motif: "habilitation" | "creation";
+        };
+        ActiviteDto: {
+            /** Format: uuid */
+            faitId: string;
+            /** Format: uuid */
+            entiteId: string;
+            entiteLibelle: string;
+            resume: string;
+            source: string;
+            fiabilite: number;
+            /** @description « agent supprimé » si anonymisé */
+            auteur: string | null;
+            /** Format: date-time */
+            survenuLe: string;
+        };
+        AccueilDto: {
+            signaux: components["schemas"]["SignalDto"][];
+            mesDossiers: components["schemas"]["DossierDeLAgentDto"][];
+            derniereActivite: components["schemas"]["ActiviteDto"][];
+        };
+        ResultatRechercheDto: {
+            /** Format: uuid */
+            id: string;
+            libelle: string;
+            /** @enum {string} */
+            nature: "entite" | "dossier";
+            typeCode: string | null;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+        };
         SanteReponseDto: {
             /**
              * @description « degrade » dès que la base ne répond pas
@@ -1562,6 +1948,76 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    JournalController_audit: {
+        parameters: {
+            query?: {
+                agent?: string;
+                cible?: string;
+                action?: string;
+                decalage?: unknown;
+                limite?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntreeAuditDto"][];
+                };
+            };
+        };
+    };
+    JournalController_consultations: {
+        parameters: {
+            query?: {
+                agent?: string;
+                objet?: string;
+                superAdmin?: boolean;
+                derogation?: boolean;
+                decalage?: unknown;
+                limite?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntreeConsultationDto"][];
+                };
+            };
+        };
+    };
+    JournalController_orphelines: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntiteOrphelineDto"][];
+                };
+            };
+        };
+    };
     AuthController_connecter: {
         parameters: {
             query?: never;
@@ -1631,6 +2087,23 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["JetonDto"];
                 };
+            };
+        };
+    };
+    AuthController_deconnecter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -2437,6 +2910,38 @@ export interface operations {
             };
         };
     };
+    EntitesController_fusionner: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FusionDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FicheEntiteDto"];
+                };
+            };
+            /** @description Types différents, ou entité déjà fusionnée */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     EntitesController_archiver: {
         parameters: {
             query?: never;
@@ -2722,12 +3227,157 @@ export interface operations {
             };
         };
     };
+    FaitsController_infirmer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InfirmationDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FaitDto"];
+                };
+            };
+            /** @description Déjà infirmé */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FichiersController_lister: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FichierDto"][];
+                };
+            };
+        };
+    };
+    FichiersController_deposer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    fichier?: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FichierDto"];
+                };
+            };
+            /** @description Format refusé ou fichier vide */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Au-delà du plafond de taille */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FichiersController_telecharger: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description L’image */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Inconnu, ou fiche inaccessible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     GrapheController_voisinage: {
         parameters: {
             query: {
                 depuis: string;
                 /** @description Nombre de sauts, 1 à 4 */
                 profondeur?: number;
+                /** @description Niveau minimal des arêtes retenues, 1 à 4 */
+                fiabilite?: number;
+                dossier?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoisinageDto"];
+                };
+            };
+        };
+    };
+    GrapheController_vueEntiere: {
+        parameters: {
+            query?: {
                 /** @description Niveau minimal des arêtes retenues, 1 à 4 */
                 fiabilite?: number;
                 dossier?: string;
@@ -2789,6 +3439,66 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    SignauxController_accueil: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccueilDto"];
+                };
+            };
+        };
+    };
+    SignauxController_liste: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignalDto"][];
+                };
+            };
+        };
+    };
+    SignauxController_rechercher: {
+        parameters: {
+            query: {
+                /** @description Deux caractères au moins */
+                q: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResultatRechercheDto"][];
+                };
             };
         };
     };

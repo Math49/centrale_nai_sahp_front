@@ -1,3 +1,7 @@
+.chemin {
+  margin-bottom: 20px;
+}
+
 .grille {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -17,4 +21,64 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--texte-faible);
+}
+
+.liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ligne,
+.signal {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 10px;
+  align-items: baseline;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  transition: var(--transition);
+  transition-property: background, border-color;
+}
+
+.ligne:hover,
+.signal:hover {
+  background: var(--surface-survol);
+  border-color: var(--bordure-forte);
+}
+
+.signal {
+  grid-template-columns: 1fr;
+}
+
+.resume {
+  font-size: 0.88rem;
+}
+
+.detail {
+  grid-column: 1;
+  font-size: 0.76rem;
+  color: var(--texte-faible);
+}
+
+/*
+ * La famille d'un signal se lit, elle ne se colore pas : la couleur est
+ * réservée à la fiabilité et à la visibilité. Une troisième échelle chromatique
+ * rendrait les deux premières illisibles.
+ */
+.famille {
+  justify-self: start;
+  margin-bottom: 4px;
+  padding: 1px 6px;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--texte-attenue);
+  background: var(--surface-haute);
+  border: 1px solid var(--bordure-forte);
+  border-radius: 2px;
 }

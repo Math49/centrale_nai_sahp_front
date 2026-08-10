@@ -3,7 +3,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, type ReactNode } from 'react';
 
+import { useReprendreSession } from '@/auth/use-session';
+
 export function Fournisseurs({ children }: { children: ReactNode }) {
+  // Le cookie de session est invisible au front : on demande à l'API si une
+  // session existe, une seule fois, avant que les gardes ne concluent.
+  useReprendreSession();
+
   const [client] = useState(
     () =>
       new QueryClient({

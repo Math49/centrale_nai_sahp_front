@@ -69,7 +69,7 @@ function Saisie() {
 
         {types.length === 0 ? (
           <EtatVide
-            titre="Aucun type d’entité n’est configuré."
+            titre="Aucun type de donnée n’est configuré."
             explication="Le modèle se règle en administration."
             action={
               <Link className={controles.bouton} href="/entites">

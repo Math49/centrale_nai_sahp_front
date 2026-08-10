@@ -13,6 +13,7 @@ import {
   type TypeDonnee,
   type TypeEntite,
 } from '@/api/referentiel';
+import { ChoixIcone } from '@/composants/choix-icone';
 import { ChampTexte } from '@/composants/champ-texte';
 import controles from '@/composants/controles.module.css';
 import { ListeReordonnable } from '@/composants/liste-reordonnable';
@@ -104,7 +105,7 @@ export function PanneauType({
               definirProprietes({ ...proprietes, libellePluriel })
             }
           />
-          <ChampTexte
+          <ChoixIcone
             etiquette="Icône"
             valeur={proprietes.icone}
             onChange={(icone) => definirProprietes({ ...proprietes, icone })}
@@ -361,7 +362,7 @@ export function PanneauType({
         >
           <p>
             Ses champs et ses onglets partent avec lui. La suppression est
-            refusée dès qu&apos;une entité de ce type existe.
+            refusée dès qu&apos;une donnée de ce type existe.
           </p>
           {supprimerType.isError && (
             <p className={controles.erreur}>{supprimerType.error.message}</p>

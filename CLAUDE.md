@@ -56,13 +56,20 @@ exemplaires.
 
 ## Session
 
-**Le jeton ne vit qu'en mémoire** — ni `localStorage`, ni `sessionStorage`, ni
-cookie. Un rechargement déconnecte, et c'est voulu : la plateforme se consulte
-depuis des postes partagés, où un jeton persisté survivrait à l'agent parti.
+**Le front ne détient plus aucun jeton.** Il vit dans un cookie `httpOnly` posé
+par l'API, valable une semaine : le navigateur l'envoie seul, et aucun script de
+la page ne peut le lire — une faille XSS ne l'exfiltre donc pas.
 
-Le magasin (`src/auth/session.ts`) vit hors de React, parce que l'intercepteur
-de requêtes doit lire le jeton sans être un composant. React s'y abonne par
-`useSyncExternalStore`.
+Le magasin (`src/auth/session.ts`) ne retient que l'identité de l'agent, pour
+l'affichage et le masquage des zones. Il n'autorise **jamais** rien : l'API
+refuse d'elle-même. Un test verrouille l'invariant — la sérialisation du magasin
+ne doit contenir nulle part le mot « jeton ».
+
+Au démarrage, le front ne peut pas savoir s'il a une session, le cookie lui
+étant invisible : il le demande par `GET /auth/moi`. C'est `useReprendreSession`,
+appelée par le fournisseur racine, et c'est ce qui fait qu'un rechargement ne
+déconnecte plus. Le garde attend cette réponse avant de conclure — rediriger
+avant renverrait vers la connexion à chaque F5.
 
 **Un 401 ferme la session**, sauf sur les routes `/auth/*`, qui rendent compte
 de leurs propres échecs : un ancien mot de passe erroné ne doit pas déconnecter
@@ -134,6 +141,147 @@ Le dossier de saisie se propage à toute la cascade du formulaire, comme la
 source active : les faits en héritent la visibilité, et l'entité créée entre
 dans son suivi.
 
+## Accueil et recherche
+
+`GET /accueil` arrive **assemblé** — signaux, mes dossiers, dernière activité —
+pour la même raison que la fiche : les trois blocs dépendent des mêmes règles de
+visibilité, et les recomposer ici supposerait la règle en deux exemplaires.
+
+Les signaux **ne sont jamais masqués côté front** : un signal portant sur un
+objet inaccessible n'est pas caché, il n'est pas venu. Ne rien ajouter qui
+compte, mentionne ou signale ce qui manque.
+
+La famille d'un signal — recoupement, récurrence, vieillissement — se lit en
+toutes lettres et **ne se colore pas** : la couleur reste réservée à la
+fiabilité et à la visibilité. Une troisième échelle chromatique rendrait les
+deux premières illisibles.
+
+La recherche globale ne part qu'à partir de deux caractères, et son état vide
+dit ce qu'il a cherché : « rien ne porte ce nom dans ce que vous pouvez
+consulter ». Ce que l'agent ne voit pas ne se distingue pas de ce qui n'existe
+pas, et c'est voulu.
+
+La recherche de chemin vit dans `src/composants/graphe/chemin.tsx`, partagée
+entre l'accueil et le graphe. Ne pas la recopier : deux exemplaires finiraient
+par diverger sur ce que veut dire « le plus solide ».
+
+## Graphe — Sigma.js
+
+**Sigma.js sur graphology**, et non plus Cytoscape. La toile charge
+`GET /graphe/complet` d'un bloc : toute la matière visible, à toute profondeur.
+
+**Le filtrage passe par les réducteurs, jamais par le graphe.** `nodeReducer`
+et `edgeReducer` sont appelés à chaque rendu et décident de l'apparence :
+masquer, c'est renvoyer `hidden: true`. Retirer puis remettre des nœuds
+relancerait ForceAtlas2 et ferait sauter la carte sous les yeux de l'agent.
+Après un changement d'état lu par les réducteurs, appeler
+`sigma.refresh({ skipIndexation: true })`.
+
+Le recentrage au clic tient en deux lignes, et c'est le motif documenté :
+
+```ts
+const position = sigma.getNodeDisplayData(id);
+void sigma.getCamera().animate({ x: position.x, y: position.y, ratio: 0.55 });
+```
+
+Le double-clic doit appeler `evenement.preventSigmaDefault()`, sans quoi Sigma
+zoome en plus d'ouvrir la fiche.
+
+**Glisser-déposer** — Sigma n'en a pas d'intégré : `downNode` saisit,
+`moveBody` déplace via `viewportToGraph`, `upNode`/`upStage` déposent. Deux
+pièges, tous deux tenus par le drapeau `glissement` :
+
+- un clic et un glissement commencent **tous deux** par `downNode`. Sans
+  distinguer les deux, tout dépôt recentrerait la caméra et arracherait le nœud
+  des mains de l'agent ;
+- `upNode` précède `clickNode`. Remettre le drapeau à zéro au dépôt rendrait la
+  garde du clic inopérante : d'où `vientDeDeposer`, que le clic consomme.
+
+Le dépôt n'est **enregistré que sous la permission** `graphe.repositionner` :
+la disposition est partagée par tout le service. Sans elle, l'agent déplace
+quand même pour lire sa carte, et le pied de page le dit.
+
+### Piège de coordonnées
+
+Trois repères, à ne pas confondre :
+
+| Méthode | Repère |
+| --- | --- |
+| `getNodeDisplayData(id)` | **normalisé** `[0,1]` — celui de la caméra |
+| `framedGraphToViewport(p)` | normalisé → pixels de l'écran |
+| `graphToViewport(p)` | coordonnées **du graphe** → pixels |
+
+`camera.animate()` attend du normalisé, donc `getNodeDisplayData` s'y passe
+directement. Pour trouver un nœud à l'écran — un test, une info-bulle — c'est
+`framedGraphToViewport` qu'il faut : passer un `DisplayData` à
+`graphToViewport` convertit deux fois et vise à côté.
+
+En développement, la toile expose `window.__toile = { sigma, graphe }`. Le rendu
+est en WebGL : sans cette poignée, aucun outil du DOM ne peut vérifier une
+position de nœud ni rejouer un glissement.
+
+**Deux échelles de couleur, sur deux objets.** Le **nœud** porte la couleur de
+son type de donnée — une entorse assumée à la règle, bornée au graphe ; l'**arête**
+garde celle de la fiabilité. Sur le même objet elles se disputeraient ; sur deux
+objets différents elles se lisent.
+
+Le filtre par nom montre la donnée trouvée **et tout ce qui s'y rattache de
+proche en proche** — `ramification()`, extraite dans son propre module parce
+qu'elle est la seule vraie logique de l'écran, et testée à part.
+
+La fiche s'ouvre dans un **panneau venant de la droite**, jamais par une
+navigation : l'agent regarde une carte, et l'envoyer ailleurs lui ferait perdre
+sa position, son filtre et sa mise au point.
+
+## Vocabulaire
+
+Ce que le modèle appelle `entite` s'affiche **« donnée »** dans l'interface.
+Les routes, les types du contrat et les identifiants de code gardent leur nom :
+seul le mot vu par l'agent change. Renommer le code aurait cassé le contrat
+OpenAPI et sa génération, pour un gain nul côté agent.
+
+## Cycle de vie et traçabilité
+
+**Aucun bouton ne dit « supprimer ».** L'infirmation le dit explicitement dans
+sa modale — le fait sort du graphe actif et reste consultable dans l'onglet
+Historique — et le **motif y est obligatoire** : sans lui, la relecture du
+dossier se retrouverait devant une information disparue sans explication.
+
+La fusion se lit dans un seul sens : **la fiche ouverte est absorbée**, celle
+qu'on choisit subsiste. L'écran le répète à chaque étape, y compris dans la
+modale. Se tromper de côté ne perdrait rien, mais mettrait tout au mauvais
+endroit.
+
+Une fiche absorbée n'est pas une impasse : elle porte un bandeau qui **redirige**
+vers celle qui subsiste, pour qu'un ancien lien continue de mener quelque part.
+
+Le journal affiche « objet non consultable » lorsque le libellé revient nul :
+l'API le résout filtré, et ce qui est masqué pour le lecteur du journal le reste
+même dans le journal.
+
+## Pièces jointes
+
+Une image ne s'affiche pas par une URL : la balise `img` ne porte pas le jeton,
+et **aucun dossier n'est servi en statique**. L'octet se récupère donc par une
+requête authentifiée, puis s'affiche depuis un `blob:` révoqué au démontage.
+C'est le prix assumé de la règle, et `useApercuFichier` est le seul endroit qui
+le paie.
+
+Le dépôt passe par `bodySerializer` pour rendre le `FormData` tel quel — la
+sérialisation JSON par défaut le viderait — et reste dans le client typé, pour
+qu'un 401 ferme la session ici comme ailleurs.
+
+L'écran annonce ce que l'API va faire : les formats acceptés, le plafond, et
+que **les métadonnées seront retirées**. Le dire est autant une information
+qu'une garantie.
+
+## Construction de l'image
+
+`NEXT_PUBLIC_API_URL` est lue **à la construction** et inlinée dans le bundle :
+changer d'URL d'API demande de reconstruire l'image. C'est le prix d'un front
+sans couche serveur, où aucune donnée d'enquête ne transite par le processus
+Next.
+
 ## Référentiel
 
 `useReferentiel()` met le catalogue en cache **une demi-heure** : il ne bouge
@@ -184,8 +332,9 @@ npm run contrat    # régénère le client typé
 | 7 — Fiche entité (front) | fait |
 | 8 — Dossiers (front) | fait |
 | 9 — Graphe (front) | fait |
-| 10 — Signaux et accueil (front) | à faire |
-| 11 — Traçabilité (front) | à faire |
+| 10 — Signaux et accueil (front) | fait |
+| 11 — Traçabilité et cycle de vie (front) | fait |
+| 12 — Exploitation (front) | fait |
 
 Le lot 6 est **la pièce la plus réutilisée de tout le front** : le moteur de
 formulaire dynamique, qui lit le référentiel et produit le formulaire de

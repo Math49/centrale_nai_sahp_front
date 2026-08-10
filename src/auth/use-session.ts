@@ -1,26 +1,67 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
 import { api } from '@/api/client';
 import { MESSAGE_INJOIGNABLE, messageDErreur } from '@/api/erreurs';
 import { magasinSession, type EtatSession } from './session';
 
-const VIDE_SERVEUR: EtatSession = {
-  jeton: null,
-  agent: null,
-  raisonFermeture: null,
-};
+const VIDE_SERVEUR: EtatSession = { agent: null, raisonFermeture: null };
 
 export function useSession(): EtatSession {
   return useSyncExternalStore(
     magasinSession.abonner,
     magasinSession.lire,
-    // Au rendu serveur, aucune session n'existe : le jeton ne vit qu'en
-    // mémoire du navigateur.
+    // Au rendu serveur, aucune session : elle se demande à l'API depuis le
+    // navigateur, qui seul porte le cookie.
     () => VIDE_SERVEUR,
   );
+}
+
+/** L'API a-t-elle répondu sur l'existence d'une session ? */
+export function useSessionPrete(): boolean {
+  return useSyncExternalStore(
+    magasinSession.abonner,
+    magasinSession.estPrete,
+    () => false,
+  );
+}
+
+/**
+ * Interroge l'API sur la session en cours, une fois, au démarrage.
+ *
+ * Le cookie est `httpOnly` : le front ne peut pas savoir seul s'il est
+ * connecté. Il le demande. C'est ce qui fait qu'un rechargement de page ne
+ * déconnecte plus — le cookie survit, la réponse revient, la session reprend.
+ */
+export function useReprendreSession(): void {
+  useEffect(() => {
+    if (magasinSession.estPrete()) {
+      return;
+    }
+
+    let abandonne = false;
+
+    void api
+      .GET('/auth/moi')
+      .then(({ data }) => {
+        if (!abandonne) {
+          magasinSession.reprendre(data ?? null);
+        }
+      })
+      .catch(() => {
+        // API injoignable : on ne prétend pas avoir de session, et l'écran de
+        // connexion dira lui-même ce qui ne va pas.
+        if (!abandonne) {
+          magasinSession.reprendre(null);
+        }
+      });
+
+    return () => {
+      abandonne = true;
+    };
+  }, []);
 }
 
 export function useConnexion() {
@@ -44,7 +85,9 @@ export function useConnexion() {
       return data;
     },
     onSuccess: (data) => {
-      magasinSession.ouvrir(data.jeton, data.agent);
+      // Le jeton du corps n'est pas retenu : le cookie posé par l'API suffit,
+      // et c'est justement de ne pas l'avoir sous la main qui protège.
+      magasinSession.ouvrir(data.agent);
     },
   });
 }
@@ -65,13 +108,15 @@ export function useChangementMotDePasse() {
       return data;
     },
     onSuccess: (data) => {
-      // Le changement invalide l'ancien jeton, y compris celui de cet appel :
-      // l'API en renvoie un neuf, qu'il faut adopter immédiatement.
-      magasinSession.renouveler(data.jeton, data.agent);
+      // Le changement invalide tous les jetons de l'agent ; l'API repose un
+      // cookie neuf dans la même réponse.
+      magasinSession.ouvrir(data.agent);
     },
   });
 }
 
-export function deconnecter(): void {
+/** Ferme la session côté API — le cookie est retiré par le serveur. */
+export async function deconnecter(): Promise<void> {
+  await api.POST('/auth/deconnexion', {}).catch(() => undefined);
   magasinSession.fermer('volontaire');
 }

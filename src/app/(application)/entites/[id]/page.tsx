@@ -15,8 +15,10 @@ import {
 import { useSession } from '@/auth/use-session';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
+import { BoutonInfirmer } from '@/composants/infirmation';
 import { Modale } from '@/composants/modale';
 import { PanneauDossier } from '@/composants/panneau-dossier';
+import { PiecesJointes } from '@/composants/pieces-jointes';
 import {
   LegendeFiabilite,
   PastilleFiabilite,
@@ -55,6 +57,15 @@ function Fiche() {
   const peutVoirLHistorique =
     agent?.superAdmin || agent?.permissions.includes('historique.consulter');
 
+  // Masquer un bouton fermé est du confort, pas de la sécurité : l'API refuse
+  // d'elle-même. Le masquer évite seulement de proposer une porte close.
+  const peutInfirmer =
+    agent?.superAdmin || agent?.permissions.includes('fait.infirmer') || false;
+  const peutFusionner =
+    agent?.superAdmin || agent?.permissions.includes('entite.fusionner');
+  const peutDeposer =
+    agent?.superAdmin || agent?.permissions.includes('fait.creer') || false;
+
   const historique = useHistorique(id, ongletActif === HISTORIQUE);
 
   if (fiche.isError) {
@@ -85,6 +96,20 @@ function Fiche() {
   return (
     <>
       {dossierOuvert && <PanneauDossier dossierId={dossierOuvert} />}
+
+      {/* Une fiche absorbée n'est pas une impasse : elle redirige, pour qu'un
+          ancien lien continue de mener quelque part. */}
+      {entite.fusionneeVersId && (
+        <p className={styles.redirection}>
+          Cette fiche a été fusionnée.{' '}
+          <Link
+            className={styles.rattachement}
+            href={`/entites/${entite.fusionneeVersId}`}
+          >
+            Ouvrir la fiche qui subsiste
+          </Link>
+        </p>
+      )}
 
       <header className={styles.entete}>
         <div className={styles.identite}>
@@ -124,6 +149,14 @@ function Fiche() {
         </div>
 
         <div className={styles.actionsEntete}>
+          {peutFusionner && entite.fusionneeVersId === null && (
+            <Link
+              className={controles.boutonDiscret}
+              href={`/entites/${id}/fusion`}
+            >
+              Fusionner
+            </Link>
+          )}
           <button
             type="button"
             className={controles.boutonDiscret}
@@ -139,7 +172,11 @@ function Fiche() {
 
         <dl className={styles.champs}>
           {entite.champs.map((champ) => (
-            <LigneChamp key={champ.definitionChampId} champ={champ} />
+            <LigneChamp
+              key={champ.definitionChampId}
+              champ={champ}
+              peutInfirmer={peutInfirmer}
+            />
           ))}
         </dl>
       </section>
@@ -179,6 +216,7 @@ function Fiche() {
         ) : (
           <ContenuOnglet
             liens={onglets.find((onglet) => onglet.id === actif)?.liens ?? []}
+            peutInfirmer={peutInfirmer}
           />
         )}
       </section>
@@ -190,9 +228,17 @@ function Fiche() {
             Aucun onglet ne regroupe ces types de liens. La mise en page des
             fiches se règle en administration.
           </p>
-          <ContenuOnglet liens={entite.liensHorsOnglet} />
+          <ContenuOnglet
+            liens={entite.liensHorsOnglet}
+            peutInfirmer={peutInfirmer}
+          />
         </section>
       )}
+
+      <section className={styles.bloc}>
+        <h2 className={styles.blocTitre}>Pièces jointes</h2>
+        <PiecesJointes entiteId={id} peutDeposer={peutDeposer} />
+      </section>
 
       <section className={styles.bloc}>
         <h2 className={styles.blocTitre}>Note</h2>
@@ -271,7 +317,13 @@ function Fiche() {
  * pastille de fiabilité reste discrète, et la source n'apparaît qu'au survol.
  * Un champ non renseigné reste affiché — l'absence d'information en est une.
  */
-function LigneChamp({ champ }: { champ: ChampDeFiche }) {
+function LigneChamp({
+  champ,
+  peutInfirmer,
+}: {
+  champ: ChampDeFiche;
+  peutInfirmer: boolean;
+}) {
   const meilleur = champ.faits[0];
 
   return (
@@ -303,12 +355,27 @@ function LigneChamp({ champ }: { champ: ChampDeFiche }) {
             {champ.faits.length} sources
           </span>
         )}
+
+        {/* L'infirmation porte sur le fait qui soutient la valeur affichée,
+            pas sur le champ : les autres sources restent debout. */}
+        {peutInfirmer && meilleur && (
+          <BoutonInfirmer
+            faitId={meilleur.id}
+            quoi={`${champ.libelle} — ${String(meilleur.valeur ?? '')}`}
+          />
+        )}
       </dd>
     </div>
   );
 }
 
-function ContenuOnglet({ liens }: { liens: LienDeFiche[] }) {
+function ContenuOnglet({
+  liens,
+  peutInfirmer,
+}: {
+  liens: LienDeFiche[];
+  peutInfirmer: boolean;
+}) {
   if (liens.length === 0) {
     return (
       <EtatVide
@@ -334,6 +401,12 @@ function ContenuOnglet({ liens }: { liens: LienDeFiche[] }) {
           </span>
           <PastilleFiabilite niveau={lien.fiabilite} source={lien.source} />
           <PastilleVisibilite niveau={lien.visibiliteEffective} />
+          {peutInfirmer && (
+            <BoutonInfirmer
+              faitId={lien.faitId}
+              quoi={`${lien.libelle} ${lien.autreEntite.libelle}`}
+            />
+          )}
         </li>
       ))}
     </ul>

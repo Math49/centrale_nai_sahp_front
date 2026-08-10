@@ -8,6 +8,12 @@ export const URL_API =
 
 export const api = createClient<paths>({
   baseUrl: URL_API,
+
+  // Le jeton vit dans un cookie `httpOnly` que le navigateur envoie seul :
+  // sans `credentials`, il ne partirait pas vers une origine différente, et
+  // aucune requête ne serait authentifiée.
+  credentials: 'include',
+
   // Résolu à chaque appel plutôt que capturé au chargement du module : le
   // client ne fige pas la référence à `fetch`, ce qui le rend observable en
   // test et insensible à un remplacement tardif.
@@ -17,32 +23,16 @@ export const api = createClient<paths>({
 /**
  * Les routes d'authentification rendent compte de leurs propres échecs : un 401
  * y signifie « identifiants invalides », pas « session expirée ». Partout
- * ailleurs, un 401 sur une requête qui portait un jeton ne peut vouloir dire
- * qu'une chose — le jeton n'est plus valable.
+ * ailleurs, un 401 ne peut vouloir dire qu'une chose — le cookie n'est plus
+ * valable.
  */
 function estUneRouteDAuthentification(url: string): boolean {
   return new URL(url).pathname.startsWith('/auth/');
 }
 
-const porteurDeJeton: Middleware = {
-  onRequest({ request }) {
-    const { jeton } = magasinSession.lire();
-
-    if (jeton) {
-      request.headers.set('Authorization', `Bearer ${jeton}`);
-    }
-
-    return request;
-  },
-
+const fermetureSurExpiration: Middleware = {
   onResponse({ request, response }) {
-    const portaitUnJeton = request.headers.has('Authorization');
-
-    if (
-      response.status === 401 &&
-      portaitUnJeton &&
-      !estUneRouteDAuthentification(request.url)
-    ) {
+    if (response.status === 401 && !estUneRouteDAuthentification(request.url)) {
       magasinSession.fermer('expiration');
     }
 
@@ -50,4 +40,4 @@ const porteurDeJeton: Middleware = {
   },
 };
 
-api.use(porteurDeJeton);
+api.use(fermetureSurExpiration);

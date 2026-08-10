@@ -1,17 +1,25 @@
-.barre {
+.conteneur {
   flex: 1;
   min-width: 160px;
-  max-width: 460px;
-  margin-left: auto;
+  max-width: 520px;
+  position: relative;
+}
+
+.barre {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 10px;
-  height: 32px;
-  background: var(--fond);
-  border: 1px solid var(--bordure);
-  border-radius: var(--rayon);
-  transition: border-color var(--transition);
+  gap: 9px;
+  padding: 0 12px;
+  height: 34px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: var(--transition);
+  transition-property: border-color, background;
+}
+
+.barre:hover {
+  background: var(--surface-2);
 }
 
 .barre:focus-within {
@@ -39,4 +47,59 @@
 /* La croix native du type search jure avec le thème. */
 .champ::-webkit-search-cancel-button {
   appearance: none;
+}
+
+.resultats {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  background: var(--surface-haute);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.resultat {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  text-align: left;
+  padding: 7px 8px;
+  background: none;
+  border: none;
+  border-radius: var(--rayon);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.resultat[data-surligne] {
+  background: var(--surface-survol);
+}
+
+.libelle {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nature {
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+  flex-shrink: 0;
+}
+
+/* Un état vide qui dit ce qu'il a cherché, jamais « aucun résultat » sec. */
+.vide {
+  padding: 8px;
+  font-size: 0.8rem;
+  color: var(--texte-faible);
 }

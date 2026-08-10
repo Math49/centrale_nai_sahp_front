@@ -1,7 +1,13 @@
 'use client';
 
 import { deconnecter, useSession } from '@/auth/use-session';
+import { Icone } from './icones';
 import styles from './menu-agent.module.css';
+
+/** Initiales de l'agent, pour la pastille d'identité. */
+function initiales(prenom: string, nom: string): string {
+  return `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase();
+}
 
 export function MenuAgent() {
   const { agent } = useSession();
@@ -12,6 +18,10 @@ export function MenuAgent() {
 
   return (
     <div className={styles.bloc}>
+      <span className={styles.pastille} aria-hidden="true">
+        {initiales(agent.prenom, agent.nom)}
+      </span>
+
       <div className={styles.identite}>
         <span className={styles.nom}>
           {agent.prenom} {agent.nom}
@@ -31,9 +41,11 @@ export function MenuAgent() {
       <button
         type="button"
         className={styles.deconnexion}
-        onClick={deconnecter}
+        onClick={() => void deconnecter()}
+        title="Se déconnecter"
+        aria-label="Se déconnecter"
       >
-        Se déconnecter
+        <Icone nom="sortie" taille={16} />
       </button>
     </div>
   );

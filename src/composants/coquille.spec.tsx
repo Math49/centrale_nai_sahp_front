@@ -7,6 +7,8 @@ import { Coquille } from './coquille';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/',
+  // La barre de recherche navigue vers le résultat choisi.
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
 const JUNIOR: AgentConnecte = {
@@ -39,16 +41,16 @@ describe('Coquille', () => {
   });
 
   it('affiche les quatre zones ouvertes à tous', () => {
-    magasinSession.ouvrir('jeton-a', JUNIOR);
+    magasinSession.ouvrir(JUNIOR);
     afficher();
 
-    for (const zone of ['Accueil', 'Dossiers', 'Entités', 'Graphe']) {
+    for (const zone of ['Accueil', 'Dossiers', 'Données', 'Graphe']) {
       expect(screen.getByRole('link', { name: zone })).toBeInTheDocument();
     }
   });
 
   it("masque l'administration à un junior", () => {
-    magasinSession.ouvrir('jeton-a', JUNIOR);
+    magasinSession.ouvrir(JUNIOR);
     afficher();
 
     expect(
@@ -57,7 +59,7 @@ describe('Coquille', () => {
   });
 
   it("ouvre l'administration à qui détient une seule de ses permissions", () => {
-    magasinSession.ouvrir('jeton-a', {
+    magasinSession.ouvrir({
       ...JUNIOR,
       permissions: ['journal.consulter'],
     });
@@ -68,8 +70,23 @@ describe('Coquille', () => {
     ).toBeInTheDocument();
   });
 
+  it("ouvre l'administration à qui peut archiver, pour la seule liste des orphelines", () => {
+    // Un Senior n'a pas `journal.consulter` : la zone s'ouvre pour l'écran de
+    // ménage, sans lui donner le relevé des consultations.
+    magasinSession.ouvrir({
+      ...JUNIOR,
+      roleCode: 'senior_investigator',
+      permissions: ['entite.creer', 'entite.archiver'],
+    });
+    afficher();
+
+    expect(
+      screen.getByRole('link', { name: 'Administration' }),
+    ).toBeInTheDocument();
+  });
+
   it("ouvre l'administration à un super-admin sans permission déclarée", () => {
-    magasinSession.ouvrir('jeton-a', {
+    magasinSession.ouvrir({
       ...JUNIOR,
       superAdmin: true,
       permissions: [],
@@ -82,16 +99,18 @@ describe('Coquille', () => {
   });
 
   it('affiche le matricule en monospace', () => {
-    magasinSession.ouvrir('jeton-a', JUNIOR);
+    magasinSession.ouvrir(JUNIOR);
     afficher();
 
     expect(screen.getByText('ji-003')).toHaveClass('mono');
   });
 
   it('garde la recherche globale présente sur tout écran', () => {
-    magasinSession.ouvrir('jeton-a', JUNIOR);
+    magasinSession.ouvrir(JUNIOR);
     afficher();
 
-    expect(screen.getByRole('searchbox')).toBeInTheDocument();
+    expect(
+      screen.getByRole('combobox', { name: 'Recherche globale' }),
+    ).toBeInTheDocument();
   });
 });

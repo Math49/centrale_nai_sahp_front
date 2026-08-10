@@ -12,7 +12,7 @@ const LONGUEUR_MINIMALE = 12;
 
 export default function PageMotDePasse() {
   const router = useRouter();
-  const { jeton, agent } = useSession();
+  const { agent } = useSession();
   const changement = useChangementMotDePasse();
 
   const [ancien, definirAncien] = useState('');
@@ -20,7 +20,7 @@ export default function PageMotDePasse() {
   const [confirmation, definirConfirmation] = useState('');
 
   useEffect(() => {
-    if (!jeton) {
+    if (!agent) {
       router.replace('/connexion');
       return;
     }
@@ -29,7 +29,7 @@ export default function PageMotDePasse() {
     if (agent && !agent.doitChangerMdp && changement.isSuccess) {
       router.replace('/');
     }
-  }, [jeton, agent, changement.isSuccess, router]);
+  }, [agent, changement.isSuccess, router]);
 
   const discordant = confirmation.length > 0 && nouveau !== confirmation;
   const tropCourt = nouveau.length > 0 && nouveau.length < LONGUEUR_MINIMALE;

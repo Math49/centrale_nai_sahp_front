@@ -42,16 +42,16 @@ function Atelier() {
     <>
       <EnteteZone
         titre="Mise en page des fiches"
-        sousTitre="Quels onglets sur chaque type d'entité, quels types de liens chacun regroupe, et dans quel ordre."
+        sousTitre="Quels onglets sur chaque type de donnée, quels types de liens chacun regroupe, et dans quel ordre."
       />
 
       <div className={styles.atelier}>
         <div className={styles.colonne}>
-          <p className={styles.section}>Type d&apos;entité</p>
+          <p className={styles.section}>Type de donnée</p>
 
           {types.length === 0 ? (
             <EtatVide
-              titre="Aucun type d'entité."
+              titre="Aucun type de donnée."
               explication="Les onglets se posent sur un type, et il n'y en a pas encore."
             />
           ) : (
@@ -82,7 +82,7 @@ function Atelier() {
             <PanneauOnglets type={type} liens={liens} />
           ) : (
             <EtatVide
-              titre="Choisir un type d'entité."
+              titre="Choisir un type de donnée."
               explication="Sa fiche se compose ici, onglet par onglet."
             />
           )}
@@ -287,7 +287,7 @@ function CompositionOnglet({
 
       <div>
         <p className={controles.etiquette} style={{ marginBottom: 8 }}>
-          Types de liens disponibles pour ce type d&apos;entité
+          Types de liens disponibles pour ce type de donnée
         </p>
 
         {candidats.length === 0 ? (

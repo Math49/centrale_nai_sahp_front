@@ -1,21 +1,19 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useDeferredValue, useMemo, useState } from 'react';
 
-import { useEntites } from '@/api/entites';
-import {
-  useChemins,
-  useEnregistrerPositions,
-  useVoisinage,
-  type Chemin,
-} from '@/api/graphe';
+import { useEnregistrerPositions, useVueEntiere } from '@/api/graphe';
 import { useSession } from '@/auth/use-session';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
-import { Toile } from '@/composants/graphe/toile';
+import { COULEURS_TYPE, LEGENDE_TYPES } from '@/composants/graphe/couleurs';
 import styles from '@/composants/graphe/graphe.module.css';
-import { LegendeFiabilite, PastilleFiabilite } from '@/composants/pastilles';
+import { PanneauDonnee } from '@/composants/graphe/panneau-donnee';
+import { donneesVisibles } from '@/composants/graphe/ramification';
+import { Toile } from '@/composants/graphe/toile';
+import { Icone } from '@/composants/icones';
+import { LegendeFiabilite } from '@/composants/pastilles';
 import { EnteteZone } from '@/composants/zone';
 
 export default function PageGraphe() {
@@ -26,70 +24,84 @@ export default function PageGraphe() {
   );
 }
 
+/**
+ * Explorateur de graphe.
+ *
+ * **Toute la matière est chargée au premier rendu** : toutes les données
+ * visibles, tous les liens franchissables, à toute profondeur. L'agent navigue
+ * dans une carte qui existe déjà plutôt que de la déplier saut par saut.
+ */
 function Explorateur() {
   const parametres = useSearchParams();
-  const router = useRouter();
   const { agent } = useSession();
-
   const dossierId = parametres.get('dossier') ?? undefined;
 
-  const [centre, definirCentre] = useState<string | null>(
+  const [fiabilite, definirFiabilite] = useState(1);
+  const [recherche, definirRecherche] = useState('');
+  const [selection, definirSelection] = useState<string | null>(
     parametres.get('depuis'),
   );
-  const [profondeur, definirProfondeur] = useState(2);
-  const [fiabilite, definirFiabilite] = useState(1);
-  const [cible, definirCible] = useState<string | null>(null);
+  const [ouverte, definirOuverte] = useState<string | null>(null);
+  const [signalOrganisation, definirSignalOrganisation] = useState(0);
+  const [organisationEnCours, definirOrganisationEnCours] = useState(false);
 
-  const voisinage = useVoisinage({
-    depuis: centre,
-    profondeur,
-    fiabilite,
-    dossierId,
-  });
-  const chemins = useChemins(centre, cible, fiabilite);
+  // La frappe ne doit pas bloquer le rendu de la toile : le filtre suit d'un
+  // battement, ce qui est imperceptible et garde la saisie fluide.
+  const filtre = useDeferredValue(recherche);
+
+  const vue = useVueEntiere({ fiabilite, dossierId });
   const positions = useEnregistrerPositions();
 
+  // Le repositionnement affecte tous les agents : c'est une disposition
+  // partagée, pas une préférence personnelle. Sans la permission, l'agent peut
+  // toujours déplacer un nœud pour lire la carte — rien n'est enregistré.
   const peutRepositionner =
     agent?.superAdmin || agent?.permissions.includes('graphe.repositionner');
+
+  const noeuds = useMemo(() => vue.data?.noeuds ?? [], [vue.data]);
+  const aretes = useMemo(() => vue.data?.aretes ?? [], [vue.data]);
+
+  const visibles = useMemo(
+    () => donneesVisibles(filtre, noeuds, aretes),
+    [filtre, noeuds, aretes],
+  );
+
+  const choisi = noeuds.find((noeud) => noeud.id === selection) ?? null;
+  const affiches = visibles ? visibles.size : noeuds.length;
+  const recurrentes = noeuds.filter((noeud) => noeud.recurrence).length;
 
   return (
     <>
       <EnteteZone
         titre="Graphe"
-        sousTitre="Le graphe se construit tout seul à partir des liens saisis. Un chemin qui passe par un lien masqué n’existe pas — la centrale ne dit jamais qu’il existe mais reste hors de portée."
+        sousTitre="Toute la matière visible, d’un seul tenant. Un chemin qui passe par un lien masqué n’existe pas — la centrale ne dit jamais qu’il existe mais reste hors de portée."
       />
 
       <div className={styles.barre}>
-        <ChoixEntite
-          etiquette="Partir de"
-          valeurId={centre}
-          onChoisir={definirCentre}
-        />
-
-        <ChoixEntite
-          etiquette="Chercher un chemin vers"
-          valeurId={cible}
-          onChoisir={definirCible}
-        />
-
-        <label className={styles.champ}>
-          <span className={controles.etiquette}>Profondeur</span>
-          <select
-            className={controles.champ}
-            value={profondeur}
-            onChange={(evenement) =>
-              definirProfondeur(Number(evenement.target.value))
-            }
-          >
-            {[1, 2, 3, 4].map((niveau) => (
-              <option key={niveau} value={niveau}>
-                {niveau} saut{niveau > 1 ? 's' : ''}
-              </option>
-            ))}
-          </select>
+        <label className={styles.champRecherche}>
+          <span className={controles.etiquette}>Filtrer par nom</span>
+          <span className={styles.avecIcone}>
+            <Icone nom="recherche" taille={15} />
+            <input
+              className={controles.champ}
+              value={recherche}
+              onChange={(evenement) => definirRecherche(evenement.target.value)}
+              placeholder="Une plaque, un nom, un lieu…"
+            />
+            {recherche && (
+              <button
+                type="button"
+                className={styles.effacer}
+                onClick={() => definirRecherche('')}
+                aria-label="Effacer le filtre"
+              >
+                <Icone nom="fermer" taille={14} />
+              </button>
+            )}
+          </span>
         </label>
 
-        <label className={styles.champ}>
+        <label className={styles.champCourt}>
           <span className={controles.etiquette}>Fiabilité minimale</span>
           <select
             className={controles.champ}
@@ -104,161 +116,131 @@ function Explorateur() {
             <option value={4}>Certain seulement</option>
           </select>
         </label>
-      </div>
 
-      {chemins.data && (
-        <div className={styles.chemins}>
-          <ResultatChemin
-            titre="Le plus court"
-            chemin={chemins.data.plusCourt}
-          />
-          {chemins.data.plusSolide ? (
-            <ResultatChemin
-              titre="Le plus solide"
-              chemin={chemins.data.plusSolide}
-            />
-          ) : (
-            chemins.data.plusCourt && (
-              <div className={styles.chemin}>
-                <p className={styles.cheminTitre}>Le plus solide</p>
-                <p className={controles.remarque}>
-                  Identique au plus court — un seul est affiché.
-                </p>
-              </div>
-            )
+        <button
+          type="button"
+          className={controles.boutonDiscret}
+          disabled={organisationEnCours || noeuds.length === 0}
+          onClick={() => definirSignalOrganisation((tour) => tour + 1)}
+          title={
+            peutRepositionner
+              ? 'Recalcule la disposition et l’enregistre pour tout le service'
+              : 'Recalcule la disposition — vos déplacements ne sont pas enregistrés'
+          }
+        >
+          <Icone nom="graphe" taille={15} />
+          {organisationEnCours ? 'Organisation…' : 'Réorganiser'}
+        </button>
+
+        <div className={styles.mesures}>
+          <span className={styles.mesure}>
+            <strong>{affiches}</strong>
+            {visibles ? ' affichées' : ' données'}
+          </span>
+          <span className={styles.mesure}>
+            <strong>{aretes.length}</strong> liens
+          </span>
+          {recurrentes > 0 && (
+            <span
+              className={styles.mesure}
+              title="Relient des données de dossiers différents"
+            >
+              <strong>{recurrentes}</strong> récurrences
+            </span>
           )}
         </div>
+      </div>
+
+      {visibles?.size === 0 && (
+        <p className={controles.remarque}>
+          Aucune donnée ne porte ce nom dans ce que vous pouvez consulter.
+        </p>
       )}
 
-      {centre === null ? (
+      {vue.isPending ? (
+        <p className={controles.remarque}>Chargement du graphe…</p>
+      ) : noeuds.length === 0 ? (
         <EtatVide
-          titre="Choisir un point de départ."
-          explication="L’exploration part d’une entité et s’étend de proche en proche."
-        />
-      ) : voisinage.isError ? (
-        <EtatVide
-          titre="Cette entité n’existe pas."
-          explication="Elle a peut-être été archivée, ou vous n’y avez pas accès — la centrale ne fait pas la différence, à dessein."
+          titre="Le graphe est vide."
+          explication="Il se construit tout seul à partir des liens saisis : dès qu’une fiche en désigne une autre, l’arête apparaît ici."
         />
       ) : (
-        <>
+        <div className={styles.scene}>
           <Toile
-            noeuds={voisinage.data?.noeuds ?? []}
-            aretes={voisinage.data?.aretes ?? []}
-            centre={centre}
-            surSelection={(id) => router.push(`/entites/${id}`)}
-            surExpansion={definirCentre}
+            noeuds={noeuds}
+            aretes={aretes}
+            selection={selection}
+            visibles={visibles}
+            surSelection={(id) => definirSelection(id || null)}
+            surOuverture={(id) => {
+              definirSelection(id);
+              definirOuverte(id);
+            }}
             surDeplacement={
               peutRepositionner
                 ? (deplacees) =>
                     positions.mutate({ dossierId, positions: deplacees })
                 : undefined
             }
+            signalOrganisation={signalOrganisation}
+            surOrganisation={definirOrganisationEnCours}
           />
 
-          <p className={styles.aide}>
-            Cliquer ouvre la fiche · Maj + clic recentre l’exploration sur le
-            nœud · Le nombre entre parenthèses est le nombre de voisins qu’il
-            reste à déplier
-            {peutRepositionner
-              ? ' · Déplacer un nœud enregistre la disposition pour tous'
-              : ' · Le repositionnement relève d’une permission'}
-          </p>
-
-          <LegendeFiabilite />
-        </>
-      )}
-    </>
-  );
-}
-
-function ResultatChemin({
-  titre,
-  chemin,
-}: {
-  titre: string;
-  chemin: Chemin | null;
-}) {
-  return (
-    <div className={styles.chemin}>
-      <p className={styles.cheminTitre}>
-        {titre}
-        {chemin && (
-          <span className={styles.cheminMesure}>
-            {chemin.longueur} saut{chemin.longueur > 1 ? 's' : ''} · maillon le
-            plus faible <PastilleFiabilite niveau={chemin.maillonLeFaible} />
-          </span>
-        )}
-      </p>
-
-      {chemin === null ? (
-        <p className={controles.remarque}>
-          Aucun chemin entre ces deux entités.
-        </p>
-      ) : (
-        <ol className={styles.trajet}>
-          {chemin.noeuds.map((noeud, rang) => (
-            <li key={noeud.id}>
-              <span className={styles.etape}>{noeud.libelle}</span>
-              {rang < chemin.aretes.length && (
-                <div className={styles.fleche}>
-                  ↓ {chemin.aretes[rang].libelle}{' '}
-                  <PastilleFiabilite niveau={chemin.aretes[rang].fiabilite} />
-                </div>
-              )}
-            </li>
-          ))}
-        </ol>
-      )}
-    </div>
-  );
-}
-
-function ChoixEntite({
-  etiquette,
-  valeurId,
-  onChoisir,
-}: {
-  etiquette: string;
-  valeurId: string | null;
-  onChoisir: (id: string | null) => void;
-}) {
-  const [recherche, definirRecherche] = useState('');
-  const resultats = useEntites({ q: recherche });
-
-  const choisie = (resultats.data ?? []).find(
-    (entite) => entite.id === valeurId,
-  );
-
-  return (
-    <div className={styles.champ}>
-      <span className={controles.etiquette}>{etiquette}</span>
-
-      <input
-        className={controles.champ}
-        value={recherche}
-        onChange={(evenement) => definirRecherche(evenement.target.value)}
-        placeholder={choisie?.libelle ?? 'Rechercher une entité'}
-      />
-
-      {recherche.trim().length > 0 && (
-        <ul className={styles.suggestions}>
-          {(resultats.data ?? []).slice(0, 8).map((entite) => (
-            <li key={entite.id}>
+          {choisi && !ouverte && (
+            <div className={styles.etiquetteSelection}>
+              <span
+                className={styles.pastilleType}
+                style={{
+                  background:
+                    COULEURS_TYPE[choisi.typeCode] ?? 'var(--text-muted)',
+                }}
+              />
+              <span>{choisi.libelle}</span>
               <button
                 type="button"
-                className={styles.suggestion}
-                onClick={() => {
-                  onChoisir(entite.id);
-                  definirRecherche('');
-                }}
+                className={controles.boutonDiscret}
+                onClick={() => definirOuverte(choisi.id)}
               >
-                {entite.libelle}
+                Ouvrir
               </button>
-            </li>
-          ))}
-        </ul>
+            </div>
+          )}
+
+          {ouverte && (
+            <PanneauDonnee
+              id={ouverte}
+              surFermeture={() => definirOuverte(null)}
+            />
+          )}
+        </div>
       )}
-    </div>
+
+      <div className={styles.legendes}>
+        <div className={styles.legendeTypes}>
+          <span className={styles.legendeTitre}>Type de donnée</span>
+          {LEGENDE_TYPES.map((type) => (
+            <span key={type.code} className={styles.legendeType}>
+              <span
+                className={styles.pastilleType}
+                style={{ background: COULEURS_TYPE[type.code] }}
+              />
+              {type.libelle}
+            </span>
+          ))}
+        </div>
+
+        <LegendeFiabilite />
+      </div>
+
+      <p className={styles.aide}>
+        Clic sur un nœud : recentre et met son voisinage au point · Double-clic
+        : ouvre la fiche à droite · Glisser : déplace le nœud · Clic dans le
+        vide : relâche · Filtrer par nom montre la donnée trouvée et tout ce qui
+        s’y rattache, de proche en proche
+        {peutRepositionner
+          ? ' · La position déposée est enregistrée pour tout le service'
+          : ' · Vos déplacements ne sont pas enregistrés — la disposition partagée relève d’une permission'}
+      </p>
+    </>
   );
 }

@@ -1,0 +1,140 @@
+.groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.titre {
+  font-size: 0.78rem;
+  color: var(--texte-attenue);
+}
+
+.selectionCourante {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--fond);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  cursor: pointer;
+  text-align: left;
+}
+
+.selectionTexte {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--texte-attenue);
+  font-size: 0.82rem;
+}
+
+.selectionNom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selectionVide {
+  color: var(--texte-faible);
+}
+
+.effacer {
+  border: 0;
+  background: none;
+  color: var(--texte-faible);
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.78rem;
+}
+
+.effacer:hover {
+  color: var(--texte);
+}
+
+.chevron {
+  color: var(--texte-faible);
+  font-size: 0.8rem;
+}
+
+.popup {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-large);
+  box-shadow: 0 12px 30px rgba(12, 22, 30, 0.14);
+}
+
+.actionsPopup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.aide {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+  gap: 8px;
+  max-height: min(360px, 48vh);
+  overflow: auto;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  cursor: pointer;
+  color: var(--texte-attenue);
+  text-align: left;
+  transition: var(--transition);
+  transition-property: border-color, background, color;
+}
+
+.option:hover {
+  background: var(--surface-survol);
+  border-color: var(--bordure-forte);
+  color: var(--texte);
+}
+
+.optionActive {
+  border-color: var(--accent-bordure);
+  background: var(--accent-fond);
+  color: var(--accent-vif);
+}
+
+.icone {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.nom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8rem;
+}

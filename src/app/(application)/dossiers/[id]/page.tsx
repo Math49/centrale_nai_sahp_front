@@ -9,7 +9,7 @@ import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
 
 /**
- * Ouvrir un dossier revient à ouvrir la fiche de son entité pivot.
+ * Ouvrir un dossier revient à ouvrir la fiche de son donnée pivot.
  *
  * Cette page ne rend rien : elle redirige, en emportant l'identifiant du
  * dossier. C'est ce paramètre qui fait apparaître le panneau de dossier sur la

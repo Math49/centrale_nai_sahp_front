@@ -19,7 +19,7 @@ export function GardeSuperAdmin({ children }: { children: ReactNode }) {
     return (
       <EtatVide
         titre="Réservé au super-admin."
-        explication="La configuration du modèle métier — types d'entités, champs, types de liens, mise en page des fiches — ne se délègue pas par un jeu de permissions."
+        explication="La configuration du modèle métier — types de données, champs, types de liens, mise en page des fiches — ne se délègue pas par un jeu de permissions."
       />
     );
   }

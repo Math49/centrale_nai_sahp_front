@@ -5,25 +5,36 @@ export type AgentConnecte = components['schemas']['AgentConnecteDto'];
 export type RaisonFermeture = 'volontaire' | 'expiration';
 
 export interface EtatSession {
-  jeton: string | null;
   agent: AgentConnecte | null;
   raisonFermeture: RaisonFermeture | null;
 }
 
-const VIDE: EtatSession = { jeton: null, agent: null, raisonFermeture: null };
+const VIDE: EtatSession = { agent: null, raisonFermeture: null };
 
 /**
- * Session en mémoire, hors de React.
+ * Session de l'agent, tenue hors de React.
  *
- * **Le jeton n'est jamais écrit sur le disque** — ni `localStorage`, ni
- * `sessionStorage`, ni cookie. Un rechargement de page déconnecte, ce qui est
- * assumé : la plateforme sert à consulter des enquêtes depuis un poste partagé,
- * et un jeton persisté y survivrait à l'agent qui s'en va.
+ * **Le front ne détient plus le jeton.** Il vit dans un cookie `httpOnly` posé
+ * par l'API : le navigateur l'envoie seul sur chaque requête, et aucun script
+ * de la page ne peut le lire — une faille XSS ne l'exfiltre donc pas.
  *
- * Le magasin vit hors de React parce que l'intercepteur de requêtes doit lire
- * le jeton sans être un composant.
+ * Ce magasin ne retient que l'identité de l'agent, qui sert à l'affichage et au
+ * masquage des zones. Il n'est **jamais** ce qui autorise quoi que ce soit :
+ * l'API refuse d'elle-même, sans rien croire de ce qui vient du navigateur.
+ *
+ * Au démarrage, le front ne peut pas savoir s'il a une session — le cookie lui
+ * est invisible. Il le demande : `GET /auth/moi`. C'est `reprendre()`.
  */
 let etat: EtatSession = VIDE;
+
+/**
+ * La session a-t-elle été cherchée auprès de l'API ?
+ *
+ * Faux tant que la question n'a pas reçu de réponse. Sans ce drapeau, le garde
+ * verrait une session vide et renverrait vers la connexion avant même d'avoir
+ * demandé.
+ */
+let pret = false;
 
 const abonnes = new Set<() => void>();
 
@@ -35,28 +46,37 @@ function publier(nouvel: EtatSession): void {
 export const magasinSession = {
   lire: (): EtatSession => etat,
 
-  ouvrir(jeton: string, agent: AgentConnecte): void {
-    publier({ jeton, agent, raisonFermeture: null });
+  /** L'API a-t-elle déjà répondu sur l'existence d'une session ? */
+  estPrete: (): boolean => pret,
+
+  /** Enregistre le résultat de l'interrogation initiale, session ou non. */
+  reprendre(agent: AgentConnecte | null): void {
+    pret = true;
+
+    if (agent) {
+      etat = { agent, raisonFermeture: null };
+    }
+
+    abonnes.forEach((prevenir) => prevenir());
   },
 
-  /** Met à jour l'agent sans toucher au jeton — après un changement de grade. */
+  ouvrir(agent: AgentConnecte): void {
+    pret = true;
+    publier({ agent, raisonFermeture: null });
+  },
+
+  /** Met à jour l'agent — après un changement de grade ou de mot de passe. */
   rafraichirAgent(agent: AgentConnecte): void {
-    if (!etat.jeton) {
-      return;
-    }
     publier({ ...etat, agent });
   },
 
-  /** Remplace jeton et agent d'un bloc — après un changement de mot de passe,
-   *  qui invalide l'ancien jeton et en renvoie un neuf. */
-  renouveler(jeton: string, agent: AgentConnecte): void {
-    publier({ jeton, agent, raisonFermeture: null });
-  },
-
   fermer(raison: RaisonFermeture): void {
-    if (!etat.jeton && !etat.agent) {
+    pret = true;
+
+    if (!etat.agent) {
       return;
     }
+
     publier({ ...VIDE, raisonFermeture: raison });
   },
 

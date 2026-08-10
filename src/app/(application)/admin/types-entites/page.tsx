@@ -8,6 +8,7 @@ import {
   useReferentiel,
 } from '@/api/referentiel';
 import { GardeSuperAdmin } from '@/auth/garde-super-admin';
+import { ChoixIcone } from '@/composants/choix-icone';
 import { ChampTexte } from '@/composants/champ-texte';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
@@ -44,8 +45,8 @@ function Atelier() {
   return (
     <>
       <EnteteZone
-        titre="Types d'entités"
-        sousTitre="Ce qu'on peut décrire dans la centrale. Les enquêteurs créent des entités et des faits, jamais des types."
+        titre="Types de données"
+        sousTitre="Ce qu'on peut décrire dans la centrale. Les enquêteurs créent des données et des faits, jamais des types."
       />
 
       <div className={styles.atelier}>
@@ -58,7 +59,7 @@ function Atelier() {
 
           {types.length === 0 && !referentiel.isLoading ? (
             <EtatVide
-              titre="Aucun type d'entité."
+              titre="Aucun type de donnée."
               explication="Commencer par le plus concret — un véhicule, une personne — puis relier."
             />
           ) : (
@@ -121,11 +122,10 @@ function Atelier() {
                 definirNouveau({ ...nouveau, libellePluriel })
               }
             />
-            <ChampTexte
+            <ChoixIcone
               etiquette="Icône"
               valeur={nouveau.icone}
               onChange={(icone) => definirNouveau({ ...nouveau, icone })}
-              indication="nom d'icône du design system"
             />
             <ChampTexte
               etiquette="Gabarit de libellé"

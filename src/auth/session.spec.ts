@@ -21,56 +21,49 @@ describe('magasinSession', () => {
 
   it('part vide', () => {
     expect(magasinSession.lire()).toEqual({
-      jeton: null,
       agent: null,
       raisonFermeture: null,
     });
   });
 
-  it('ouvre une session', () => {
-    magasinSession.ouvrir('jeton-a', AGENT);
+  it('ouvre une session sur la seule identité de l’agent', () => {
+    magasinSession.ouvrir(AGENT);
 
-    expect(magasinSession.lire().jeton).toBe('jeton-a');
     expect(magasinSession.lire().agent?.matricule).toBe('2291');
   });
 
   it('retient la raison de fermeture, pour que la connexion puisse la dire', () => {
-    magasinSession.ouvrir('jeton-a', AGENT);
+    magasinSession.ouvrir(AGENT);
     magasinSession.fermer('expiration');
 
     expect(magasinSession.lire()).toEqual({
-      jeton: null,
       agent: null,
       raisonFermeture: 'expiration',
     });
   });
 
-  it('remplace jeton et agent au renouvellement', () => {
-    magasinSession.ouvrir('jeton-a', AGENT);
-    magasinSession.renouveler('jeton-b', { ...AGENT, doitChangerMdp: false });
+  it('n’est prête qu’une fois l’API interrogée', () => {
+    // `fermer` répond à la question « y a-t-il une session ? » : non.
+    expect(magasinSession.estPrete()).toBe(true);
 
-    expect(magasinSession.lire().jeton).toBe('jeton-b');
-    expect(magasinSession.lire().raisonFermeture).toBeNull();
-  });
+    magasinSession.reprendre(AGENT);
 
-  it('ne rafraîchit pas un agent hors session', () => {
-    magasinSession.rafraichirAgent(AGENT);
-
-    expect(magasinSession.lire().agent).toBeNull();
+    expect(magasinSession.estPrete()).toBe(true);
+    expect(magasinSession.lire().agent?.matricule).toBe('2291');
   });
 
   it('prévient ses abonnés à chaque changement', () => {
     const prevenir = vi.fn();
     const desabonner = magasinSession.abonner(prevenir);
 
-    magasinSession.ouvrir('jeton-a', AGENT);
+    magasinSession.ouvrir(AGENT);
     expect(prevenir).toHaveBeenCalledTimes(1);
 
     magasinSession.fermer('volontaire');
     expect(prevenir).toHaveBeenCalledTimes(2);
 
     desabonner();
-    magasinSession.ouvrir('jeton-b', AGENT);
+    magasinSession.ouvrir(AGENT);
     expect(prevenir).toHaveBeenCalledTimes(2);
   });
 
@@ -83,9 +76,13 @@ describe('magasinSession', () => {
     expect(prevenir).not.toHaveBeenCalled();
   });
 
-  it("n'écrit rien dans le stockage du navigateur", () => {
-    magasinSession.ouvrir('jeton-a', AGENT);
+  it('ne détient aucun jeton, ni en mémoire ni dans le navigateur', () => {
+    magasinSession.ouvrir(AGENT);
 
+    // Le jeton vit dans un cookie `httpOnly` posé par l'API. Le front ne le
+    // détient nulle part — c'est précisément ce qui le met hors de portée d'un
+    // script injecté dans la page.
+    expect(JSON.stringify(magasinSession.lire())).not.toMatch(/jeton/i);
     expect(window.localStorage.length).toBe(0);
     expect(window.sessionStorage.length).toBe(0);
     expect(document.cookie).toBe('');

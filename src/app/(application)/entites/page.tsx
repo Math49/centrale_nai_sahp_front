@@ -27,13 +27,13 @@ export default function PageEntites() {
   return (
     <>
       <EnteteZone
-        titre="Entités"
+        titre="Données"
         sousTitre="Tout ce que la centrale sait décrire. Les objets privés n’y figurent pas — leur absence ne se signale pas."
       />
 
       {types.length === 0 ? (
         <EtatVide
-          titre="Aucun type d’entité n’est configuré."
+          titre="Aucun type de donnée n’est configuré."
           explication="Le modèle se règle en administration : types, champs, types de liens, onglets."
           action={
             <Link className={controles.bouton} href="/admin/types-entites">

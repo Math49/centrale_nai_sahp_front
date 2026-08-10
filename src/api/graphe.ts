@@ -27,6 +27,38 @@ async function attendre<T>(
   return data as T;
 }
 
+/**
+ * La vue entière, chargée d'un bloc.
+ *
+ * Tout ce que l'agent peut voir, à toute profondeur : l'exploration devient
+ * une navigation dans une carte plutôt qu'une succession de dépliages. Le
+ * filtre de fiabilité reste, parce qu'il change ce qu'on regarde, pas
+ * seulement ce qu'on affiche.
+ */
+export function useVueEntiere(options: {
+  fiabilite: number;
+  dossierId?: string;
+}) {
+  return useQuery({
+    queryKey: [...CLE_GRAPHE, 'complet', options],
+    // Le graphe entier ne change qu'à l'écriture ; le recharger au moindre
+    // retour d'onglet ferait sauter la disposition sous les yeux de l'agent.
+    staleTime: 60_000,
+    queryFn: () =>
+      attendre(
+        api.GET('/graphe/complet', {
+          params: {
+            query: {
+              fiabilite: options.fiabilite,
+              dossier: options.dossierId,
+            },
+          },
+        }),
+        'graphe indisponible',
+      ),
+  });
+}
+
 export function useVoisinage(options: {
   depuis: string | null;
   profondeur: number;

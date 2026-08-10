@@ -17,7 +17,7 @@ interface Rubrique {
 const RUBRIQUES: Rubrique[] = [
   { libelle: 'Vue d’ensemble', chemin: '/admin' },
   {
-    libelle: "Types d'entités",
+    libelle: 'Types de données',
     chemin: '/admin/types-entites',
     superAdminSeul: true,
   },
@@ -31,15 +31,43 @@ const RUBRIQUES: Rubrique[] = [
     chemin: '/admin/fiches',
     superAdminSeul: true,
   },
+  {
+    libelle: 'Journaux',
+    chemin: '/admin/journal',
+    permissions: ['journal.consulter'],
+  },
+  {
+    libelle: 'Archives',
+    chemin: '/admin/archives',
+    permissions: ['journal.consulter'],
+  },
+  {
+    libelle: 'Données orphelines',
+    chemin: '/admin/orphelines',
+    // Écran de ménage : il suit la permission de qui peut agir sur un orphelin,
+    // pas celle du relevé des consultations.
+    permissions: ['entite.archiver'],
+  },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const courant = usePathname();
   const { agent } = useSession();
 
-  const rubriques = RUBRIQUES.filter(
-    (rubrique) => !rubrique.superAdminSeul || agent?.superAdmin,
-  );
+  // Masquer une rubrique fermée est du confort, pas de la sécurité : chaque
+  // route de l'API refuse d'elle-même ce qu'elle doit refuser.
+  const rubriques = RUBRIQUES.filter((rubrique) => {
+    if (agent?.superAdmin) {
+      return true;
+    }
+    if (rubrique.superAdminSeul) {
+      return false;
+    }
+    return (
+      !rubrique.permissions ||
+      rubrique.permissions.some((code) => agent?.permissions.includes(code))
+    );
+  });
 
   return (
     <div className={styles.cadre}>

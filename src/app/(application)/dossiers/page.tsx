@@ -19,7 +19,7 @@ export default function PageDossiers() {
     <>
       <EnteteZone
         titre="Dossiers"
-        sousTitre="Un dossier est un périmètre d’enquête ancré sur une entité pivot. Il ne contient rien : il contextualise."
+        sousTitre="Un dossier est un périmètre d’enquête ancré sur une donnée pivot. Il ne contient rien : il contextualise."
       />
 
       <div className={styles.barre}>
@@ -39,7 +39,7 @@ export default function PageDossiers() {
       {dossiers.isSuccess && dossiers.data.length === 0 ? (
         <EtatVide
           titre="Aucun dossier ouvert."
-          explication="Un dossier s’ancre sur l’entité qui est au cœur de l’enquête — le groupe, le plus souvent."
+          explication="Un dossier s’ancre sur la donnée qui est au cœur de l’enquête — le groupe, le plus souvent."
           action={
             <button
               type="button"
@@ -65,7 +65,7 @@ export default function PageDossiers() {
               </div>
 
               <span className={styles.suivis}>
-                {dossier.nombreSuivis} entité
+                {dossier.nombreSuivis} donnée
                 {dossier.nombreSuivis > 1 ? 's' : ''} suivie
                 {dossier.nombreSuivis > 1 ? 's' : ''}
               </span>

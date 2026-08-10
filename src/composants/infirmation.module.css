@@ -1,0 +1,30 @@
+/*
+ * Un déclencheur discret : infirmer est un geste rare, qui ne doit pas
+ * disputer l'attention à la valeur qu'il accompagne. Aucune couleur — elle
+ * reste réservée à la fiabilité et à la visibilité.
+ */
+.declencheur {
+  flex-shrink: 0;
+  padding: 1px 7px;
+  background: none;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  color: var(--texte-faible);
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: var(--transition);
+  transition-property: opacity, color, border-color, background;
+}
+
+/* Il apparaît au survol de sa ligne, et reste atteignable au clavier. */
+:hover > .declencheur,
+.declencheur:focus-visible {
+  opacity: 1;
+}
+
+.declencheur:hover {
+  color: var(--texte);
+  border-color: var(--bordure-forte);
+  background: var(--surface-survol);
+}

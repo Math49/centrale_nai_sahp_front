@@ -10,19 +10,19 @@ import styles from './page.module.css';
 
 export default function PageConnexion() {
   const router = useRouter();
-  const { jeton, agent, raisonFermeture } = useSession();
+  const { agent, raisonFermeture } = useSession();
   const connexion = useConnexion();
 
   const [matricule, definirMatricule] = useState('');
   const [motDePasse, definirMotDePasse] = useState('');
 
   useEffect(() => {
-    if (!jeton || !agent) {
+    if (!agent) {
       return;
     }
 
     router.replace(agent.doitChangerMdp ? '/mot-de-passe' : '/');
-  }, [jeton, agent, router]);
+  }, [agent, router]);
 
   return (
     <div className={styles.page}>

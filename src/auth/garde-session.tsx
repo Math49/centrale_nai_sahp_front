@@ -3,13 +3,14 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
 
-import { useSession } from './use-session';
+import { useSession, useSessionPrete } from './use-session';
 
 /**
  * Porte d'entrée des zones applicatives.
  *
- * Le jeton ne vit qu'en mémoire : au premier rendu après un rechargement, il
- * n'y en a pas, et l'agent repart par la connexion. C'est voulu.
+ * Elle **attend la réponse de l'API** avant de conclure quoi que ce soit : le
+ * cookie de session est `httpOnly`, donc invisible au front, et rediriger avant
+ * d'avoir demandé renverrait vers la connexion à chaque rechargement.
  *
  * Ce garde n'est **pas** une mesure de sécurité — il masque des écrans, il ne
  * protège pas des données. Toute donnée est refusée par l'API elle-même, qui
@@ -17,10 +18,15 @@ import { useSession } from './use-session';
  */
 export function GardeSession({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const { jeton, agent } = useSession();
+  const prete = useSessionPrete();
+  const { agent } = useSession();
 
   useEffect(() => {
-    if (!jeton || !agent) {
+    if (!prete) {
+      return;
+    }
+
+    if (!agent) {
       router.replace('/connexion');
       return;
     }
@@ -28,9 +34,9 @@ export function GardeSession({ children }: { children: ReactNode }) {
     if (agent.doitChangerMdp) {
       router.replace('/mot-de-passe');
     }
-  }, [jeton, agent, router]);
+  }, [prete, agent, router]);
 
-  if (!jeton || !agent || agent.doitChangerMdp) {
+  if (!prete || !agent || agent.doitChangerMdp) {
     return null;
   }
 

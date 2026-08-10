@@ -21,7 +21,7 @@ export function CompteurImpact({ impact }: { impact: Impact }) {
 
   if (impact.entitesCreees > 0) {
     morceaux.push(
-      `${impact.entitesCreees} entité${impact.entitesCreees > 1 ? 's' : ''} créée${
+      `${impact.entitesCreees} donnée${impact.entitesCreees > 1 ? 's' : ''} créée${
         impact.entitesCreees > 1 ? 's' : ''
       }`,
     );
@@ -31,7 +31,7 @@ export function CompteurImpact({ impact }: { impact: Impact }) {
 
   if (impact.entitesRestantes > 0) {
     restants.push(
-      `${impact.entitesRestantes} entité${impact.entitesRestantes > 1 ? 's' : ''}`,
+      `${impact.entitesRestantes} donnée${impact.entitesRestantes > 1 ? 's' : ''}`,
     );
   }
 

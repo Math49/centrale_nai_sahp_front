@@ -33,7 +33,11 @@ async function attendre<T>(
   return data as T;
 }
 
-export function useEntites(filtres: { typeEntiteId?: string; q?: string }) {
+export function useEntites(filtres: {
+  typeEntiteId?: string;
+  q?: string;
+  etat?: 'actif' | 'archive';
+}) {
   return useQuery({
     queryKey: [...CLE_ENTITES, 'liste', filtres],
     queryFn: () =>
@@ -43,6 +47,7 @@ export function useEntites(filtres: { typeEntiteId?: string; q?: string }) {
             query: {
               type: filtres.typeEntiteId,
               q: filtres.q || undefined,
+              etat: filtres.etat,
             },
           },
         }),
@@ -149,6 +154,44 @@ export function useCreerEntite() {
 export function useCreerFait() {
   return useEcriture((corps: CreationFait) =>
     attendre(api.POST('/faits', { body: corps }), 'fait non enregistré'),
+  );
+}
+
+/**
+ * Infirmation d'un fait.
+ *
+ * Jamais une suppression : le fait sort du graphe actif et reste consultable
+ * dans l'onglet Historique. Le motif est obligatoire — infirmer sans dire
+ * pourquoi laisserait la relecture devant une information disparue sans
+ * explication.
+ */
+export function useInfirmerFait() {
+  return useEcriture(({ id, motif }: { id: string; motif: string }) =>
+    attendre(
+      api.POST('/faits/{id}/infirmer', {
+        params: { path: { id } },
+        body: { motif },
+      }),
+      'infirmation impossible',
+    ),
+  );
+}
+
+/**
+ * Fusion de doublons.
+ *
+ * `id` est absorbée, `versId` subsiste. L'absorbée reste en base, archivée, et
+ * redirige : un ancien lien vers elle continue de mener quelque part.
+ */
+export function useFusionner() {
+  return useEcriture(({ id, versId }: { id: string; versId: string }) =>
+    attendre(
+      api.POST('/entites/{id}/fusion', {
+        params: { path: { id } },
+        body: { versId },
+      }),
+      'fusion impossible',
+    ),
   );
 }
 

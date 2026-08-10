@@ -35,6 +35,9 @@
 }
 
 .bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 36px;
   padding: 0 16px;
   background: var(--accent-fond);
@@ -42,6 +45,8 @@
   border-radius: var(--rayon);
   color: var(--accent-vif);
   cursor: pointer;
+  line-height: 1;
+  text-align: center;
   transition: var(--transition);
   transition-property: background, border-color, color;
 }

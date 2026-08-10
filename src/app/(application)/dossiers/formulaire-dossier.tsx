@@ -20,7 +20,7 @@ const VISIBILITES = [
 /**
  * Ouverture d'un dossier.
  *
- * L'entité pivot est obligatoire : un dossier sans elle n'existe pas. Le
+ * L'donnée pivot est obligatoire : un dossier sans elle n'existe pas. Le
  * classement en restreint ou privé relève d'une permission à part — sans elle,
  * le choix ne s'affiche pas, plutôt que d'être proposé puis refusé.
  */
@@ -55,7 +55,7 @@ export function FormulaireDossier({ onCree }: { onCree: () => void }) {
       />
 
       <div className={controles.groupe}>
-        <span className={controles.etiquette}>Entité pivot</span>
+        <span className={controles.etiquette}>Donnée pivot</span>
 
         {pivot ? (
           <div className={styles.pivotChoisi}>
@@ -74,7 +74,7 @@ export function FormulaireDossier({ onCree }: { onCree: () => void }) {
               className={controles.champ}
               value={recherche}
               onChange={(evenement) => definirRecherche(evenement.target.value)}
-              placeholder="Rechercher l’entité au cœur de l’enquête"
+              placeholder="Rechercher la donnée au cœur de l’enquête"
             />
             {recherche.trim().length > 0 && (
               <ul className={styles.suggestions}>
@@ -180,7 +180,7 @@ export function FormulaireDossier({ onCree }: { onCree: () => void }) {
           {visibilite !== 'public' && (
             <p>
               Les faits saisis depuis ce dossier en hériteront la visibilité.
-              Les entités, elles, gardent la leur.
+              Les données, elles, gardent la leur.
             </p>
           )}
         </Modale>

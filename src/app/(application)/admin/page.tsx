@@ -19,7 +19,7 @@ interface Rubrique {
 
 const RUBRIQUES: Rubrique[] = [
   {
-    libelle: "Types d'entités et champs",
+    libelle: 'Types de données et champs',
     description: 'Nom, icône, champs typés, obligatoires ou uniques.',
     lot: 'Lot 3',
     permissions: [],
@@ -58,11 +58,12 @@ const RUBRIQUES: Rubrique[] = [
     permissions: ['agent.gerer'],
   },
   {
-    libelle: 'Journal de consultation',
+    libelle: 'Journaux',
     description:
-      'Toute lecture de fiche est tracée, y compris celles du super-admin.',
+      'Toute lecture de fiche est tracée, y compris celles du super-admin, qui y sont signalées. Toute écriture aussi.',
     lot: 'Lot 11',
     permissions: ['journal.consulter'],
+    chemin: '/admin/journal',
   },
   {
     libelle: 'Archives',
@@ -70,13 +71,15 @@ const RUBRIQUES: Rubrique[] = [
       'Rien n’est supprimé : tout est archivé, infirmé ou anonymisé.',
     lot: 'Lot 11',
     permissions: ['journal.consulter'],
+    chemin: '/admin/archives',
   },
   {
-    libelle: 'Entités orphelines',
+    libelle: 'Données orphelines',
     description:
-      'Entités restées sans lien après une saisie interrompue. Liste discrète, sans signal.',
+      'Données restées sans lien après une saisie interrompue. Liste discrète, sans signal.',
     lot: 'Lot 11',
-    permissions: ['agent.gerer'],
+    permissions: ['entite.archiver'],
+    chemin: '/admin/orphelines',
   },
 ];
 

@@ -91,6 +91,17 @@ la construction.
 Le Dockerfile produit une image Next standalone et embarque aussi `public/` pour
 les logos et le favicon.
 
+En production, Portainer peut importer ce dÃ©pÃ´t directement et utiliser
+`docker-compose.yml`.
+
+```bash
+cp .env.production.example .env.production
+docker compose --env-file .env.production up -d
+```
+
+La stack expose le front uniquement sur `127.0.0.1:${FRONT_PORT:-40510}`, prÃªt
+pour un tunnel Cloudflare.
+
 ---
 
 ## Structure

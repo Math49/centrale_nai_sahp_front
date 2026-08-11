@@ -186,6 +186,7 @@ function Vignette({
             alt={fichier.nomOrigine}
             fill
             sizes="(max-width: 700px) 50vw, 180px"
+            unoptimized
           />
         ) : (
           <span className={styles.attente}>

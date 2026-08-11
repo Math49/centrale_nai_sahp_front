@@ -29,7 +29,8 @@ COPY --from=construction /app/public ./public
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
   && touch /app/public/runtime-config.js \
-  && chown node:node /app/public/runtime-config.js
+  && mkdir -p /app/.next/cache \
+  && chown -R node:node /app/public/runtime-config.js /app/.next/cache
 
 USER node
 

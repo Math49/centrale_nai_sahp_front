@@ -3,6 +3,9 @@ import createClient, { type Middleware } from 'openapi-fetch';
 import { magasinSession } from '@/auth/session';
 import type { paths } from './contrat';
 
+const URL_API_PAR_DEFAUT = 'http://localhost:40511';
+const URL_API_INTERNE = 'http://centrale-ni-api.invalid';
+
 type ConfigurationNavigateur = Window &
   typeof globalThis & {
     __CENTRALE_NI_CONFIG__?: {
@@ -20,17 +23,31 @@ function lireUrlApi(): string {
     }
   }
 
-  return process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:40511';
+  return process.env.NEXT_PUBLIC_API_URL?.trim() || URL_API_PAR_DEFAUT;
 }
 
 export const URL_API = lireUrlApi();
 
+function creerRequeteApi(requete: Request): Request {
+  const urlApi = new URL(lireUrlApi());
+  const urlInitiale = new URL(requete.url);
+  const cheminApi = urlApi.pathname.replace(/\/$/, '');
+  const urlFinale = new URL(
+    `${cheminApi}${urlInitiale.pathname}${urlInitiale.search}`,
+    urlApi,
+  );
+
+  urlFinale.hash = urlInitiale.hash;
+
+  return new Request(urlFinale.toString(), requete);
+}
+
 export const api = createClient<paths>({
-  baseUrl: URL_API,
+  baseUrl: URL_API_INTERNE,
 
   credentials: 'include',
 
-  fetch: (requete) => globalThis.fetch(requete),
+  fetch: (requete) => globalThis.fetch(creerRequeteApi(requete)),
 });
 
 const authentificationEnMemoire: Middleware = {

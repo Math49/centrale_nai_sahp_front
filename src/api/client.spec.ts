@@ -50,6 +50,21 @@ describe('client API', () => {
     expect(appel.headers.has('Authorization')).toBe(false);
   });
 
+  it('utilise la configuration runtime disponible au moment de la requete', async () => {
+    vi.stubGlobal('__CENTRALE_NI_CONFIG__', {
+      apiUrl: 'https://crij1h-api-centrale-nai.hockwood.fr',
+    });
+    repondre(200);
+
+    await api.GET('/agents');
+
+    const appel = vi.mocked(fetch).mock.calls[0][0] as Request;
+
+    expect(appel.url).toBe(
+      'https://crij1h-api-centrale-nai.hockwood.fr/agents',
+    );
+  });
+
   it('joint le jeton en memoire quand le cookie navigateur ne suffit pas', async () => {
     magasinSession.ouvrir(AGENT, 'jeton-en-memoire');
     repondre(200);

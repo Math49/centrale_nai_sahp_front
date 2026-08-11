@@ -18,7 +18,7 @@ export default function RacineLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
       <head>
-        <Script src="/runtime-config.js" strategy="beforeInteractive" />
+        <Script src="/runtime-config.js?v=2" strategy="beforeInteractive" />
         <link
           rel="icon"
           type="image/x-icon"

@@ -14,7 +14,12 @@ import {
   type ChampDeFiche,
   type LienDeFiche,
 } from '@/api/entites';
-import { useReferentiel, type DefinitionChamp } from '@/api/referentiel';
+import {
+  liensDisponiblesPour,
+  useReferentiel,
+  type DefinitionChamp,
+  type SensLien,
+} from '@/api/referentiel';
 import { useSession } from '@/auth/use-session';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
@@ -24,6 +29,10 @@ import { Modale } from '@/composants/modale';
 import { PanneauDossier } from '@/composants/panneau-dossier';
 import { PiecesJointes } from '@/composants/pieces-jointes';
 import { ChampDynamique } from '@/composants/formulaire/champ-dynamique';
+import {
+  ChampRelationnel,
+  type EntiteChoisie,
+} from '@/composants/formulaire/champ-relationnel';
 import {
   NIVEAUX_FIABILITE,
   LegendeFiabilite,
@@ -77,6 +86,15 @@ function Fiche() {
     dateConstatation: string;
     visibilite: (typeof VISIBILITES)[number];
   } | null>(null);
+  const [creationLien, definirCreationLien] = useState<{
+    typeLienId: string;
+    sens: SensLien;
+    cible: EntiteChoisie | null;
+    source: string;
+    fiabilite: number;
+    dateConstatation: string;
+    visibilite: (typeof VISIBILITES)[number];
+  } | null>(null);
   const [confirmation, definirConfirmation] = useState(false);
 
   const peutVoirLHistorique =
@@ -98,6 +116,9 @@ function Fiche() {
   const type = referentiel.data?.typesEntites.find(
     (candidat) => candidat.id === entite?.typeEntiteId,
   );
+  const candidatsLiens = type
+    ? liensDisponiblesPour(type, referentiel.data?.typesLiens ?? [])
+    : [];
 
   useEffect(() => {
     if (!entite) {
@@ -107,6 +128,7 @@ function Fiche() {
     definirNote(null);
     definirVisibilite(null);
     definirEditionChamp(null);
+    definirCreationLien(null);
   }, [entite]);
 
   if (fiche.isError) {
@@ -135,6 +157,42 @@ function Fiche() {
   const visibiliteAffichee = visibilite ?? entite.visibilite;
   const visibiliteModifiee =
     visibilite !== null && visibilite !== entite.visibilite;
+  const lienSelectionne = creationLien
+    ? candidatsLiens.find(
+        (candidat) =>
+          candidat.lien.id === creationLien.typeLienId &&
+          candidat.sens === creationLien.sens,
+      )
+    : undefined;
+  const typeCibleId = lienSelectionne
+    ? lienSelectionne.sens === 'direct'
+      ? lienSelectionne.lien.typeEntiteCibleId
+      : lienSelectionne.lien.typeEntiteSourceId
+    : null;
+  const typeCible = referentiel.data?.typesEntites.find(
+    (candidat) => candidat.id === typeCibleId,
+  );
+  const peutAjouterLien =
+    peutCreerFait &&
+    entite.fusionneeVersId === null &&
+    candidatsLiens.length > 0;
+  const ouvrirCreationLien = () => {
+    const premier = candidatsLiens[0];
+
+    if (!premier) {
+      return;
+    }
+
+    definirCreationLien({
+      typeLienId: premier.lien.id,
+      sens: premier.sens,
+      cible: null,
+      source: '',
+      fiabilite: 3,
+      dateConstatation: new Date().toISOString().slice(0, 10),
+      visibilite: entite.visibilite,
+    });
+  };
 
   return (
     <>
@@ -255,31 +313,43 @@ function Fiche() {
         </dl>
       </section>
 
-      <nav className={styles.onglets} aria-label="Onglets de la fiche">
-        {onglets.map((onglet) => (
-          <button
-            key={onglet.id}
-            type="button"
-            className={styles.onglet}
-            aria-current={actif === onglet.id ? 'true' : undefined}
-            onClick={() => definirOngletActif(onglet.id)}
-          >
-            {onglet.libelle}
-            <span className={styles.compteur}>{onglet.compteur}</span>
-          </button>
-        ))}
+      <div className={styles.barreOnglets}>
+        <nav className={styles.onglets} aria-label="Onglets de la fiche">
+          {onglets.map((onglet) => (
+            <button
+              key={onglet.id}
+              type="button"
+              className={styles.onglet}
+              aria-current={actif === onglet.id ? 'true' : undefined}
+              onClick={() => definirOngletActif(onglet.id)}
+            >
+              {onglet.libelle}
+              <span className={styles.compteur}>{onglet.compteur}</span>
+            </button>
+          ))}
 
-        {peutVoirLHistorique && (
+          {peutVoirLHistorique && (
+            <button
+              type="button"
+              className={styles.onglet}
+              aria-current={actif === HISTORIQUE ? 'true' : undefined}
+              onClick={() => definirOngletActif(HISTORIQUE)}
+            >
+              Historique
+            </button>
+          )}
+        </nav>
+
+        {peutAjouterLien && (
           <button
             type="button"
-            className={styles.onglet}
-            aria-current={actif === HISTORIQUE ? 'true' : undefined}
-            onClick={() => definirOngletActif(HISTORIQUE)}
+            className={controles.bouton}
+            onClick={ouvrirCreationLien}
           >
-            Historique
+            Ajouter un lien
           </button>
         )}
-      </nav>
+      </div>
 
       <section className={styles.bloc}>
         {actif === HISTORIQUE ? (
@@ -525,6 +595,161 @@ function Fiche() {
           {(modifierFait.isError || creerFait.isError) && (
             <p className={controles.erreur} role="alert">
               {modifierFait.error?.message ?? creerFait.error?.message}
+            </p>
+          )}
+        </Modale>
+      )}
+
+      {creationLien && (
+        <Modale
+          titre={`Ajouter un lien depuis "${entite.libelle}"`}
+          libelleConfirmation="Ajouter le lien"
+          enCours={creerFait.isPending}
+          confirmationBloquee={
+            !lienSelectionne ||
+            !creationLien.cible ||
+            creationLien.source.trim().length === 0
+          }
+          onAnnuler={() => definirCreationLien(null)}
+          onConfirmer={() => {
+            if (!lienSelectionne || !creationLien.cible) {
+              return;
+            }
+
+            creerFait.mutate(
+              {
+                sujetId:
+                  creationLien.sens === 'direct' ? id : creationLien.cible.id,
+                nature: 'lien',
+                typeLienId: creationLien.typeLienId,
+                cibleId:
+                  creationLien.sens === 'direct' ? creationLien.cible.id : id,
+                source: creationLien.source.trim(),
+                fiabilite: creationLien.fiabilite,
+                dateConstatation: creationLien.dateConstatation,
+                visibilite: creationLien.visibilite,
+              },
+              { onSuccess: () => definirCreationLien(null) },
+            );
+          }}
+        >
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Type de lien</span>
+            <select
+              className={controles.champ}
+              value={`${creationLien.typeLienId}:${creationLien.sens}`}
+              onChange={(evenement) => {
+                const [typeLienId, sens] = evenement.target.value.split(':');
+
+                definirCreationLien({
+                  ...creationLien,
+                  typeLienId,
+                  sens: sens as SensLien,
+                  cible: null,
+                });
+              }}
+            >
+              {candidatsLiens.map((candidat) => (
+                <option
+                  key={`${candidat.lien.id}:${candidat.sens}`}
+                  value={`${candidat.lien.id}:${candidat.sens}`}
+                >
+                  {candidat.libelleLu}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {lienSelectionne && typeCibleId && (
+            <ChampRelationnel
+              libelle={lienSelectionne.libelleLu}
+              typeCibleId={typeCibleId}
+              typeCibleLibelle={typeCible?.libelle ?? 'fiche'}
+              multiple={false}
+              choisis={creationLien.cible ? [creationLien.cible] : []}
+              onAjouter={(cible) =>
+                definirCreationLien({ ...creationLien, cible })
+              }
+              onRetirer={() =>
+                definirCreationLien({ ...creationLien, cible: null })
+              }
+            />
+          )}
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Source</span>
+            <input
+              className={controles.champ}
+              value={creationLien.source}
+              onChange={(evenement) =>
+                definirCreationLien({
+                  ...creationLien,
+                  source: evenement.target.value,
+                })
+              }
+              placeholder="Observation, renseignement, dossier..."
+            />
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Fiabilite</span>
+            <select
+              className={controles.champ}
+              value={creationLien.fiabilite}
+              onChange={(evenement) =>
+                definirCreationLien({
+                  ...creationLien,
+                  fiabilite: Number(evenement.target.value),
+                })
+              }
+            >
+              {FIABILITES.map((niveau) => (
+                <option key={niveau} value={niveau}>
+                  {niveau} - {NIVEAUX_FIABILITE[niveau]}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Date de constatation</span>
+            <input
+              className={controles.champMono}
+              type="date"
+              value={creationLien.dateConstatation}
+              onChange={(evenement) =>
+                definirCreationLien({
+                  ...creationLien,
+                  dateConstatation: evenement.target.value,
+                })
+              }
+            />
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Visibilite</span>
+            <select
+              className={controles.champ}
+              value={creationLien.visibilite}
+              onChange={(evenement) =>
+                definirCreationLien({
+                  ...creationLien,
+                  visibilite: evenement.target
+                    .value as (typeof VISIBILITES)[number],
+                })
+              }
+            >
+              {VISIBILITES.map((niveau) => (
+                <option key={niveau} value={niveau}>
+                  {LIBELLES_VISIBILITE[niveau]}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {creerFait.isError && (
+            <p className={controles.erreur} role="alert">
+              {creerFait.error.message}
             </p>
           )}
         </Modale>

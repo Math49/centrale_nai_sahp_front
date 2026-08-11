@@ -21,6 +21,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check required build configuration
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        run: |
+          if [ -z "$NEXT_PUBLIC_API_URL" ]; then
+            echo "Le secret NEXT_PUBLIC_API_URL est requis pour construire le front."
+            exit 1
+          fi
+
+          node -e "new URL(process.env.NEXT_PUBLIC_API_URL)"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

@@ -4,7 +4,7 @@ import { magasinSession } from '@/auth/session';
 import type { paths } from './contrat';
 
 export const URL_API =
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:40511';
+  process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:40511';
 
 export const api = createClient<paths>({
   baseUrl: URL_API,

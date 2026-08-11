@@ -21,7 +21,7 @@ FROM node:22-alpine AS execution
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3001
+ENV PORT=40510
 ENV HOSTNAME=0.0.0.0
 
 
@@ -31,6 +31,6 @@ COPY --from=construction /app/public ./public
 
 USER node
 
-EXPOSE 3001
+EXPOSE 40510
 
 CMD ["node", "server.js"]

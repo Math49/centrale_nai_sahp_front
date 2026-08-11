@@ -24,7 +24,7 @@ npm install
 npm run dev
 ```
 
-L'interface écoute sur `http://localhost:3001`. Le port n'est pas au hasard :
+L'interface écoute sur `http://localhost:40510`. Le port n'est pas au hasard :
 c'est celui que l'API autorise par défaut dans `CORS_ORIGINES`.
 
 Le premier compte se crée côté back, par la commande d'amorçage :

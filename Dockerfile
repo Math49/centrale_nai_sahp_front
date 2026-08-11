@@ -26,6 +26,11 @@ COPY --from=construction /app/.next/standalone ./
 COPY --from=construction /app/.next/static ./.next/static
 COPY --from=construction /app/public ./public
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+  && touch /app/public/runtime-config.js \
+  && chown node:node /app/public/runtime-config.js
+
 USER node
 
 EXPOSE 40510

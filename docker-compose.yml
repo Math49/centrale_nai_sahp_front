@@ -2,7 +2,7 @@ name: centrale-ni-front
 
 services:
   front:
-    image: ghcr.io/math49/centrale_nai_sahp_front:latest
+    image: ${FRONT_IMAGE:?renseigner FRONT_IMAGE}
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?renseigner NEXT_PUBLIC_API_URL}

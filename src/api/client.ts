@@ -3,8 +3,27 @@ import createClient, { type Middleware } from 'openapi-fetch';
 import { magasinSession } from '@/auth/session';
 import type { paths } from './contrat';
 
-export const URL_API =
-  process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:40511';
+type ConfigurationNavigateur = Window &
+  typeof globalThis & {
+    __CENTRALE_NI_CONFIG__?: {
+      apiUrl?: string;
+    };
+  };
+
+function lireUrlApi(): string {
+  if (typeof window !== 'undefined') {
+    const urlRuntime = (window as ConfigurationNavigateur)
+      .__CENTRALE_NI_CONFIG__?.apiUrl;
+
+    if (urlRuntime?.trim()) {
+      return urlRuntime.trim();
+    }
+  }
+
+  return process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:40511';
+}
+
+export const URL_API = lireUrlApi();
 
 export const api = createClient<paths>({
   baseUrl: URL_API,

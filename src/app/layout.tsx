@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import type { ReactNode } from 'react';
 
 import { Fournisseurs } from '@/fournisseurs';
@@ -17,6 +18,7 @@ export default function RacineLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
       <head>
+        <Script src="/runtime-config.js" strategy="beforeInteractive" />
         <link
           rel="icon"
           type="image/x-icon"

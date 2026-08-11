@@ -72,7 +72,7 @@ export function useConnexion() {
       return data;
     },
     onSuccess: (data) => {
-      magasinSession.ouvrir(data.agent);
+      magasinSession.ouvrir(data.agent, data.jeton);
     },
   });
 }
@@ -93,7 +93,7 @@ export function useChangementMotDePasse() {
       return data;
     },
     onSuccess: (data) => {
-      magasinSession.ouvrir(data.agent);
+      magasinSession.ouvrir(data.agent, data.jeton);
     },
   });
 }

@@ -38,7 +38,7 @@ describe('client API', () => {
     vi.unstubAllGlobals();
   });
 
-  it('joint le cookie de session, sans porter de jeton lui-même', async () => {
+  it('joint le cookie de session sans header quand aucun jeton n’est en memoire', async () => {
     magasinSession.ouvrir(AGENT);
     repondre(200);
 
@@ -48,6 +48,18 @@ describe('client API', () => {
 
     expect(appel.credentials).toBe('include');
     expect(appel.headers.has('Authorization')).toBe(false);
+  });
+
+  it('joint le jeton en memoire quand le cookie navigateur ne suffit pas', async () => {
+    magasinSession.ouvrir(AGENT, 'jeton-en-memoire');
+    repondre(200);
+
+    await api.GET('/agents');
+
+    const appel = vi.mocked(fetch).mock.calls[0][0] as Request;
+
+    expect(appel.credentials).toBe('include');
+    expect(appel.headers.get('Authorization')).toBe('Bearer jeton-en-memoire');
   });
 
   describe('expiration', () => {

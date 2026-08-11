@@ -75,10 +75,11 @@ describe('magasinSession', () => {
     expect(prevenir).not.toHaveBeenCalled();
   });
 
-  it('ne détient aucun jeton, ni en mémoire ni dans le navigateur', () => {
-    magasinSession.ouvrir(AGENT);
+  it('ne met jamais le jeton dans l’etat expose ni dans le navigateur', () => {
+    magasinSession.ouvrir(AGENT, 'jeton-en-memoire');
 
     expect(JSON.stringify(magasinSession.lire())).not.toMatch(/jeton/i);
+    expect(magasinSession.lireJeton()).toBe('jeton-en-memoire');
     expect(window.localStorage.length).toBe(0);
     expect(window.sessionStorage.length).toBe(0);
     expect(document.cookie).toBe('');

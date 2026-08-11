@@ -33,6 +33,21 @@ export const api = createClient<paths>({
   fetch: (requete) => globalThis.fetch(requete),
 });
 
+const authentificationEnMemoire: Middleware = {
+  onRequest({ request }) {
+    const jeton = magasinSession.lireJeton();
+
+    if (!jeton) {
+      return request;
+    }
+
+    const headers = new Headers(request.headers);
+    headers.set('Authorization', `Bearer ${jeton}`);
+
+    return new Request(request, { headers });
+  },
+};
+
 function estUneRouteDAuthentification(url: string): boolean {
   return new URL(url).pathname.startsWith('/auth/');
 }
@@ -47,4 +62,5 @@ const fermetureSurExpiration: Middleware = {
   },
 };
 
+api.use(authentificationEnMemoire);
 api.use(fermetureSurExpiration);

@@ -13,6 +13,8 @@ const VIDE: EtatSession = { agent: null, raisonFermeture: null };
 
 let etat: EtatSession = VIDE;
 
+let jeton: string | null = null;
+
 let pret = false;
 
 const abonnes = new Set<() => void>();
@@ -24,6 +26,8 @@ function publier(nouvel: EtatSession): void {
 
 export const magasinSession = {
   lire: (): EtatSession => etat,
+
+  lireJeton: (): string | null => jeton,
 
   estPrete: (): boolean => pret,
 
@@ -37,8 +41,13 @@ export const magasinSession = {
     abonnes.forEach((prevenir) => prevenir());
   },
 
-  ouvrir(agent: AgentConnecte): void {
+  ouvrir(agent: AgentConnecte, nouveauJeton?: string): void {
     pret = true;
+
+    if (nouveauJeton) {
+      jeton = nouveauJeton;
+    }
+
     publier({ agent, raisonFermeture: null });
   },
 
@@ -48,6 +57,7 @@ export const magasinSession = {
 
   fermer(raison: RaisonFermeture): void {
     pret = true;
+    jeton = null;
 
     if (!etat.agent) {
       return;

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import {
   LIBELLES_TYPES_DONNEES,
   useCreerChamp,
+  useModifierChamp,
   useModifierTypeEntite,
   useOrdonnerChamps,
   useSupprimerChamp,
@@ -42,6 +43,7 @@ export function PanneauType({
   const modifier = useModifierTypeEntite();
   const supprimerType = useSupprimerTypeEntite();
   const creerChamp = useCreerChamp();
+  const modifierChamp = useModifierChamp();
   const supprimerChamp = useSupprimerChamp();
   const ordonner = useOrdonnerChamps();
 
@@ -53,6 +55,16 @@ export function PanneauType({
   });
 
   const [nouveau, definirNouveau] = useState(CHAMP_VIERGE);
+  const [aModifier, definirAModifier] = useState<{
+    id: string;
+    cle: string;
+    typeDonnee: TypeDonnee;
+    libelle: string;
+    obligatoire: boolean;
+    estUnique: boolean;
+    multiple: boolean;
+    options: string;
+  } | null>(null);
   const [aSupprimer, definirASupprimer] = useState<DefinitionChamp | null>(
     null,
   );
@@ -66,6 +78,7 @@ export function PanneauType({
       modeleLibelle: type.modeleLibelle,
     });
     definirNouveau(CHAMP_VIERGE);
+    definirAModifier(null);
   }, [
     type.id,
     type.libelle,
@@ -185,13 +198,33 @@ export function PanneauType({
                     <span className={styles.marqueur}>multiple</span>
                   )}
                 </span>
-                <button
-                  type="button"
-                  className={styles.retirer}
-                  onClick={() => definirASupprimer(champ)}
-                >
-                  Retirer
-                </button>
+                <div className={styles.actionsLigne}>
+                  <button
+                    type="button"
+                    className={styles.retirer}
+                    onClick={() =>
+                      definirAModifier({
+                        id: champ.id,
+                        cle: champ.cle,
+                        typeDonnee: champ.typeDonnee,
+                        libelle: champ.libelle,
+                        obligatoire: champ.obligatoire,
+                        estUnique: champ.estUnique,
+                        multiple: champ.multiple,
+                        options: (champ.options ?? []).join(', '),
+                      })
+                    }
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.retirer}
+                    onClick={() => definirASupprimer(champ)}
+                  >
+                    Retirer
+                  </button>
+                </div>
               </div>
             )}
           />
@@ -320,6 +353,123 @@ export function PanneauType({
           </button>
         </form>
       </div>
+
+      {aModifier && (
+        <Modale
+          titre={`Modifier le champ Â« ${aModifier.cle} Â»`}
+          enCours={modifierChamp.isPending}
+          libelleConfirmation="Enregistrer"
+          confirmationBloquee={
+            aModifier.libelle.trim().length === 0 ||
+            (aModifier.typeDonnee === 'liste' &&
+              aModifier.options
+                .split(',')
+                .map((valeur) => valeur.trim())
+                .filter((valeur) => valeur.length > 0).length === 0)
+          }
+          onAnnuler={() => definirAModifier(null)}
+          onConfirmer={() =>
+            modifierChamp.mutate(
+              {
+                id: aModifier.id,
+                libelle: aModifier.libelle.trim(),
+                obligatoire: aModifier.obligatoire,
+                estUnique: aModifier.estUnique,
+                multiple: aModifier.multiple,
+                ...(aModifier.typeDonnee === 'liste'
+                  ? {
+                      options: aModifier.options
+                        .split(',')
+                        .map((valeur) => valeur.trim())
+                        .filter((valeur) => valeur.length > 0),
+                    }
+                  : {}),
+              },
+              { onSuccess: () => definirAModifier(null) },
+            )
+          }
+        >
+          <div className={styles.grilleChamps}>
+            <ChampTexte
+              etiquette="LibellÃ©"
+              valeur={aModifier.libelle}
+              onChange={(libelle) =>
+                definirAModifier({ ...aModifier, libelle })
+              }
+            />
+            <label className={controles.groupe}>
+              <span className={controles.etiquette}>Type de donnÃ©e</span>
+              <input
+                className={controles.champ}
+                value={LIBELLES_TYPES_DONNEES[aModifier.typeDonnee]}
+                disabled
+              />
+            </label>
+          </div>
+
+          {aModifier.typeDonnee === 'liste' && (
+            <label className={controles.groupe}>
+              <span className={controles.etiquette}>Valeurs autorisÃ©es</span>
+              <input
+                className={controles.champ}
+                value={aModifier.options}
+                onChange={(evenement) =>
+                  definirAModifier({
+                    ...aModifier,
+                    options: evenement.target.value,
+                  })
+                }
+                placeholder="gris, noir, blanc"
+                required
+              />
+              <span className={controles.remarque}>
+                sÃ©parÃ©es par des virgules
+              </span>
+            </label>
+          )}
+
+          <div className={styles.actionsLigne}>
+            <Bascule
+              libelle="obligatoire"
+              actif={aModifier.obligatoire}
+              onChange={(obligatoire) =>
+                definirAModifier({ ...aModifier, obligatoire })
+              }
+            />
+            <Bascule
+              libelle="unique"
+              actif={aModifier.estUnique}
+              onChange={(estUnique) =>
+                definirAModifier({
+                  ...aModifier,
+                  estUnique,
+                  multiple: false,
+                })
+              }
+            />
+            <Bascule
+              libelle="multiple"
+              actif={aModifier.multiple}
+              onChange={(multiple) =>
+                definirAModifier({
+                  ...aModifier,
+                  multiple,
+                  estUnique: false,
+                })
+              }
+            />
+          </div>
+
+          <p className={controles.remarque}>
+            La cle et le type de donnee restent fixes pour conserver les faits
+            deja saisis.
+          </p>
+
+          {modifierChamp.isError && (
+            <p className={controles.erreur}>{modifierChamp.error.message}</p>
+          )}
+        </Modale>
+      )}
 
       {aSupprimer && (
         <Modale

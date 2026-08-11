@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import {
   useCreerTypeLien,
+  useModifierTypeLien,
   useReferentiel,
   useSupprimerTypeLien,
   type TypeLien,
@@ -36,9 +37,17 @@ export default function PageTypesLiens() {
 function Atelier() {
   const referentiel = useReferentiel();
   const creer = useCreerTypeLien();
+  const modifier = useModifierTypeLien();
   const supprimer = useSupprimerTypeLien();
 
   const [nouveau, definirNouveau] = useState(VIERGE);
+  const [aModifier, definirAModifier] = useState<{
+    id: string;
+    code: string;
+    libelle: string;
+    libelleInverse: string;
+    multiple: boolean;
+  } | null>(null);
   const [aSupprimer, definirASupprimer] = useState<TypeLien | null>(null);
 
   const types = referentiel.data?.typesEntites ?? [];
@@ -86,13 +95,30 @@ function Atelier() {
                       {!lien.multiple && ' · unique'}
                     </td>
                     <td>
-                      <button
-                        type="button"
-                        className={styles.retirer}
-                        onClick={() => definirASupprimer(lien)}
-                      >
-                        Retirer
-                      </button>
+                      <div className={styles.actionsLigne}>
+                        <button
+                          type="button"
+                          className={styles.retirer}
+                          onClick={() =>
+                            definirAModifier({
+                              id: lien.id,
+                              code: lien.code,
+                              libelle: lien.libelle,
+                              libelleInverse: lien.libelleInverse,
+                              multiple: lien.multiple,
+                            })
+                          }
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.retirer}
+                          onClick={() => definirASupprimer(lien)}
+                        >
+                          Retirer
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -205,6 +231,71 @@ function Atelier() {
           </button>
         </form>
       </div>
+
+      {aModifier && (
+        <Modale
+          titre={`Modifier Â« ${aModifier.code} Â»`}
+          enCours={modifier.isPending}
+          libelleConfirmation="Enregistrer"
+          confirmationBloquee={
+            aModifier.libelle.trim().length === 0 ||
+            aModifier.libelleInverse.trim().length === 0
+          }
+          onAnnuler={() => definirAModifier(null)}
+          onConfirmer={() =>
+            modifier.mutate(
+              {
+                id: aModifier.id,
+                libelle: aModifier.libelle.trim(),
+                libelleInverse: aModifier.libelleInverse.trim(),
+                multiple: aModifier.multiple,
+              },
+              { onSuccess: () => definirAModifier(null) },
+            )
+          }
+        >
+          <div className={styles.grilleChamps}>
+            <ChampTexte
+              etiquette="LibellÃ©"
+              valeur={aModifier.libelle}
+              onChange={(libelle) =>
+                definirAModifier({ ...aModifier, libelle })
+              }
+            />
+            <ChampTexte
+              etiquette="LibellÃ© inverse"
+              valeur={aModifier.libelleInverse}
+              onChange={(libelleInverse) =>
+                definirAModifier({ ...aModifier, libelleInverse })
+              }
+            />
+          </div>
+
+          <label className={styles.marqueur} style={{ cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={aModifier.multiple}
+              onChange={(evenement) =>
+                definirAModifier({
+                  ...aModifier,
+                  multiple: evenement.target.checked,
+                })
+              }
+              style={{ marginRight: 6 }}
+            />
+            plusieurs cibles possibles
+          </label>
+
+          <p className={controles.remarque}>
+            Le code et le domaine ne se modifient pas ici : des faits peuvent
+            deja s&apos;appuyer dessus.
+          </p>
+
+          {modifier.isError && (
+            <p className={controles.erreur}>{modifier.error.message}</p>
+          )}
+        </Modale>
+      )}
 
       {aSupprimer && (
         <Modale

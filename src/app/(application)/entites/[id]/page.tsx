@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from 'react';
 
 import {
   useArchiverEntite,
+  useCreerFait,
   useEntite,
   useHistorique,
   useModifierEntite,
@@ -60,17 +61,21 @@ function Fiche() {
   const fiche = useEntite(id);
   const modifier = useModifierEntite();
   const modifierFait = useModifierFait();
+  const creerFait = useCreerFait();
   const archiver = useArchiverEntite();
 
   const [ongletActif, definirOngletActif] = useState<string | null>(null);
   const [note, definirNote] = useState<string | null>(null);
   const [visibilite, definirVisibilite] = useState<string | null>(null);
   const [editionChamp, definirEditionChamp] = useState<{
-    faitId: string;
+    faitId?: string;
     champ: ChampDeFiche;
     definition: DefinitionChamp;
     valeur: unknown;
+    source: string;
     fiabilite: number;
+    dateConstatation: string;
+    visibilite: (typeof VISIBILITES)[number];
   } | null>(null);
   const [confirmation, definirConfirmation] = useState(false);
 
@@ -81,6 +86,8 @@ function Fiche() {
     agent?.superAdmin || agent?.permissions.includes('fait.infirmer') || false;
   const peutModifierFait =
     agent?.superAdmin || agent?.permissions.includes('fait.modifier') || false;
+  const peutCreerFait =
+    agent?.superAdmin || agent?.permissions.includes('fait.creer') || false;
   const peutFusionner =
     agent?.superAdmin || agent?.permissions.includes('entite.fusionner');
   const peutDeposer =
@@ -212,10 +219,11 @@ function Fiche() {
             const definition = type?.champs.find(
               (candidat) => candidat.id === champ.definitionChampId,
             );
+            const fait = champ.faits[0];
             const peutModifierChamp =
-              peutModifierFait &&
               definition !== undefined &&
-              champ.faits[0] !== undefined;
+              ((fait !== undefined && peutModifierFait) ||
+                (fait === undefined && peutCreerFait));
 
             return (
               <LigneChamp
@@ -224,18 +232,21 @@ function Fiche() {
                 peutInfirmer={peutInfirmer}
                 peutModifier={peutModifierChamp}
                 onModifier={() => {
-                  const fait = champ.faits[0];
-
-                  if (!definition || !fait) {
+                  if (!definition) {
                     return;
                   }
 
                   definirEditionChamp({
-                    faitId: fait.id,
+                    faitId: fait?.id,
                     champ,
                     definition,
-                    valeur: fait.valeur,
-                    fiabilite: fait.fiabilite,
+                    valeur: fait?.valeur,
+                    source: fait?.source ?? '',
+                    fiabilite: fait?.fiabilite ?? 3,
+                    dateConstatation:
+                      fait?.dateConstatation.slice(0, 10) ??
+                      new Date().toISOString().slice(0, 10),
+                    visibilite: fait?.visibilite ?? entite.visibilite,
                   });
                 }}
               />
@@ -383,25 +394,53 @@ function Fiche() {
 
       {editionChamp && (
         <Modale
-          titre={`Modifier « ${editionChamp.champ.libelle} »`}
+          titre={`${editionChamp.faitId ? 'Modifier' : 'Renseigner'} "${editionChamp.champ.libelle}"`}
           libelleConfirmation="Enregistrer"
-          enCours={modifierFait.isPending}
+          enCours={modifierFait.isPending || creerFait.isPending}
+          confirmationBloquee={
+            editionChamp.source.trim().length === 0 ||
+            editionChamp.valeur === null ||
+            editionChamp.valeur === undefined ||
+            editionChamp.valeur === ''
+          }
           onAnnuler={() => definirEditionChamp(null)}
-          onConfirmer={() =>
-            modifierFait.mutate(
-              {
-                id: editionChamp.faitId,
+          onConfirmer={() => {
+            const valeur = editionChamp.valeur as string | number | boolean;
 
-                valeur: editionChamp.valeur as string | number | boolean,
+            if (editionChamp.faitId) {
+              modifierFait.mutate(
+                {
+                  id: editionChamp.faitId,
+                  valeur,
+                  source: editionChamp.source.trim(),
+                  fiabilite: editionChamp.fiabilite,
+                  dateConstatation: editionChamp.dateConstatation,
+                  visibilite: editionChamp.visibilite,
+                },
+                { onSuccess: () => definirEditionChamp(null) },
+              );
+              return;
+            }
+
+            creerFait.mutate(
+              {
+                sujetId: id,
+                nature: 'champ',
+                definitionChampId: editionChamp.definition.id,
+                valeur,
+                source: editionChamp.source.trim(),
                 fiabilite: editionChamp.fiabilite,
+                dateConstatation: editionChamp.dateConstatation,
+                visibilite: editionChamp.visibilite,
               },
               { onSuccess: () => definirEditionChamp(null) },
-            )
-          }
+            );
+          }}
         >
           <p className={controles.remarque}>
-            La valeur affichée changera à partir du fait sélectionné. Les autres
-            sources restent intactes.
+            {editionChamp.faitId
+              ? 'La valeur affichee changera a partir du fait selectionne. Les autres sources restent intactes.'
+              : 'Un fait source sera ajoute a cette fiche pour renseigner le champ.'}
           </p>
 
           <ChampDynamique
@@ -413,7 +452,22 @@ function Fiche() {
           />
 
           <label className={controles.groupe}>
-            <span className={controles.etiquette}>Fiabilité</span>
+            <span className={controles.etiquette}>Source</span>
+            <input
+              className={controles.champ}
+              value={editionChamp.source}
+              onChange={(evenement) =>
+                definirEditionChamp({
+                  ...editionChamp,
+                  source: evenement.target.value,
+                })
+              }
+              placeholder="Observation, renseignement, dossier..."
+            />
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Fiabilite</span>
             <select
               className={controles.champ}
               value={editionChamp.fiabilite}
@@ -426,15 +480,51 @@ function Fiche() {
             >
               {FIABILITES.map((niveau) => (
                 <option key={niveau} value={niveau}>
-                  {niveau} — {NIVEAUX_FIABILITE[niveau]}
+                  {niveau} - {NIVEAUX_FIABILITE[niveau]}
                 </option>
               ))}
             </select>
           </label>
 
-          {modifierFait.isError && (
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Date de constatation</span>
+            <input
+              className={controles.champMono}
+              type="date"
+              value={editionChamp.dateConstatation}
+              onChange={(evenement) =>
+                definirEditionChamp({
+                  ...editionChamp,
+                  dateConstatation: evenement.target.value,
+                })
+              }
+            />
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Visibilite</span>
+            <select
+              className={controles.champ}
+              value={editionChamp.visibilite}
+              onChange={(evenement) =>
+                definirEditionChamp({
+                  ...editionChamp,
+                  visibilite: evenement.target
+                    .value as (typeof VISIBILITES)[number],
+                })
+              }
+            >
+              {VISIBILITES.map((niveau) => (
+                <option key={niveau} value={niveau}>
+                  {LIBELLES_VISIBILITE[niveau]}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {(modifierFait.isError || creerFait.isError) && (
             <p className={controles.erreur} role="alert">
-              {modifierFait.error.message}
+              {modifierFait.error?.message ?? creerFait.error?.message}
             </p>
           )}
         </Modale>
@@ -520,13 +610,13 @@ function LigneChamp({
           />
         )}
 
-        {peutModifier && meilleur && (
+        {peutModifier && (
           <button
             type="button"
             className={controles.boutonDiscret}
             onClick={onModifier}
           >
-            Modifier
+            {meilleur ? 'Modifier' : 'Renseigner'}
           </button>
         )}
       </dd>

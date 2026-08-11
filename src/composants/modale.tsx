@@ -11,6 +11,10 @@ import styles from './modale.module.css';
  * Invariant : toute création, modification ou archivage passe par une
  * confirmation explicite. La variante récapitulative rappelle les effets et
  * l'irréversibilité ; la variante simple se contente d'une question courte.
+ *
+ * `sansAnnulation` retire la sortie par le voile, par la touche d'échappement
+ * et par le bouton discret. Réservé à ce qui ne s'affiche qu'une fois : un
+ * clic à côté ne doit pas faire perdre un secret irrécupérable.
  */
 export function Modale({
   titre,
@@ -18,6 +22,8 @@ export function Modale({
   libelleConfirmation = 'Confirmer',
   irreversible = false,
   enCours = false,
+  sansAnnulation = false,
+  confirmationBloquee = false,
   onConfirmer,
   onAnnuler,
 }: {
@@ -26,10 +32,21 @@ export function Modale({
   libelleConfirmation?: string;
   irreversible?: boolean;
   enCours?: boolean;
+  sansAnnulation?: boolean;
+  /**
+   * Confirmation encore fermée — le corps de la modale porte une condition que
+   * l'agent n'a pas remplie. Un bouton grisé le dit ; un bouton actif qui ne
+   * ferait rien laisserait croire à une panne.
+   */
+  confirmationBloquee?: boolean;
   onConfirmer: () => void;
   onAnnuler: () => void;
 }) {
   useEffect(() => {
+    if (sansAnnulation) {
+      return;
+    }
+
     const auClavier = (evenement: KeyboardEvent): void => {
       if (evenement.key === 'Escape') {
         onAnnuler();
@@ -38,10 +55,13 @@ export function Modale({
 
     document.addEventListener('keydown', auClavier);
     return () => document.removeEventListener('keydown', auClavier);
-  }, [onAnnuler]);
+  }, [onAnnuler, sansAnnulation]);
 
   return (
-    <div className={styles.voile} onClick={onAnnuler}>
+    <div
+      className={styles.voile}
+      onClick={sansAnnulation ? undefined : onAnnuler}
+    >
       <div
         className={styles.boite}
         role="dialog"
@@ -58,19 +78,21 @@ export function Modale({
         )}
 
         <div className={styles.actions}>
-          <button
-            type="button"
-            className={controles.boutonDiscret}
-            onClick={onAnnuler}
-            disabled={enCours}
-          >
-            Annuler
-          </button>
+          {!sansAnnulation && (
+            <button
+              type="button"
+              className={controles.boutonDiscret}
+              onClick={onAnnuler}
+              disabled={enCours}
+            >
+              Annuler
+            </button>
+          )}
           <button
             type="button"
             className={controles.bouton}
             onClick={onConfirmer}
-            disabled={enCours}
+            disabled={enCours || confirmationBloquee}
             autoFocus
           >
             {enCours ? 'En cours…' : libelleConfirmation}

@@ -3,10 +3,21 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { EcranChargement } from '@/composants/chargement';
 import { Logo } from '@/composants/logo';
 import controles from '@/composants/controles.module.css';
 import { useConnexion, useSession } from '@/auth/use-session';
 import styles from './page.module.css';
+
+/**
+ * Temps d'accueil après une session ouverte.
+ *
+ * Il ne masque aucun calcul : l'API a déjà répondu. C'est une entrée en
+ * matière, tenue ici plutôt que sur la page d'arrivée pour que celle-ci
+ * s'affiche déjà peuplée — la faire attendre à son tour ferait deux attentes
+ * là où l'agent n'en comprendrait qu'une.
+ */
+const DUREE_ACCUEIL = 1000;
 
 export default function PageConnexion() {
   const router = useRouter();
@@ -15,20 +26,31 @@ export default function PageConnexion() {
 
   const [matricule, definirMatricule] = useState('');
   const [motDePasse, definirMotDePasse] = useState('');
+  const [accueil, definirAccueil] = useState(false);
 
   useEffect(() => {
     if (!agent) {
       return;
     }
 
-    router.replace(agent.doitChangerMdp ? '/mot-de-passe' : '/');
+    definirAccueil(true);
+
+    const minuteur = window.setTimeout(() => {
+      router.replace(agent.doitChangerMdp ? '/mot-de-passe' : '/');
+    }, DUREE_ACCUEIL);
+
+    return () => window.clearTimeout(minuteur);
   }, [agent, router]);
+
+  if (accueil) {
+    return <EcranChargement />;
+  }
 
   return (
     <div className={styles.page}>
       <div className={styles.carte}>
         <div className={styles.entete}>
-          <Logo taille={40} />
+          <Logo taille={70} />
           <div>
             <h1 className={styles.titre}>
               Centrale <span className={styles.sigle}>N&amp;I</span>

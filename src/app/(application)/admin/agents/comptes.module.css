@@ -1,0 +1,122 @@
+.liste {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.identite {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.nom {
+  font-size: 0.88rem;
+  color: var(--texte);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grade {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}
+
+.matricule {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}
+
+/* Un compte fermé ou anonymisé reste lisible, mais cesse de se présenter
+   comme les autres : l'écart est visible sans qu'aucune couleur soit dépensée. */
+.eteinte .nom,
+.eteinte .grade {
+  color: var(--texte-faible);
+  text-decoration: line-through;
+  text-decoration-color: var(--bordure-forte);
+}
+
+.filtres {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bascule {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--texte-attenue);
+  cursor: pointer;
+}
+
+.entete {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.titreCompte {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.etats {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid var(--bordure);
+}
+
+.dangereux {
+  margin-left: auto;
+}
+
+/* Le mot de passe provisoire n'est montré qu'une fois : il occupe donc toute
+   la place que mérite quelque chose qu'on ne pourra pas relire. */
+.secret {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--fond);
+  border: 1px dashed var(--bordure-forte);
+  border-radius: var(--rayon);
+}
+
+.secretValeur {
+  font-family: var(--police-mono);
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  color: var(--texte);
+  user-select: all;
+}
+
+.confirmationSaisie {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

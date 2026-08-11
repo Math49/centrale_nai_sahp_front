@@ -120,7 +120,9 @@ function Fiche() {
     );
   }
 
-  if (!fiche.data) {
+  // Le garde porte sur `entite` et non sur `fiche.data` : TypeScript ne
+  // rétrécit pas un alias depuis une vérification faite sur sa source.
+  if (!entite) {
     return <p className={controles.remarque}>Chargement…</p>;
   }
 
@@ -394,7 +396,10 @@ function Fiche() {
             modifierFait.mutate(
               {
                 id: editionChamp.faitId,
-                valeur: editionChamp.valeur,
+                // Un fait de champ porte toujours un scalaire ; seule la
+                // *projection* d'un champ multiple est un tableau, et elle ne
+                // se corrige pas — ce sont les faits qui la composent.
+                valeur: editionChamp.valeur as string | number | boolean,
                 fiabilite: editionChamp.fiabilite,
               },
               { onSuccess: () => definirEditionChamp(null) },

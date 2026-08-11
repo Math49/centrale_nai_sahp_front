@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
 
+import { EcranChargement } from '@/composants/chargement';
 import { useSession, useSessionPrete } from './use-session';
 
 /**
@@ -36,8 +37,12 @@ export function GardeSession({ children }: { children: ReactNode }) {
     }
   }, [prete, agent, router]);
 
+  // Trois attentes, un seul écran : la question posée à l'API, la redirection
+  // vers la connexion, celle vers le changement imposé. Un blanc laisserait
+  // croire à une page cassée pendant le temps — court, mais réel — où le front
+  // ne sait pas encore s'il a une session.
   if (!prete || !agent || agent.doitChangerMdp) {
-    return null;
+    return <EcranChargement />;
   }
 
   return <>{children}</>;

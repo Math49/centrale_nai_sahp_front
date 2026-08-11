@@ -32,6 +32,16 @@ const RUBRIQUES: Rubrique[] = [
     superAdminSeul: true,
   },
   {
+    libelle: 'Comptes agents',
+    chemin: '/admin/agents',
+    permissions: ['agent.gerer'],
+  },
+  {
+    libelle: 'Rôles et permissions',
+    chemin: '/admin/roles',
+    permissions: ['role.gerer'],
+  },
+  {
     libelle: 'Journaux',
     chemin: '/admin/journal',
     permissions: ['journal.consulter'],

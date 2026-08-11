@@ -575,18 +575,23 @@ export function Toile({
         };
       });
 
-      arreter = animer(graphe, arrivee, { duration: 600, easing: 'quadraticInOut' }, () => {
-        sigma.getCamera().animatedReset({ duration: 400 });
-        rappels.current.surOrganisation?.(false);
+      arreter = animer(
+        graphe,
+        arrivee,
+        { duration: 600, easing: 'quadraticInOut' },
+        () => {
+          sigma.getCamera().animatedReset({ duration: 400 });
+          rappels.current.surOrganisation?.(false);
 
-        rappels.current.surDeplacement?.(
-          Object.entries(arrivee).map(([entiteId, position]) => ({
-            entiteId,
-            x: position.x,
-            y: position.y,
-          })),
-        );
-      });
+          rappels.current.surDeplacement?.(
+            Object.entries(arrivee).map(([entiteId, position]) => ({
+              entiteId,
+              x: position.x,
+              y: position.y,
+            })),
+          );
+        },
+      );
     }, 40);
 
     return () => {

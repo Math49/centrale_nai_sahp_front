@@ -15,6 +15,9 @@ export const metadata: Metadata = {
 export default function RacineLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
+      <head>
+        <link rel="icon" type="image/x-icon" href="/images/logos/logo_nai.png" />
+      </head>
       <body>
         <Fournisseurs>{children}</Fournisseurs>
       </body>

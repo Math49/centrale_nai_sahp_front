@@ -235,8 +235,9 @@ function Explorateur() {
       <p className={styles.aide}>
         Clic sur un nœud : recentre et met son voisinage au point · Double-clic
         : ouvre la fiche à droite · Glisser : déplace le nœud · Clic dans le
-        vide : relâche · Filtrer par nom montre la donnée trouvée et tout ce qui
-        s’y rattache, de proche en proche
+        vide : relâche · Réorganiser recalcule toute la disposition, en écartant
+        les grappes pour qu’elles se distinguent · Filtrer par nom montre la
+        donnée trouvée et tout ce qui s’y rattache, de proche en proche
         {peutRepositionner
           ? ' · La position déposée est enregistrée pour tout le service'
           : ' · Vos déplacements ne sont pas enregistrés — la disposition partagée relève d’une permission'}

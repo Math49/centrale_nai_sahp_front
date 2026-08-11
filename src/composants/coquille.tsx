@@ -73,7 +73,7 @@ export function Coquille({ children }: { children: ReactNode }) {
       <aside className={styles.laterale}>
         <Link href="/" className={styles.marque}>
           <span className={styles.badge}>
-            <Logo taille={30} />
+            <Logo taille={40} />
           </span>
           <span className={styles.identite}>
             <span className={styles.nom}>

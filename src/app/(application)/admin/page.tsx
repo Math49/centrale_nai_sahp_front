@@ -49,6 +49,7 @@ const RUBRIQUES: Rubrique[] = [
       'Jeu de permissions de chaque grade, entièrement configurable.',
     lot: 'Lot 1',
     permissions: ['role.gerer'],
+    chemin: '/admin/roles',
   },
   {
     libelle: 'Comptes agents',
@@ -56,6 +57,7 @@ const RUBRIQUES: Rubrique[] = [
       "Création, modification, anonymisation. Pas d'inscription libre.",
     lot: 'Lot 1',
     permissions: ['agent.gerer'],
+    chemin: '/admin/agents',
   },
   {
     libelle: 'Journaux',

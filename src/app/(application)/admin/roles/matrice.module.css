@@ -1,0 +1,95 @@
+.defilement {
+  overflow-x: auto;
+}
+
+.matrice {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.matrice th,
+.matrice td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--bordure);
+}
+
+/* La colonne des gestes reste lisible quand la matrice défile : sans elle, on
+   coche une case sans savoir ce qu'elle autorise. */
+.geste {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  text-align: left;
+  min-width: 260px;
+}
+
+.libelleGeste {
+  display: block;
+  color: var(--texte);
+}
+
+.codeGeste {
+  display: block;
+  font-family: var(--police-mono);
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+}
+
+.colonneGrade {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+  white-space: nowrap;
+}
+
+.colonneGrade[data-modifie='true'] {
+  color: var(--accent-vif);
+}
+
+.cellule {
+  text-align: center;
+}
+
+.cellule input {
+  cursor: pointer;
+}
+
+.famille td {
+  padding-top: 16px;
+  border-bottom: none;
+}
+
+.familleTitre {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}
+
+/* Barre d'enregistrement, en bas et collante : la matrice est longue, et
+   remonter pour valider ferait perdre la ligne qu'on vient de cocher. */
+.barre {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--accent-bordure);
+  border-radius: var(--rayon-large);
+}
+
+.decompte {
+  font-size: 0.85rem;
+  color: var(--texte-attenue);
+  margin-right: auto;
+}

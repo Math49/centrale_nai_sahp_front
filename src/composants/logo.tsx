@@ -1,104 +1,49 @@
+import Image from 'next/image';
+import type { CSSProperties } from 'react';
+
+import styles from './logo.module.css';
+
+/** Badge officiel de l'unité, tel que fourni. */
+const SOURCE = '/images/logos/logo_nai.png';
+
+/** Rapport largeur/hauteur du fichier, 482 × 454. */
+const RATIO = 482 / 454;
+
 /**
- * Badge SAHP Narcotics — étoile à sept branches.
+ * Badge SAHP Narcotics.
  *
- * Redessiné plutôt que repris du sceau officiel : à la taille où il sert —
- * trente pixels dans la barre latérale — la gravure du sceau de l'État serait
- * une bouillie. Un mark vectoriel reste lisible à toutes les tailles.
+ * Le sceau est **posé sur une plaque claire**, et ce n'est pas une coquetterie :
+ * près des deux tiers de ses pixels opaques sont sous une luminance de 70,
+ * c'est-à-dire noirs. Sur une interface dont le fond est `#08090b`, l'étoile
+ * disparaîtrait et il ne resterait que le disque gravé — un badge réduit à son
+ * trou. La plaque rend la silhouette, qui *est* la marque.
  *
- * **Monochrome, et volontairement** : le logo est la seule marque d'identité,
- * et la couleur de l'interface est réservée à la fiabilité et à la visibilité.
- *
- * `detail` fait apparaître l'anneau gravé et le matricule d'unité — à réserver
- * aux grandes tailles, écran de connexion notamment.
+ * `taille` désigne la plaque, pas le sceau : c'est elle qui occupe la place
+ * dans la mise en page, et raisonner sur le contenu ferait sauter les alignements
+ * à chaque changement de fourrure.
  */
+export function Logo({ taille = 28 }: { taille?: number }) {
+  const marge = Math.max(2, Math.round(taille * 0.11));
+  const largeur = taille - marge * 2;
+  const hauteur = Math.round(largeur / RATIO);
 
-/** Sommets d'une étoile à sept branches, rayon externe 50, interne 21. */
-function pointesEtoile(externe: number, interne: number): string {
-  const sommets: string[] = [];
-
-  for (let index = 0; index < 14; index += 1) {
-    // On part vers le haut : -90°, puis un sommet tous les 1/14e de tour.
-    const angle = (Math.PI * 2 * index) / 14 - Math.PI / 2;
-    const rayon = index % 2 === 0 ? externe : interne;
-
-    sommets.push(
-      `${(50 + rayon * Math.cos(angle)).toFixed(2)},${(50 + rayon * Math.sin(angle)).toFixed(2)}`,
-    );
-  }
-
-  return sommets.join(' ');
-}
-
-const ETOILE = pointesEtoile(49, 22);
-
-export function Logo({
-  taille = 28,
-  detail = false,
-}: {
-  taille?: number;
-  detail?: boolean;
-}) {
   return (
-    <svg
-      width={taille}
-      height={taille}
-      viewBox="0 0 100 100"
-      role="img"
-      aria-label="Centrale N&I — SAHP Narcotics"
+    <span
+      className={styles.plaque}
+      style={
+        {
+          '--taille': `${taille}px`,
+          '--marge': `${marge}px`,
+        } as CSSProperties
+      }
     >
-      <defs>
-        {/* Le disque central est évidé de l'étoile : l'anneau reste net même
-            quand le mark est posé sur une surface claire. */}
-        <mask id="coeur-badge">
-          <rect width="100" height="100" fill="white" />
-          <circle cx="50" cy="50" r="21" fill="black" />
-        </mask>
-      </defs>
-
-      <polygon
-        points={ETOILE}
-        fill="currentColor"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinejoin="round"
-        mask="url(#coeur-badge)"
-        opacity="0.92"
+      <Image
+        src={SOURCE}
+        alt="Centrale N&I — SAHP Narcotics"
+        width={largeur}
+        height={hauteur}
+        priority
       />
-
-      <circle
-        cx="50"
-        cy="50"
-        r="24.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-      />
-
-      {detail && (
-        <>
-          <circle
-            cx="50"
-            cy="50"
-            r="18"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            opacity="0.55"
-          />
-          <text
-            x="50"
-            y="55.5"
-            textAnchor="middle"
-            fontSize="15"
-            fontWeight="600"
-            fontFamily="var(--police-mono)"
-            fill="currentColor"
-            letterSpacing="0.5"
-          >
-            091
-          </text>
-        </>
-      )}
-    </svg>
+    </span>
   );
 }

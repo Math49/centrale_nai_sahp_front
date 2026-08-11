@@ -27,15 +27,16 @@
   border-bottom: 1px solid var(--border);
 }
 
+/* Le badge est une image, non plus un tracé : il ne se colore pas au survol.
+   La marque répond par un très léger relief, qui se voit sans se remarquer. */
 .badge {
   display: flex;
   flex-shrink: 0;
-  color: var(--text-secondary);
-  transition: color var(--transition);
+  transition: transform var(--transition);
 }
 
 .marque:hover .badge {
-  color: var(--text-primary);
+  transform: scale(1.04);
 }
 
 .identite {

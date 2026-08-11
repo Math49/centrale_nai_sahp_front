@@ -40,7 +40,7 @@ export default function PageMotDePasse() {
     <div className={styles.page}>
       <div className={styles.carte}>
         <div className={styles.entete}>
-          <Logo taille={32} />
+          <Logo taille={40} />
           <h1 className={styles.titre}>Changement de mot de passe</h1>
         </div>
 

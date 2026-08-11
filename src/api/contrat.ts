@@ -874,11 +874,7 @@ export interface paths {
          * @description Le type est vérifié **sur le contenu** et non sur l’extension, la taille est plafonnée, et les métadonnées — EXIF, GPS, commentaires — sont retirées sans réencoder l’image.
          */
         post: operations["FichiersController_deposer"];
-        /**
-         * Suppression d’une image
-         * @description L’image disparaît du volume et de la base, sauf si un fait l’utilise encore.
-         */
-        delete: operations["FichiersController_supprimer"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -898,7 +894,11 @@ export interface paths {
         get: operations["FichiersController_telecharger"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Suppression d’une image
+         * @description L’image disparaît du volume et de la base, sauf si un fait l’utilise encore.
+         */
+        delete: operations["FichiersController_supprimer"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3326,6 +3326,33 @@ export interface operations {
             };
         };
     };
+    FichiersController_telecharger: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description L’image */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Inconnu, ou fiche inaccessible */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     FichiersController_supprimer: {
         parameters: {
             query?: never;
@@ -3352,33 +3379,6 @@ export interface operations {
             };
             /** @description Image encore utilisée par un fait */
             409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    FichiersController_telecharger: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description L’image */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Inconnu, ou fiche inaccessible */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };

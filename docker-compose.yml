@@ -4,5 +4,7 @@ services:
   front:
     image: ghcr.io/math49/centrale_nai_sahp_front:latest
     restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?renseigner NEXT_PUBLIC_API_URL}
     ports:
       - '127.0.0.1:${FRONT_PORT:-40510}:40510'

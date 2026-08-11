@@ -10,10 +10,6 @@ RUN npm ci --no-audit --no-fund
 
 COPY . .
 
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-RUN test -n "$NEXT_PUBLIC_API_URL" && node -e "new URL(process.env.NEXT_PUBLIC_API_URL)"
-
 RUN npm run build
 
 
@@ -30,8 +26,14 @@ COPY --from=construction /app/.next/standalone ./
 COPY --from=construction /app/.next/static ./.next/static
 COPY --from=construction /app/public ./public
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+  && touch /app/public/runtime-config.js \
+  && chown node:node /app/public/runtime-config.js
+
 USER node
 
 EXPOSE 40510
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["node", "server.js"]

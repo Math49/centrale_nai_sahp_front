@@ -17,6 +17,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.3.1",
+    "@fortawesome/fontawesome-svg-core": "^7.3.1",
+    "@fortawesome/free-brands-svg-icons": "^7.3.1",
+    "@fortawesome/free-regular-svg-icons": "^7.3.1",
+    "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@tanstack/react-query": "^5.62.0",
     "graphology": "^0.26.0",
     "graphology-layout": "^0.6.1",

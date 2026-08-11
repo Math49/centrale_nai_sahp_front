@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRecherche, type ResultatRecherche } from '@/api/accueil';
 import styles from './barre-recherche.module.css';
+import { Icone } from './icones';
 import { PastilleVisibilite } from './pastilles';
 
 /**
@@ -84,31 +85,7 @@ export function BarreRecherche() {
         role="search"
         onSubmit={(evenement) => evenement.preventDefault()}
       >
-        <svg
-          className={styles.loupe}
-          width="14"
-          height="14"
-          viewBox="0 0 16 16"
-          aria-hidden="true"
-        >
-          <circle
-            cx="7"
-            cy="7"
-            r="5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          />
-          <line
-            x1="11"
-            y1="11"
-            x2="15"
-            y2="15"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
-        </svg>
+        <Icone nom="recherche" taille={14} className={styles.loupe} />
 
         <input
           className={styles.champ}

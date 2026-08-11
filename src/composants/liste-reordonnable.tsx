@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 
+import { Icone } from './icones';
 import styles from './liste-reordonnable.module.css';
 
 /**
@@ -70,7 +71,7 @@ export function ListeReordonnable<T extends { id: string }>({
           }}
         >
           <span className={styles.poignee} aria-hidden="true">
-            ⣿
+            <Icone nom="poignee" taille={13} />
           </span>
 
           <div className={styles.corps}>{rendu(element)}</div>
@@ -83,7 +84,7 @@ export function ListeReordonnable<T extends { id: string }>({
               disabled={desactive || rang === 0}
               aria-label="Monter"
             >
-              ↑
+              <Icone nom="haut" taille={12} />
             </button>
             <button
               type="button"
@@ -92,7 +93,7 @@ export function ListeReordonnable<T extends { id: string }>({
               disabled={desactive || rang === elements.length - 1}
               aria-label="Descendre"
             >
-              ↓
+              <Icone nom="bas" taille={12} />
             </button>
           </div>
         </li>

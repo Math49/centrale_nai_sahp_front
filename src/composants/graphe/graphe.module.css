@@ -236,6 +236,9 @@
 }
 
 .fleche {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: var(--text-muted);
   font-size: 0.75rem;
   padding-left: 8px;

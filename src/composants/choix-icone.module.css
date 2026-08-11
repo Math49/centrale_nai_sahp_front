@@ -57,8 +57,11 @@
 }
 
 .chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--texte-faible);
-  font-size: 0.8rem;
+  transform: rotate(90deg);
 }
 
 .popup {
@@ -87,9 +90,37 @@
   color: var(--texte-faible);
 }
 
+.recherche {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.rechercheLibelle {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}
+
+.champRecherche {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  background: var(--fond);
+  color: var(--texte);
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.champRecherche:focus {
+  outline: 2px solid var(--accent-bordure);
+  outline-offset: 1px;
+}
+
 .grille {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   gap: 8px;
   max-height: min(360px, 48vh);
   overflow: auto;
@@ -136,5 +167,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 0.8rem;
+}
+
+.aucunResultat {
+  margin: 8px 0 0;
+  color: var(--texte-faible);
   font-size: 0.8rem;
 }

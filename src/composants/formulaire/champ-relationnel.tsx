@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { useEntites, type EntiteResumee } from '@/api/entites';
+import { Icone } from '../icones';
 import controles from '../controles.module.css';
 import styles from './formulaire.module.css';
 
@@ -70,7 +71,7 @@ export function ChampRelationnel({
                   aria-label="hérité du contexte"
                   title="Hérité du contexte"
                 >
-                  ⌧
+                  <Icone nom="verrou" taille={10} />
                 </span>
               )}
               <span>{element.libelle}</span>
@@ -80,7 +81,7 @@ export function ChampRelationnel({
                 onClick={() => onRetirer(element.id)}
                 aria-label={`Retirer ${element.libelle}`}
               >
-                ×
+                <Icone nom="fermer" taille={10} />
               </button>
             </li>
           ))}

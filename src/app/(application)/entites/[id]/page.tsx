@@ -18,6 +18,7 @@ import { useSession } from '@/auth/use-session';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
 import { BoutonInfirmer } from '@/composants/infirmation';
+import { IconeFontAwesome } from '@/composants/icone-fontawesome';
 import { Modale } from '@/composants/modale';
 import { PanneauDossier } from '@/composants/panneau-dossier';
 import { PiecesJointes } from '@/composants/pieces-jointes';
@@ -155,7 +156,10 @@ function Fiche() {
 
       <header className={styles.entete}>
         <div className={styles.identite}>
-          <span className={styles.typeEntite}>{entite.typeLibelle}</span>
+          <span className={styles.typeEntite}>
+            {type && <IconeFontAwesome valeur={type.icone} taille={14} />}
+            {entite.typeLibelle}
+          </span>
           <h1 className={styles.titre}>{entite.libelle}</h1>
           <div className={styles.marques}>
             <PastilleVisibilite niveau={entite.visibilite} />

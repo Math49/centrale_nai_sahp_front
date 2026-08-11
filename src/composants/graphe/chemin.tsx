@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useEntites } from '@/api/entites';
 import type { Chemin } from '@/api/graphe';
 import controles from '@/composants/controles.module.css';
+import { Icone } from '@/composants/icones';
 import { PastilleFiabilite } from '@/composants/pastilles';
 import styles from './graphe.module.css';
 
@@ -48,7 +49,7 @@ export function ResultatChemin({
               <span className={styles.etape}>{noeud.libelle}</span>
               {rang < chemin.aretes.length && (
                 <div className={styles.fleche}>
-                  ↓ {chemin.aretes[rang].libelle}{' '}
+                  <Icone nom="bas" taille={10} /> {chemin.aretes[rang].libelle}{' '}
                   <PastilleFiabilite niveau={chemin.aretes[rang].fiabilite} />
                 </div>
               )}

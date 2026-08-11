@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 import { useEntite } from '@/api/entites';
+import { useReferentiel } from '@/api/referentiel';
 import controles from '@/composants/controles.module.css';
-import { Icone, iconeDeType } from '@/composants/icones';
+import { IconeFontAwesome } from '@/composants/icone-fontawesome';
+import { Icone } from '@/composants/icones';
 import { PastilleFiabilite, PastilleVisibilite } from '@/composants/pastilles';
 import styles from './panneau-donnee.module.css';
 
@@ -29,6 +31,7 @@ export function PanneauDonnee({
   surFermeture: () => void;
 }) {
   const fiche = useEntite(id);
+  const referentiel = useReferentiel();
 
   // La touche d'échappement referme : le panneau se superpose au graphe, il
   // doit se retirer aussi vite qu'il est venu.
@@ -44,6 +47,9 @@ export function PanneauDonnee({
   }, [surFermeture]);
 
   const donnee = fiche.data;
+  const type = referentiel.data?.typesEntites.find(
+    (candidat) => candidat.code === donnee?.typeCode,
+  );
 
   return (
     <aside
@@ -54,7 +60,11 @@ export function PanneauDonnee({
       <header className={styles.tete}>
         {donnee && (
           <span className={styles.icone}>
-            <Icone nom={iconeDeType(donnee.typeCode)} taille={19} />
+            {type ? (
+              <IconeFontAwesome valeur={type.icone} taille={19} />
+            ) : (
+              <Icone nom="entite" taille={19} />
+            )}
           </span>
         )}
 

@@ -8,6 +8,7 @@ import { usePanneauDossier } from '@/api/dossiers';
 import { useReferentiel } from '@/api/referentiel';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
+import { IconeFontAwesome } from '@/composants/icone-fontawesome';
 import type { SourceActive } from '@/composants/formulaire/bandeau-source';
 import {
   MoteurFormulaire,
@@ -95,7 +96,9 @@ function Saisie() {
                     key={candidat.id}
                     className={controles.boutonDiscret}
                     href={lienVers(candidat.id)}
+                    style={{ gap: 6 }}
                   >
+                    <IconeFontAwesome valeur={candidat.icone} taille={13} />
                     {candidat.libelle}
                   </Link>
                 ))}

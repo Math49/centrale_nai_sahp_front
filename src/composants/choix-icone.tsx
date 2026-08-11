@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { Icone, NOMS_ICONES, type NomIcone } from './icones';
+import {
+  CATALOGUE_ICONES_FONTAWESOME,
+  IconeFontAwesome,
+  optionIconeFontAwesome,
+} from './catalogue-fontawesome';
+import { valeurIconeCanonique } from './icone-fontawesome';
+import { Icone } from './icones';
 import styles from './choix-icone.module.css';
-
-function estNomIcone(valeur: string): valeur is NomIcone {
-  return (NOMS_ICONES as readonly string[]).includes(valeur);
-}
 
 export function ChoixIcone({
   etiquette,
@@ -20,8 +22,21 @@ export function ChoixIcone({
 }) {
   const identifiant = useId();
   const [ouvert, definirOuvert] = useState(false);
+  const [filtre, definirFiltre] = useState('');
   const racine = useRef<HTMLDivElement | null>(null);
-  const iconeValide = estNomIcone(valeur) ? valeur : null;
+  const iconeCourante = optionIconeFontAwesome(valeur);
+  const valeurCanonique = valeurIconeCanonique(valeur);
+  const filtreNormalise = filtre.trim().toLowerCase();
+  const options = useMemo(() => {
+    if (!filtreNormalise) {
+      return CATALOGUE_ICONES_FONTAWESOME;
+    }
+
+    const termes = filtreNormalise.split(/\s+/);
+    return CATALOGUE_ICONES_FONTAWESOME.filter((option) =>
+      termes.every((terme) => option.recherche.includes(terme)),
+    );
+  }, [filtreNormalise]);
 
   useEffect(() => {
     const fermerSiClicExterieur = (evenement: MouseEvent): void => {
@@ -67,22 +82,24 @@ export function ChoixIcone({
         onClick={() => definirOuvert((precedent) => !precedent)}
       >
         <span
-          className={`${styles.selectionTexte} ${!iconeValide ? styles.selectionVide : ''}`}
+          className={`${styles.selectionTexte} ${!iconeCourante ? styles.selectionVide : ''}`}
         >
           <span className={styles.icone}>
-            {iconeValide ? (
-              <Icone nom={iconeValide} taille={18} />
+            {iconeCourante ? (
+              <IconeFontAwesome valeur={iconeCourante.valeur} taille={18} />
             ) : (
               <Icone nom="image" taille={18} />
             )}
           </span>
           <span className={styles.selectionNom}>
-            {iconeValide ? valeur : 'Aucune icône sélectionnée'}
+            {iconeCourante
+              ? iconeCourante.libelle
+              : 'Aucune icône sélectionnée'}
           </span>
         </span>
 
         <span className={styles.chevron} aria-hidden="true">
-          ▾
+          <Icone nom="chevron" taille={12} />
         </span>
       </button>
 
@@ -105,25 +122,42 @@ export function ChoixIcone({
             )}
           </div>
 
+          <label className={styles.recherche}>
+            <span className={styles.rechercheLibelle}>Rechercher</span>
+            <input
+              className={styles.champRecherche}
+              value={filtre}
+              onChange={(evenement) => definirFiltre(evenement.target.value)}
+              placeholder="user, car, github..."
+            />
+          </label>
+
           <div className={styles.grille}>
-            {NOMS_ICONES.map((nom) => (
+            {options.map((option) => (
               <button
-                key={nom}
+                key={option.valeur}
                 type="button"
-                className={`${styles.option} ${valeur === nom ? styles.optionActive : ''}`}
-                aria-pressed={valeur === nom}
+                className={`${styles.option} ${
+                  valeurCanonique === option.valeur ? styles.optionActive : ''
+                }`}
+                aria-label={`Choisir ${option.libelle}`}
+                aria-pressed={valeurCanonique === option.valeur}
                 onClick={() => {
-                  onChange(nom);
+                  onChange(option.valeur);
                   definirOuvert(false);
                 }}
               >
                 <span className={styles.icone}>
-                  <Icone nom={nom} taille={18} />
+                  <IconeFontAwesome valeur={option.valeur} taille={18} />
                 </span>
-                <span className={styles.nom}>{nom}</span>
+                <span className={styles.nom}>{option.libelle}</span>
               </button>
             ))}
           </div>
+
+          {options.length === 0 && (
+            <p className={styles.aucunResultat}>Aucune icône trouvée.</p>
+          )}
         </div>
       )}
     </div>

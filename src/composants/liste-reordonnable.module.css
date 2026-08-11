@@ -28,9 +28,10 @@
 }
 
 .poignee {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--texte-faible);
-  font-size: 0.8rem;
-  letter-spacing: -2px;
   flex-shrink: 0;
 }
 
@@ -46,6 +47,9 @@
 }
 
 .fleche {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 24px;
   height: 24px;
   background: none;

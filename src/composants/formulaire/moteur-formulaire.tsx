@@ -17,6 +17,7 @@ import {
   type TypeLien,
 } from '@/api/referentiel';
 import controles from '../controles.module.css';
+import { Icone } from '../icones';
 import { Modale } from '../modale';
 import { AlerteDoublon } from './alerte-doublon';
 import { BandeauSource, type SourceActive } from './bandeau-source';
@@ -255,7 +256,10 @@ export function MoteurFormulaire({
       {heritage && (
         <p className={styles.filDAriane}>
           Créée depuis <strong>{heritage.libelleParent}</strong> —{' '}
-          <span className={styles.puceHeritee}>⌧ {heritage.libelleLien}</span>{' '}
+          <span className={styles.puceHeritee}>
+            <Icone nom="verrou" taille={10} />
+            {heritage.libelleLien}
+          </span>{' '}
           sera posé à l’enregistrement de la fiche d’origine.
         </p>
       )}

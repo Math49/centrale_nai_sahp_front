@@ -16,13 +16,6 @@ import controles from './controles.module.css';
 import styles from './panneau-dossier.module.css';
 import { PastilleVisibilite } from './pastilles';
 
-/**
- * Panneau de dossier.
- *
- * Visible **uniquement lorsqu'on accède à la fiche par le dossier**. Ouvrir la
- * même fiche depuis l'annuaire n'en montre rien : le dossier contextualise une
- * consultation, il ne s'attache pas à l'entité.
- */
 export function PanneauDossier({ dossierId }: { dossierId: string }) {
   const panneau = usePanneauDossier(dossierId);
   const modifier = useModifierDossier();
@@ -215,12 +208,6 @@ export function PanneauDossier({ dossierId }: { dossierId: string }) {
   );
 }
 
-/**
- * L'habilitation est nominative : on désigne un agent, jamais un grade.
- *
- * La liste des comptes exige `agent.gerer` ; si l'API la refuse, le champ se
- * tait plutôt que d'afficher une erreur sur un écran qui n'en est pas le sujet.
- */
 function AjoutHabilitation({
   dejaHabilites,
   onAjouter,

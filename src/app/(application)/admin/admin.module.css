@@ -21,7 +21,6 @@
   border-bottom: none;
 }
 
-/* Une rubrique construite est cliquable sur toute sa surface. */
 .ouvrable {
   display: flex;
   align-items: center;

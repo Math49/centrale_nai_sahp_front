@@ -2,7 +2,6 @@
   margin: 10px 0;
 }
 
-/* Le champ natif est illisible dans le thème ; le bouton le déclenche. */
 .entree {
   display: none;
 }
@@ -24,6 +23,7 @@
 }
 
 .cadre {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;

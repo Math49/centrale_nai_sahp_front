@@ -11,9 +11,9 @@ export default tseslint.config(
       '.next/**',
       'node_modules/**',
       'coverage/**',
-      // Fichier généré depuis le contrat OpenAPI : il n'a pas à être relu.
+
       'src/api/contrat.ts',
-      // Écrit par Next à chaque build.
+
       'next-env.d.ts',
     ],
   },

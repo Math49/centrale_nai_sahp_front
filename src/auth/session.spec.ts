@@ -43,7 +43,6 @@ describe('magasinSession', () => {
   });
 
   it('n’est prête qu’une fois l’API interrogée', () => {
-    // `fermer` répond à la question « y a-t-il une session ? » : non.
     expect(magasinSession.estPrete()).toBe(true);
 
     magasinSession.reprendre(AGENT);
@@ -79,9 +78,6 @@ describe('magasinSession', () => {
   it('ne détient aucun jeton, ni en mémoire ni dans le navigateur', () => {
     magasinSession.ouvrir(AGENT);
 
-    // Le jeton vit dans un cookie `httpOnly` posé par l'API. Le front ne le
-    // détient nulle part — c'est précisément ce qui le met hors de portée d'un
-    // script injecté dans la page.
     expect(JSON.stringify(magasinSession.lire())).not.toMatch(/jeton/i);
     expect(window.localStorage.length).toBe(0);
     expect(window.sessionStorage.length).toBe(0);

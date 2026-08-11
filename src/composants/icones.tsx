@@ -92,7 +92,6 @@ export function Icone({
   return <SvgIcone definition={ICONES[nom]} taille={taille} {...reste} />;
 }
 
-/** Icône du type de donnée, avec un repli neutre pour un type inconnu. */
 export function iconeDeType(code: string | null | undefined): NomIcone {
   switch (code) {
     case 'personne':

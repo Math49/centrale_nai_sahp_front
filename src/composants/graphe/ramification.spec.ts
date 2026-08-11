@@ -24,12 +24,6 @@ const arete = (id: string, de: string, vers: string): AreteGraphe => ({
   fiabilite: 4,
 });
 
-/**
- * Un fil d'enquête, et une grappe qui n'a rien à voir avec lui :
- *
- *   isadora → sultan → braquage → tyron → madrina
- *   ana → buffalo              (à part)
- */
 const NOEUDS = [
   noeud('isadora', 'Isadora Morales'),
   noeud('sultan', '8KLM204'),
@@ -53,7 +47,6 @@ describe('adjacence', () => {
   it('relie dans les deux sens', () => {
     const voisins = adjacence(ARETES);
 
-    // « Isadora possède 8KLM204 » se remonte aussi du véhicule vers elle.
     expect(voisins.get('isadora')).toContain('sultan');
     expect(voisins.get('sultan')).toContain('isadora');
   });
@@ -63,7 +56,6 @@ describe('ramification', () => {
   it('suit le fil jusqu’au bout, pas seulement les voisins directs', () => {
     const atteints = ramification(['isadora'], adjacence(ARETES));
 
-    // Isadora ne touche que le Sultan ; le fil mène pourtant jusqu'à Madrina.
     expect([...atteints].sort()).toEqual(
       ['braquage', 'isadora', 'madrina', 'sultan', 'tyron'].sort(),
     );
@@ -84,7 +76,6 @@ describe('ramification', () => {
       arete('c3', 'c', 'a'),
     ];
 
-    // Sans marquage à l'entrée, ce parcours ne terminerait pas.
     expect([...ramification(['a'], adjacence(cycle))].sort()).toEqual([
       'a',
       'b',
@@ -120,12 +111,10 @@ describe('donneesVisibles', () => {
   it('part de toutes les données qui répondent, pas de la première', () => {
     const visibles = donneesVisibles('a', NOEUDS, ARETES);
 
-    // « a » fait moins de deux caractères : aucun filtre.
     expect(visibles).toBeNull();
 
     const deux = donneesVisibles('an', NOEUDS, ARETES)!;
 
-    // « Ana Silva » et « Banks » répondent tous deux : les deux grappes sortent.
     expect(deux.has('ana')).toBe(true);
     expect(deux.has('tyron')).toBe(true);
   });

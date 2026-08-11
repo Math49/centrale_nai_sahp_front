@@ -43,8 +43,6 @@ function Saisie() {
 
   const [enregistrees, definirEnregistrees] = useState<EntiteEnregistree[]>([]);
 
-  // Le registre vit ici, à la racine de la cascade : abandonner une branche doit
-  // pouvoir retirer tout ce qu'elle a persisté, quel qu'en soit le niveau.
   const registre = useRegistreCascade();
 
   const types = referentiel.data?.typesEntites ?? [];
@@ -55,7 +53,6 @@ function Saisie() {
       ? `/entites/nouveau?type=${id}&dossier=${dossierId}`
       : `/entites/nouveau?type=${id}`;
 
-  // Sans type désigné, on ne devine pas : c'est lui qui décrit les champs.
   if (!typeEntiteId || (referentiel.isSuccess && !type)) {
     return (
       <>
@@ -129,8 +126,6 @@ function Saisie() {
       )}
 
       <MoteurFormulaire
-        // Remonter la clé force un formulaire vierge après chaque
-        // enregistrement, sans traîner l'état de la saisie précédente.
         key={`${typeEntiteId}-${enregistrees.length}`}
         typeEntiteId={typeEntiteId}
         dossierId={dossierId ?? undefined}

@@ -2,7 +2,6 @@
 
 import controles from './controles.module.css';
 
-/** Champ texte étiqueté, avec indication facultative sous le champ. */
 export function ChampTexte({
   etiquette,
   valeur,
@@ -15,7 +14,7 @@ export function ChampTexte({
   valeur: string;
   onChange: (valeur: string) => void;
   indication?: string;
-  /** Les identifiants se saisissent en monospace, comme ils s'affichent. */
+
   mono?: boolean;
   obligatoire?: boolean;
 }) {

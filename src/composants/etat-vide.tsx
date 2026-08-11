@@ -2,12 +2,6 @@ import type { ReactNode } from 'react';
 
 import styles from './etat-vide.module.css';
 
-/**
- * État vide — formulé comme une invitation, avec l'action directement dessous.
- *
- * Jamais « aucun résultat » sec : l'absence d'information est elle-même une
- * information, et l'écran doit dire quoi en faire.
- */
 export function EtatVide({
   titre,
   explication,

@@ -46,9 +46,6 @@ describe('client API', () => {
 
     const appel = vi.mocked(fetch).mock.calls[0][0] as Request;
 
-    // Le navigateur envoie seul le cookie `httpOnly` ; l'application n'a aucun
-    // jeton à mettre en en-tête, et c'est ce qui le met hors de portée d'un
-    // script injecté dans la page.
     expect(appel.credentials).toBe('include');
     expect(appel.headers.has('Authorization')).toBe(false);
   });
@@ -65,8 +62,6 @@ describe('client API', () => {
     });
 
     it('ne ferme pas la session sur un 401 de /auth/mot-de-passe', async () => {
-      // Un ancien mot de passe erroné ne doit pas déconnecter l'agent : il
-      // perdrait sa session pour une faute de frappe.
       magasinSession.ouvrir(AGENT);
       repondre(401);
 
@@ -88,7 +83,6 @@ describe('client API', () => {
     });
 
     it('laisse la session ouverte sur un 403', async () => {
-      // Un refus de permission n'est pas une expiration : le cookie reste bon.
       magasinSession.ouvrir(AGENT);
       repondre(403);
 

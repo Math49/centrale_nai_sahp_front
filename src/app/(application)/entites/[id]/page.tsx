@@ -31,7 +31,6 @@ import {
 } from '@/composants/pastilles';
 import styles from './fiche.module.css';
 
-/** Onglet toujours présent, en plus de ceux que l'administration configure. */
 const HISTORIQUE = 'historique';
 const VISIBILITES = ['public', 'restreint', 'prive'] as const;
 const FIABILITES = [4, 3, 2, 1] as const;
@@ -54,8 +53,6 @@ function Fiche() {
   const parametres = useParams<{ id: string }>();
   const id = parametres.id;
 
-  // Le panneau de dossier n'apparaît que lorsqu'on accède à la fiche **par le
-  // dossier**. La même fiche ouverte depuis l'annuaire n'en montre rien.
   const dossierOuvert = useSearchParams().get('dossier');
 
   const { agent } = useSession();
@@ -80,8 +77,6 @@ function Fiche() {
   const peutVoirLHistorique =
     agent?.superAdmin || agent?.permissions.includes('historique.consulter');
 
-  // Masquer un bouton fermé est du confort, pas de la sécurité : l'API refuse
-  // d'elle-même. Le masquer évite seulement de proposer une porte close.
   const peutInfirmer =
     agent?.superAdmin || agent?.permissions.includes('fait.infirmer') || false;
   const peutModifierFait =
@@ -121,8 +116,6 @@ function Fiche() {
     );
   }
 
-  // Le garde porte sur `entite` et non sur `fiche.data` : TypeScript ne
-  // rétrécit pas un alias depuis une vérification faite sur sa source.
   if (!entite) {
     return <p className={controles.remarque}>Chargement…</p>;
   }
@@ -140,8 +133,7 @@ function Fiche() {
     <>
       {dossierOuvert && <PanneauDossier dossierId={dossierOuvert} />}
 
-      {/* Une fiche absorbée n'est pas une impasse : elle redirige, pour qu'un
-          ancien lien continue de mener quelque part. */}
+      {}
       {entite.fusionneeVersId && (
         <p className={styles.redirection}>
           Cette fiche a été fusionnée.{' '}
@@ -171,8 +163,7 @@ function Fiche() {
             )}
           </div>
 
-          {/* Une entité peut appartenir à plusieurs dossiers ; la fiche le dit,
-              qu'on y soit arrivé par l'un d'eux ou non. */}
+          {}
           {entite.dossiers.length > 0 && (
             <p className={styles.rattachements}>
               Suivie par{' '}
@@ -400,9 +391,7 @@ function Fiche() {
             modifierFait.mutate(
               {
                 id: editionChamp.faitId,
-                // Un fait de champ porte toujours un scalaire ; seule la
-                // *projection* d'un champ multiple est un tableau, et elle ne
-                // se corrige pas — ce sont les faits qui la composent.
+
                 valeur: editionChamp.valeur as string | number | boolean,
                 fiabilite: editionChamp.fiabilite,
               },
@@ -480,13 +469,6 @@ function Fiche() {
   );
 }
 
-/**
- * Une ligne de champ.
- *
- * La **valeur prime sur ses métadonnées** : elle s'affiche en évidence, la
- * pastille de fiabilité reste discrète, et la source n'apparaît qu'au survol.
- * Un champ non renseigné reste affiché — l'absence d'information en est une.
- */
 function LigneChamp({
   champ,
   peutInfirmer,
@@ -530,8 +512,7 @@ function LigneChamp({
           </span>
         )}
 
-        {/* L'infirmation porte sur le fait qui soutient la valeur affichée,
-            pas sur le champ : les autres sources restent debout. */}
+        {}
         {peutInfirmer && meilleur && (
           <BoutonInfirmer
             faitId={meilleur.id}

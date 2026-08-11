@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'Centrale N&I',
   description:
     'Narcotics & Investigations — San Andreas Highway Patrol. Usage interne.',
-  // Un outil d'enquête n'a rien à faire dans un index.
+
   robots: { index: false, follow: false },
 };
 

@@ -4,7 +4,6 @@ import { deconnecter, useSession } from '@/auth/use-session';
 import { Icone } from './icones';
 import styles from './menu-agent.module.css';
 
-/** Initiales de l'agent, pour la pastille d'identité. */
 function initiales(prenom: string, nom: string): string {
   return `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase();
 }
@@ -27,7 +26,7 @@ export function MenuAgent() {
           {agent.prenom} {agent.nom}
         </span>
         <span className={styles.grade}>
-          {/* Le matricule est un identifiant : monospace, comme les plaques. */}
+          {}
           <span className="mono">{agent.matricule}</span>
           {agent.superAdmin && (
             <>

@@ -24,13 +24,6 @@ export default function PageGraphe() {
   );
 }
 
-/**
- * Explorateur de graphe.
- *
- * **Toute la matière est chargée au premier rendu** : toutes les données
- * visibles, tous les liens franchissables, à toute profondeur. L'agent navigue
- * dans une carte qui existe déjà plutôt que de la déplier saut par saut.
- */
 function Explorateur() {
   const parametres = useSearchParams();
   const { agent } = useSession();
@@ -45,16 +38,11 @@ function Explorateur() {
   const [signalOrganisation, definirSignalOrganisation] = useState(0);
   const [organisationEnCours, definirOrganisationEnCours] = useState(false);
 
-  // La frappe ne doit pas bloquer le rendu de la toile : le filtre suit d'un
-  // battement, ce qui est imperceptible et garde la saisie fluide.
   const filtre = useDeferredValue(recherche);
 
   const vue = useVueEntiere({ fiabilite, dossierId });
   const positions = useEnregistrerPositions();
 
-  // Le repositionnement affecte tous les agents : c'est une disposition
-  // partagée, pas une préférence personnelle. Sans la permission, l'agent peut
-  // toujours déplacer un nœud pour lire la carte — rien n'est enregistré.
   const peutRepositionner =
     agent?.superAdmin || agent?.permissions.includes('graphe.repositionner');
 

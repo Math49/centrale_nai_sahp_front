@@ -19,7 +19,6 @@ import { PastilleFiabilite, PastilleVisibilite } from '@/composants/pastilles';
 import { EnteteZone } from '@/composants/zone';
 import styles from './accueil.module.css';
 
-/** Ce que chaque famille de signal veut dire, en un mot et une phrase. */
 const FAMILLES: Record<Signal['famille'], { etiquette: string; sens: string }> =
   {
     recoupement: {
@@ -72,12 +71,6 @@ export default function PageAccueil() {
   );
 }
 
-/**
- * Recherche de chemin, en tête d'accueil.
- *
- * Le même rendu que sur le graphe, par le même composant : deux exemplaires
- * finiraient par diverger sur ce que veut dire « le plus solide ».
- */
 function RechercheDeChemin() {
   const [de, definirDe] = useState<string | null>(null);
   const [vers, definirVers] = useState<string | null>(null);
@@ -105,13 +98,6 @@ function RechercheDeChemin() {
   );
 }
 
-/**
- * Les signaux.
- *
- * Ils arrivent déjà filtrés : un signal portant sur un objet inaccessible n'est
- * pas masqué ici, il n'est pas venu. C'est la seule façon de ne pas en révéler
- * l'existence.
- */
 function Signaux({
   signaux,
   enCours,

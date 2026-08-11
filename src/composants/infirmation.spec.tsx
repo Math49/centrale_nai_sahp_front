@@ -62,8 +62,6 @@ describe('BoutonInfirmer', () => {
     afficher();
     ouvrirLaModale();
 
-    // La règle porte sur les commandes, pas sur la prose : la modale énonce
-    // justement que rien n'est jamais supprimé.
     for (const bouton of screen.getAllByRole('button')) {
       expect(bouton.textContent ?? '').not.toMatch(/supprim/i);
     }

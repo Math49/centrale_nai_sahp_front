@@ -16,13 +16,6 @@ import { EnteteZone } from '@/composants/zone';
 import styles from '../administration.module.css';
 import propres from './matrice.module.css';
 
-/**
- * Familles de gestes.
- *
- * Le préfixe du code est déjà la famille — `entite.archiver` appartient aux
- * données. On ne les redéclare donc pas : on les nomme, et un préfixe inconnu
- * arrive sous son propre code plutôt que de disparaître de la matrice.
- */
 const FAMILLES: Record<string, string> = {
   entite: 'Données',
   fait: 'Faits',
@@ -52,7 +45,6 @@ function Matrice() {
   const catalogue = useCataloguePermissions();
   const modifier = useModifierRole();
 
-  /** Jeux complets, par grade, pour les seuls grades touchés. */
   const [brouillon, definirBrouillon] = useState<Record<string, string[]>>({});
   const [aConfirmer, definirAConfirmer] = useState(false);
   const [echecs, definirEchecs] = useState<string[]>([]);
@@ -83,8 +75,6 @@ function Matrice() {
       ? courantes.filter((permission) => permission !== code)
       : [...courantes, code];
 
-    // Revenir à l'état enregistré retire le grade du brouillon : le décompte
-    // de la barre ne doit compter que des écarts réels.
     const identique =
       suivantes.length === grade.permissions.length &&
       suivantes.every((permission) => grade.permissions.includes(permission));
@@ -107,8 +97,6 @@ function Matrice() {
   const enregistrer = async (): Promise<void> => {
     const rates: string[] = [];
 
-    // Une requête par grade, en série : le jeu de permissions est complet à
-    // chaque fois, et paralléliser ne ferait qu'entremêler les messages d'échec.
     for (const grade of touches) {
       try {
         await modifier.mutateAsync({
@@ -272,7 +260,6 @@ function Matrice() {
   );
 }
 
-/** Ce qui part, en toutes lettres : accorder et retirer ne se valent pas. */
 function resumerEcart(grade: Role, suivantes: string[]): string {
   const accordees = suivantes.filter(
     (permission) => !grade.permissions.includes(permission),

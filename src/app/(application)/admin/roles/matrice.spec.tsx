@@ -99,8 +99,6 @@ describe('Rôles et permissions', () => {
   it('range les grades dans leur ordre, et les gestes par famille', async () => {
     afficher();
 
-    // « Geste » est là dès le premier rendu : attendre les colonnes de grades,
-    // sinon `findAllBy` se contente de la seule qui existe déjà.
     await screen.findByLabelText(CASE_JOURNAL_JUNIOR);
 
     const colonnes = screen.getAllByRole('columnheader');

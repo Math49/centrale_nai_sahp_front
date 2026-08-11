@@ -14,8 +14,6 @@
   border-bottom: 1px solid var(--bordure);
 }
 
-/* La colonne des gestes reste lisible quand la matrice défile : sans elle, on
-   coche une case sans savoir ce qu'elle autorise. */
 .geste {
   position: sticky;
   left: 0;
@@ -72,8 +70,6 @@
   color: var(--texte-faible);
 }
 
-/* Barre d'enregistrement, en bas et collante : la matrice est longue, et
-   remonter pour valider ferait perdre la ligne qu'on vient de cocher. */
 .barre {
   position: sticky;
   bottom: 0;

@@ -81,6 +81,18 @@ npm run build
 
 ---
 
+## Image Docker
+
+Le workflow GitHub Actions construit et pousse l'image front sur GHCR. Le secret
+`NEXT_PUBLIC_API_URL` est obligatoire, par exemple
+`https://centrale-ni.exemple.fr/api` : cette valeur est inlinée dans le bundle à
+la construction.
+
+Le Dockerfile produit une image Next standalone et embarque aussi `public/` pour
+les logos et le favicon.
+
+---
+
 ## Structure
 
 ```

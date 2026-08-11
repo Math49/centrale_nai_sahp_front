@@ -73,8 +73,6 @@ describe('liensDisponiblesPour', () => {
   });
 
   it('propose le sens inverse quand le type est la cible', () => {
-    // C'est le cas de l'onglet Membres du groupe : le lien va de la personne
-    // vers le groupe, la fiche du groupe le lit donc à l'envers.
     const candidats = liensDisponiblesPour(groupe, [membreDe]);
 
     expect(candidats).toEqual([

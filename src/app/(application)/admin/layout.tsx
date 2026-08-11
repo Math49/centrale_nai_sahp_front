@@ -54,8 +54,7 @@ const RUBRIQUES: Rubrique[] = [
   {
     libelle: 'Données orphelines',
     chemin: '/admin/orphelines',
-    // Écran de ménage : il suit la permission de qui peut agir sur un orphelin,
-    // pas celle du relevé des consultations.
+
     permissions: ['entite.archiver'],
   },
 ];
@@ -64,8 +63,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const courant = usePathname();
   const { agent } = useSession();
 
-  // Masquer une rubrique fermée est du confort, pas de la sécurité : chaque
-  // route de l'API refuse d'elle-même ce qu'elle doit refuser.
   const rubriques = RUBRIQUES.filter((rubrique) => {
     if (agent?.superAdmin) {
       return true;

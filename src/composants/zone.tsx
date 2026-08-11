@@ -1,11 +1,5 @@
 import styles from './zone.module.css';
 
-/**
- * En-tête d'une zone. Casse de phrase, pas de majuscules décoratives.
- *
- * `lot` indique ce qui reste à venir. Il disparaîtra à mesure que les zones se
- * remplissent : c'est un repère de chantier, pas un élément d'interface.
- */
 export function EnteteZone({
   titre,
   sousTitre,

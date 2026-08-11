@@ -4,8 +4,6 @@
   grid-template-columns: var(--sidebar) minmax(0, 1fr);
 }
 
-/* ─────────────────────────── Barre latérale ─────────────────────────── */
-
 .laterale {
   position: sticky;
   top: 0;
@@ -27,8 +25,6 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* Le badge est une image, non plus un tracé : il ne se colore pas au survol.
-   La marque répond par un très léger relief, qui se voit sans se remarquer. */
 .badge {
   display: flex;
   flex-shrink: 0;
@@ -94,8 +90,6 @@
   background: var(--surface-3);
 }
 
-/* Un filet d'accent marque la zone courante — la couleur ne porte ici qu'une
- * information d'interface, jamais de donnée. */
 .zone[aria-current='page']::before {
   content: '';
   position: absolute;
@@ -113,8 +107,6 @@
   padding-top: 10px;
   border-top: 1px solid var(--border);
 }
-
-/* ──────────────────────── Colonne de contenu ──────────────────────── */
 
 .colonne {
   display: flex;
@@ -143,9 +135,6 @@
   padding: 26px 24px 72px;
 }
 
-/* Sous 900 px, la barre latérale passe en bandeau : l'application est pensée
- * pour un poste, mais elle ne doit pas devenir inutilisable sur un écran
- * étroit. */
 @media (max-width: 900px) {
   .application {
     grid-template-columns: minmax(0, 1fr);

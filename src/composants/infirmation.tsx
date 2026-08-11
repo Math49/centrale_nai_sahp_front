@@ -7,23 +7,12 @@ import controles from './controles.module.css';
 import styles from './infirmation.module.css';
 import { Modale } from './modale';
 
-/**
- * Infirmation d'un fait.
- *
- * Le bouton ne dit **jamais** « supprimer » : rien n'est jamais supprimé. Un
- * fait contredit sort du graphe actif et reste consultable dans l'onglet
- * Historique, ce que la modale énonce avant que l'agent ne confirme.
- *
- * Le motif est obligatoire. Sans lui, la relecture du dossier se retrouverait
- * devant une information disparue sans explication — et c'est précisément la
- * situation que l'infirmation existe pour éviter.
- */
 export function BoutonInfirmer({
   faitId,
   quoi,
 }: {
   faitId: string;
-  /** Ce qui sera infirmé, tel qu'il s'affiche à l'agent. */
+
   quoi: string;
 }) {
   const [ouverte, definirOuverte] = useState(false);

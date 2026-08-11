@@ -9,14 +9,6 @@ import controles from '@/composants/controles.module.css';
 import { useConnexion, useSession } from '@/auth/use-session';
 import styles from './page.module.css';
 
-/**
- * Temps d'accueil après une session ouverte.
- *
- * Il ne masque aucun calcul : l'API a déjà répondu. C'est une entrée en
- * matière, tenue ici plutôt que sur la page d'arrivée pour que celle-ci
- * s'affiche déjà peuplée — la faire attendre à son tour ferait deux attentes
- * là où l'agent n'en comprendrait qu'une.
- */
 const DUREE_ACCUEIL = 1000;
 
 export default function PageConnexion() {

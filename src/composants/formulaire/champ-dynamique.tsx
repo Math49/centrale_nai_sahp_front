@@ -4,13 +4,6 @@ import type { DefinitionChamp } from '@/api/referentiel';
 import controles from '../controles.module.css';
 import styles from './formulaire.module.css';
 
-/**
- * Un champ, rendu depuis sa seule définition.
- *
- * Le formulaire n'existe pas à la compilation : il se construit à partir de
- * `definition_champ`, que le super-admin configure. Ajouter un type de donnée
- * se fait ici, et nulle part ailleurs.
- */
 export function ChampDynamique({
   champ,
   valeur,
@@ -90,7 +83,6 @@ export function ChampDynamique({
     <label className={controles.groupe}>
       {etiquette}
       <input
-        // Les identifiants se saisissent en monospace, comme ils s'affichent.
         className={champ.estUnique ? controles.champMono : controles.champ}
         type={type}
         value={valeurAffichable(valeur, champ)}
@@ -109,7 +101,6 @@ function valeurAffichable(valeur: unknown, champ: DefinitionChamp): string {
   }
 
   if (champ.typeDonnee === 'datetime' && typeof valeur === 'string') {
-    // L'API attend de l'ISO ; le contrôle natif veut « AAAA-MM-JJTHH:MM ».
     return valeur.slice(0, 16);
   }
 

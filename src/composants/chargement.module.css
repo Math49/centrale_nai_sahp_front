@@ -19,11 +19,6 @@
   }
 }
 
-/*
- * Une rotation continue est exactement ce dont se plaint qui a demandé moins de
- * mouvement. On garde alors un signe de vie, mais immobile : l'écusson respire
- * au lieu de tourner.
- */
 @media (prefers-reduced-motion: reduce) {
   .rotor {
     animation: respirer 2s ease-in-out infinite;
@@ -40,7 +35,6 @@
   }
 }
 
-/* Lisible par les lecteurs d'écran, invisible à l'écran. */
 .releve {
   position: absolute;
   width: 1px;

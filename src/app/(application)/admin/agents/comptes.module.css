@@ -39,8 +39,6 @@
   color: var(--texte-faible);
 }
 
-/* Un compte fermé ou anonymisé reste lisible, mais cesse de se présenter
-   comme les autres : l'écart est visible sans qu'aucune couleur soit dépensée. */
 .eteinte .nom,
 .eteinte .grade {
   color: var(--texte-faible);
@@ -94,8 +92,6 @@
   margin-left: auto;
 }
 
-/* Le mot de passe provisoire n'est montré qu'une fois : il occupe donc toute
-   la place que mérite quelque chose qu'on ne pourra pas relire. */
 .secret {
   display: flex;
   align-items: center;

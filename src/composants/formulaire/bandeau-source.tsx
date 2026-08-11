@@ -25,17 +25,6 @@ export const FIABILITES: { niveau: number; libelle: string; usage: string }[] =
     { niveau: 1, libelle: 'Douteux', usage: 'rumeur, source anonyme' },
   ];
 
-/**
- * Bandeau de source active.
- *
- * En tête de tout écran de saisie. Ses trois valeurs sont héritées par **tout
- * fait créé ensuite**, y compris ceux des entités créées en cascade : l'agent
- * ne corrige que les exceptions, et change le bandeau lorsqu'il passe à une
- * autre source.
- *
- * Le type de source est du texte totalement libre : il n'existe pas de liste
- * fermée, et il ne faut pas en inventer une.
- */
 export function BandeauSource({
   valeur,
   onChange,
@@ -43,7 +32,7 @@ export function BandeauSource({
 }: {
   valeur: SourceActive;
   onChange: (valeur: SourceActive) => void;
-  /** Dans un sous-formulaire : la source vient du formulaire parent. */
+
   fige?: boolean;
 }) {
   return (

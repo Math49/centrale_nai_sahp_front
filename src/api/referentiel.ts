@@ -21,7 +21,6 @@ export type TypeDonnee = DefinitionChamp['typeDonnee'];
 
 export const CLE_REFERENTIEL = ['referentiel'] as const;
 
-/** Libellés des types de données, pour les écrans d'administration. */
 export const LIBELLES_TYPES_DONNEES: Record<TypeDonnee, string> = {
   texte: 'Texte',
   nombre: 'Nombre',
@@ -35,21 +34,10 @@ export const LIBELLES_TYPES_DONNEES: Record<TypeDonnee, string> = {
 export interface CandidatOnglet {
   lien: TypeLien;
   sens: SensLien;
-  /** Le libellé tel qu'il se lira depuis la fiche, une fois dans l'onglet. */
+
   libelleLu: string;
 }
 
-/**
- * Types de liens qu'un onglet de ce type d'entité peut regrouper.
- *
- * Un onglet n'affiche un lien que du côté où son type d'entité se trouve :
- * l'onglet Membres du groupe montre le côté **inverse** de « membre de », qui
- * va de la personne vers le groupe. Un lien dont les deux extrémités sont du
- * même type apparaît donc deux fois, une par sens.
- *
- * Proposer autre chose reviendrait à proposer une composition que l'API
- * refusera — la règle est la même des deux côtés, mais c'est l'API qui tranche.
- */
 export function liensDisponiblesPour(
   type: TypeEntite,
   liens: TypeLien[],
@@ -69,10 +57,6 @@ export function liensDisponiblesPour(
   return candidats;
 }
 
-/**
- * Le référentiel change rarement et sert à peu près tout l'écran : cache de
- * longue durée, invalidé uniquement par l'administration.
- */
 export function useReferentiel() {
   return useQuery({
     queryKey: CLE_REFERENTIEL,
@@ -89,10 +73,6 @@ export function useReferentiel() {
   });
 }
 
-/**
- * Toute écriture du référentiel invalide le cache : c'est le seul moment où il
- * bouge, et la fiche de chaque entité en dépend.
- */
 function useEcritureReferentiel<Variables, Resultat>(
   action: (variables: Variables) => Promise<Resultat>,
 ): UseMutationResult<Resultat, Error, Variables> {
@@ -104,7 +84,6 @@ function useEcritureReferentiel<Variables, Resultat>(
   });
 }
 
-/** Déballe une réponse openapi-fetch, ou lève une erreur lisible. */
 async function attendre<T>(
   appel: Promise<{ data?: T; error?: unknown }>,
   defaut: string,
@@ -117,8 +96,6 @@ async function attendre<T>(
 
   return data as T;
 }
-
-// ─────────────────────── Types d'entités ───────────────────────
 
 export function useCreerTypeEntite() {
   return useEcritureReferentiel(
@@ -165,8 +142,6 @@ export function useOrdonnerTypesEntites() {
     ),
   );
 }
-
-// ───────────────────────────── Champs ─────────────────────────────
 
 export function useCreerChamp() {
   return useEcritureReferentiel(
@@ -216,8 +191,6 @@ export function useOrdonnerChamps() {
   );
 }
 
-// ─────────────────────────── Types de liens ───────────────────────────
-
 export function useCreerTypeLien() {
   return useEcritureReferentiel(
     (corps: components['schemas']['CreationTypeLienDto']) =>
@@ -252,8 +225,6 @@ export function useSupprimerTypeLien() {
     ),
   );
 }
-
-// ───────────────────────────── Onglets ─────────────────────────────
 
 export function useCreerOnglet() {
   return useEcritureReferentiel(

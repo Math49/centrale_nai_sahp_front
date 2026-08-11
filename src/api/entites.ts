@@ -68,13 +68,6 @@ export function useEntite(id: string | null) {
   });
 }
 
-/**
- * Onglet Historique — soumis à la permission `historique.consulter`.
- *
- * `actif` reste faux tant que l'agent ne l'a pas ouvert : l'onglet ne se
- * charge pas tout seul, et un agent sans la permission n'y déclenche jamais de
- * requête refusée.
- */
 export function useHistorique(id: string, actif: boolean) {
   return useQuery({
     queryKey: [...CLE_ENTITES, id, 'historique'],
@@ -134,12 +127,6 @@ export function useArchiverEntite() {
   );
 }
 
-/**
- * Détection de doublons à la frappe.
- *
- * Interrogée pendant la saisie, pas à l'enregistrement : une fois la fiche
- * créée, il est trop tard pour proposer de retenir l'existante.
- */
 export function useSimilaires(q: string, typeEntiteId?: string) {
   const recherche = q.trim();
 
@@ -180,14 +167,6 @@ export function useCreerFait() {
   );
 }
 
-/**
- * Infirmation d'un fait.
- *
- * Jamais une suppression : le fait sort du graphe actif et reste consultable
- * dans l'onglet Historique. Le motif est obligatoire — infirmer sans dire
- * pourquoi laisserait la relecture devant une information disparue sans
- * explication.
- */
 export function useInfirmerFait() {
   return useEcriture(({ id, motif }: { id: string; motif: string }) =>
     attendre(
@@ -200,12 +179,6 @@ export function useInfirmerFait() {
   );
 }
 
-/**
- * Fusion de doublons.
- *
- * `id` est absorbée, `versId` subsiste. L'absorbée reste en base, archivée, et
- * redirige : un ancien lien vers elle continue de mener quelque part.
- */
 export function useFusionner() {
   return useEcriture(({ id, versId }: { id: string; versId: string }) =>
     attendre(
@@ -218,12 +191,6 @@ export function useFusionner() {
   );
 }
 
-/**
- * Retrait d'une entité que le sous-formulaire venait de persister.
- *
- * Ce n'est pas une suppression de renseignement : l'enregistrement est
- * progressif, et une cascade abandonnée laisserait sinon des fiches vides.
- */
 export function useAnnulerCreation() {
   return useEcriture((id: string) =>
     attendre(

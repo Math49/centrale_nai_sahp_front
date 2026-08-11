@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 import {
@@ -14,20 +15,10 @@ import { EtatVide } from './etat-vide';
 import { Modale } from './modale';
 import styles from './pieces-jointes.module.css';
 
-/** Huit mégaoctets, comme le plafond de l'API — annoncé, jamais deviné. */
 const PLAFOND_MO = 8;
 
 const FORMATS = 'image/jpeg,image/png,image/webp';
 
-/**
- * Pièces jointes d'une fiche.
- *
- * Ce que l'agent doit savoir avant de déposer est écrit à l'écran : les
- * formats acceptés, le plafond, et surtout que **les métadonnées sont
- * retirées**. Une photo porte souvent des coordonnées et un horodatage que
- * personne n'a décidé de verser au dossier ; le dire est autant une
- * information qu'une garantie.
- */
 export function PiecesJointes({
   entiteId,
   peutDeposer,
@@ -189,13 +180,12 @@ function Vignette({
     <li className={styles.vignette}>
       <div className={styles.cadre}>
         {apercu.url ? (
-          /* L'octet vient d'une requête authentifiée et vit dans un `blob:` :
-             `next/image` irait le chercher lui-même, sans jeton. */
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
+          <Image
             className={styles.image}
             src={apercu.url}
             alt={fichier.nomOrigine}
+            fill
+            sizes="(max-width: 700px) 50vw, 180px"
           />
         ) : (
           <span className={styles.attente}>

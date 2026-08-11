@@ -43,13 +43,8 @@ const GRADES = [
   },
 ];
 
-/** Journal des écritures, pour vérifier ce qui est réellement parti. */
 const envois: { url: string; corps: unknown }[] = [];
 
-/**
- * Le client appelle `fetch(requete)` avec un seul `Request` : la méthode et le
- * corps se lisent donc sur lui, et non sur un second argument d'options.
- */
 function repondre(): void {
   vi.stubGlobal(
     'fetch',
@@ -133,8 +128,6 @@ describe('Comptes agents', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Ouvrir un compte' }));
 
-    // Le libellé accessible d'un `ChampTexte` inclut son indication : on vise
-    // donc le début, pas l'égalité stricte.
     fireEvent.change(screen.getByLabelText(/^Matricule/), {
       target: { value: 'ji-010' },
     });
@@ -155,8 +148,6 @@ describe('Comptes agents', () => {
 
     await screen.findByText('coriandre-plateau-9741');
 
-    // Un clic à côté ferait perdre un secret irrécupérable : la seule sortie
-    // est l'acquittement.
     const boite = screen.getByRole('dialog');
     expect(
       [...boite.querySelectorAll('button')].map((bouton) => bouton.textContent),

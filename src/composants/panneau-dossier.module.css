@@ -1,5 +1,3 @@
-/* Le panneau se distingue de la fiche : il contextualise la consultation,
- * il n'en fait pas partie. D'où le liseré d'accent. */
 .panneau {
   display: flex;
   flex-direction: column;

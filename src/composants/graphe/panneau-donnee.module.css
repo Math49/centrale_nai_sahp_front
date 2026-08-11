@@ -1,9 +1,3 @@
-/*
- * Panneau venant de la droite, posé sur le graphe.
- *
- * Il se superpose sans pousser la toile : l'agent garde sa position et sa mise
- * au point, ce qui est toute la raison de ne pas naviguer.
- */
 .panneau {
   position: absolute;
   top: 0;

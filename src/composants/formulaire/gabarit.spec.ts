@@ -36,8 +36,6 @@ describe('libellePrevu', () => {
   });
 
   it('resserre les espaces d’un champ encore vide', () => {
-    // Pendant la frappe, la moitié du gabarit manque : « Tyron » vaut mieux
-    // que « Tyron  », ne serait-ce que pour la recherche de doublons.
     expect(libellePrevu(personne, { prenom: 'Tyron' })).toBe('Tyron');
   });
 

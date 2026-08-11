@@ -28,8 +28,6 @@ import styles from './formulaire.module.css';
 import { libellePrevu } from './gabarit';
 import { cleRelation, planDEcriture } from './plan-ecriture';
 
-/** Profondeur maximale de la création en cascade. Au-delà, l'agent enregistre
- *  puis poursuit depuis la fiche créée. */
 export const PROFONDEUR_MAXIMALE = 2;
 
 export interface EntiteEnregistree {
@@ -37,14 +35,6 @@ export interface EntiteEnregistree {
   libelle: string;
 }
 
-/**
- * Registre partagé par toute la cascade.
- *
- * L'enregistrement est progressif : chaque sous-formulaire validé persiste son
- * entité. Abandonner une branche doit donc pouvoir retirer ce qu'elle a écrit,
- * et pas seulement ce que le dernier niveau a produit — d'où un registre unique
- * tenu à la racine, et des marques posées à l'ouverture de chaque niveau.
- */
 export interface RegistreCascade {
   creees: EntiteEnregistree[];
   ajouter: (entite: EntiteEnregistree) => void;
@@ -64,8 +54,6 @@ export function useRegistreCascade(): RegistreCascade {
       annulerDepuis: async (marque) => {
         const aRetirer = creees.slice(marque);
 
-        // À rebours : une entité créée plus tard peut désigner une plus
-        // ancienne, et l'annulation refuse de retirer ce qui est désigné.
         for (const entite of [...aRetirer].reverse()) {
           await annuler.mutateAsync(entite.id).catch(() => undefined);
         }
@@ -78,7 +66,6 @@ export function useRegistreCascade(): RegistreCascade {
 }
 
 export interface HeritageCascade {
-  /** Ce que le formulaire parent posera comme lien, une fois enregistré. */
   libelleLien: string;
   libelleParent: string;
 }
@@ -89,10 +76,6 @@ interface Proprietes {
   onSourceChange: (source: SourceActive) => void;
   registre: RegistreCascade;
 
-  /**
-   * Dossier de saisie. Les faits en héritent la visibilité et l'entité entre
-   * dans son suivi ; l'entité, elle, ne porte que la sienne.
-   */
   dossierId?: string;
 
   profondeur?: number;
@@ -101,17 +84,6 @@ interface Proprietes {
   onAnnule: () => void;
 }
 
-/**
- * Moteur de formulaire dynamique.
- *
- * Il lit le référentiel et produit le formulaire de n'importe quel type
- * d'entité, champs relationnels compris. C'est la pièce la plus réutilisée du
- * front : la fiche, l'édition et la création en cascade en dépendent toutes.
- *
- * Le principe fondateur tient dans son comportement : **on décrit des entités,
- * les liens se construisent seuls**. L'agent ne trace jamais un lien à la main,
- * il remplit un champ.
- */
 export function MoteurFormulaire({
   typeEntiteId,
   source,
@@ -226,19 +198,12 @@ export function MoteurFormulaire({
     }
   };
 
-  /**
-   * Abandon : ce que la cascade a persisté depuis l'ouverture de ce niveau est
-   * retiré. Ce qui a été validé plus haut reste.
-   */
   const abandonner = async () => {
     await registre.annulerDepuis(marque);
     onAnnule();
   };
 
   const retenirLeDoublon = (suggestion: SuggestionDoublon) => {
-    // Bascule de la création vers la sélection. Dans un sous-formulaire, le
-    // parent reçoit la fiche existante comme s'il l'avait cherchée ; sa propre
-    // saisie, elle, n'a jamais été touchée.
     onEnregistre({ id: suggestion.id, libelle: suggestion.libelle });
   };
 
@@ -428,14 +393,6 @@ export function MoteurFormulaire({
   );
 }
 
-/**
- * Sous-formulaire bloquant.
- *
- * On en sort par validation, qui persiste, ou par annulation explicite, qui
- * retire ce qui vient d'être créé. Rien d'autre ne le referme : ni le voile,
- * ni la touche d'échappement — une fermeture accidentelle laisserait la saisie
- * du parent dans un état que l'agent n'a pas choisi.
- */
 function SousFormulaire({
   typeCibleId,
   libelleLien,
@@ -454,7 +411,7 @@ function SousFormulaire({
   source: SourceActive;
   onSourceChange: (source: SourceActive) => void;
   registre: RegistreCascade;
-  /** Le dossier de saisie se propage à toute la cascade, comme la source. */
+
   dossierId?: string;
   profondeur: number;
   onEnregistre: (entite: EntiteEnregistree) => void;

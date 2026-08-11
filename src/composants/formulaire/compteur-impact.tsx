@@ -1,21 +1,12 @@
 import styles from './formulaire.module.css';
 
 export interface Impact {
-  /** Entités déjà persistées par les sous-formulaires validés. */
   entitesCreees: number;
-  /** Entités restant à écrire — au moins celle qu'on saisit. */
+
   entitesRestantes: number;
   liensRestants: number;
 }
 
-/**
- * Compteur d'impact, en pied de formulaire.
- *
- * Il reflète **l'état réel de la saisie** : les entités déjà persistées par les
- * sous-formulaires validés ne sont pas comptées comme restant à faire.
- * Annoncer un total figé au moment d'ouvrir le formulaire mentirait dès la
- * première cascade.
- */
 export function CompteurImpact({ impact }: { impact: Impact }) {
   const morceaux: string[] = [];
 

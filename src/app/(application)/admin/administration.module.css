@@ -32,7 +32,6 @@
   background: var(--accent-fond);
 }
 
-/* Deux colonnes : la liste à gauche, le détail de la sélection à droite. */
 .atelier {
   display: grid;
   grid-template-columns: minmax(220px, 300px) 1fr;

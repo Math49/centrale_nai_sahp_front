@@ -7,14 +7,6 @@ export const NIVEAUX_FIABILITE: Record<number, string> = {
   1: 'douteux',
 };
 
-/**
- * Pastille de fiabilité.
- *
- * Discrète, et **jamais réduite à sa couleur** : elle porte toujours son texte,
- * faute de quoi elle serait illisible pour qui distingue mal les teintes. La
- * source s'affiche au survol — la valeur prime sur ses métadonnées, qui ne
- * doivent pas encombrer le flux.
- */
 export function PastilleFiabilite({
   niveau,
   source,
@@ -33,13 +25,6 @@ export function PastilleFiabilite({
   );
 }
 
-/**
- * Pastille de visibilité.
- *
- * Neutre pour public — au point de ne rien afficher : signaler l'ordinaire
- * noierait le signal. Marquée pour restreint et privé, en famille froide, pour
- * ne pas se confondre avec l'échelle chaude de la fiabilité.
- */
 export function PastilleVisibilite({ niveau }: { niveau: string }) {
   if (niveau === 'public') {
     return null;
@@ -52,7 +37,6 @@ export function PastilleVisibilite({ niveau }: { niveau: string }) {
   );
 }
 
-/** Légende de fiabilité, en pied de fiche. */
 export function LegendeFiabilite() {
   return (
     <div className={styles.legende}>

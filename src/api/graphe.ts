@@ -27,22 +27,13 @@ async function attendre<T>(
   return data as T;
 }
 
-/**
- * La vue entière, chargée d'un bloc.
- *
- * Tout ce que l'agent peut voir, à toute profondeur : l'exploration devient
- * une navigation dans une carte plutôt qu'une succession de dépliages. Le
- * filtre de fiabilité reste, parce qu'il change ce qu'on regarde, pas
- * seulement ce qu'on affiche.
- */
 export function useVueEntiere(options: {
   fiabilite: number;
   dossierId?: string;
 }) {
   return useQuery({
     queryKey: [...CLE_GRAPHE, 'complet', options],
-    // Le graphe entier ne change qu'à l'écriture ; le recharger au moindre
-    // retour d'onglet ferait sauter la disposition sous les yeux de l'agent.
+
     staleTime: 60_000,
     queryFn: () =>
       attendre(
@@ -85,13 +76,6 @@ export function useVoisinage(options: {
   });
 }
 
-/**
- * Recherche de chemin.
- *
- * Deux résultats : le plus court et le plus solide. L'absence de chemin est un
- * résultat comme un autre — la plateforme ne dit jamais qu'un chemin existe
- * mais reste inaccessible.
- */
 export function useChemins(
   de: string | null,
   vers: string | null,

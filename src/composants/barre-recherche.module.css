@@ -44,7 +44,6 @@
   color: var(--texte-faible);
 }
 
-/* La croix native du type search jure avec le thème. */
 .champ::-webkit-search-cancel-button {
   appearance: none;
 }
@@ -97,7 +96,6 @@
   flex-shrink: 0;
 }
 
-/* Un état vide qui dit ce qu'il a cherché, jamais « aucun résultat » sec. */
 .vide {
   padding: 8px;
   font-size: 0.8rem;

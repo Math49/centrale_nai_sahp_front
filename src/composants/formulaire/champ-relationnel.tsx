@@ -10,17 +10,10 @@ import styles from './formulaire.module.css';
 export interface EntiteChoisie {
   id: string;
   libelle: string;
-  /** Pré-remplie par le contexte de création : marquée d'un cadenas. */
+
   heritee?: boolean;
 }
 
-/**
- * Champ relationnel — la pièce qui fait que personne ne trace jamais un lien.
- *
- * L'agent remplit un champ ; l'arête existe. Le champ permet toujours de
- * **sélectionner une entité existante ou d'en créer une sur place**, ce second
- * cas ouvrant un sous-formulaire.
- */
 export function ChampRelationnel({
   libelle,
   typeCibleId,

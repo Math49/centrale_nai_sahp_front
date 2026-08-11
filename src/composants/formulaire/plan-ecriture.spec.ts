@@ -32,7 +32,6 @@ const vehicule: TypeEntite = {
   onglets: [],
 };
 
-/** Personne → Véhicule : depuis la fiche du véhicule, il se lit à l'envers. */
 const proprietaireDe: TypeLien = {
   id: 'l-proprietaire',
   code: 'proprietaire_de',
@@ -44,7 +43,6 @@ const proprietaireDe: TypeLien = {
   ordre: 0,
 };
 
-/** Véhicule → Groupe : depuis la fiche du véhicule, il se lit à l'endroit. */
 const utilisePar: TypeLien = {
   id: 'l-utilise',
   code: 'utilise_par',
@@ -97,8 +95,6 @@ describe('planDEcriture', () => {
   });
 
   it('diffère les liens dont elle est la cible — elle doit exister pour être désignée', () => {
-    // C'est le cas du parcours Madrina : depuis la fiche du véhicule, on
-    // désigne un propriétaire, mais le fait a la personne pour sujet.
     const plan = planDEcriture(
       vehicule,
       candidats,

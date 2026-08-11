@@ -5,14 +5,6 @@ import { useState, type ReactNode } from 'react';
 import { Icone } from './icones';
 import styles from './liste-reordonnable.module.css';
 
-/**
- * Liste réordonnable par glisser-déposer.
- *
- * Le glisser-déposer natif suffit ici et évite une dépendance ; il est doublé
- * de deux boutons de déplacement, sans lesquels l'ordre serait inatteignable
- * au clavier. Le nouvel ordre n'est envoyé qu'au dépôt, en un seul appel qui
- * porte le jeu complet.
- */
 export function ListeReordonnable<T extends { id: string }>({
   elements,
   rendu,

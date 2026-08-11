@@ -108,8 +108,6 @@
   color: var(--texte-faible);
 }
 
-/* La couleur est réservée à la fiabilité et à la visibilité : les pastilles
- * de visibilité portent la famille froide, et toujours leur texte. */
 .restreint,
 .prive {
   margin-left: auto;

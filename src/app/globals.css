@@ -1,25 +1,4 @@
-/*
- * Centrale N&I — design system.
- *
- * Quatre règles gouvernent ce fichier :
- *
- *   1. Thème sombre unique. Fond quasi noir, gris froids, surfaces empilées.
- *   2. La couleur porte du sens, jamais de la décoration. Trois familles, et
- *      trois seulement : la **fiabilité** (échelle sémantique ordonnée), la
- *      **visibilité** (famille froide, violette), et un **accent** unique
- *      d'interface — bleu acier repris du métal du badge — pour ce qui se
- *      clique et ce qui est sélectionné.
- *   3. Jamais la couleur seule : une pastille porte toujours son texte.
- *   4. Les identifiants — plaques, matricules, numéros, dates techniques —
- *      sont en monospace.
- *
- * La fiabilité et la visibilité ne doivent jamais se confondre : la première
- * va du vert au rouge en passant par le bleu et l'ambre, la seconde reste dans
- * les violets. Deux échelles coexistent souvent sur une même fiche.
- */
-
 :root {
-  /* ─────────────────────────── Surfaces ─────────────────────────── */
   --fond: #08090b;
   --surface-1: #0e1014;
   --surface-2: #14171d;
@@ -27,11 +6,9 @@
   --surface-survol: #1f242d;
   --surface-popover: #171b22;
 
-  /* Rétro-compatibilité : anciens jetons, en cours de retrait. */
   --surface: var(--surface-1);
   --surface-haute: var(--surface-2);
 
-  /* ──────────────────────────── Traits ──────────────────────────── */
   --border: #212630;
   --border-strong: #2d343f;
   --border-accent: rgba(111, 157, 196, 0.4);
@@ -39,7 +16,6 @@
   --bordure: var(--border);
   --bordure-forte: var(--border-strong);
 
-  /* ──────────────────────────── Textes ──────────────────────────── */
   --text-primary: #e7ebf1;
   --text-secondary: #99a3b2;
   --text-muted: #66707e;
@@ -48,7 +24,6 @@
   --texte-attenue: var(--text-secondary);
   --texte-faible: var(--text-muted);
 
-  /* ───────────────── Accent d'interface — bleu acier ───────────────── */
   --accent: #6f9dc4;
   --accent-vif: #9cc2e0;
   --accent-sourd: #3d6182;
@@ -58,18 +33,6 @@
   --text-accent: var(--accent-vif);
   --bg-accent: var(--accent-fond);
 
-  /*
-   * ────────────────────────── Fiabilité ──────────────────────────
-   *
-   * Quatre niveaux ordonnés. Les noms sémantiques — success, accent, warning,
-   * danger — sont ceux des maquettes ; la correspondance est fixée ici une
-   * fois pour toutes :
-   *
-   *   4 certain     → success
-   *   3 probable    → accent
-   *   2 à confirmer → warning
-   *   1 douteux     → danger
-   */
   --text-success: #6cc08a;
   --bg-success: rgba(74, 157, 110, 0.16);
   --text-warning: #d99a5b;
@@ -82,21 +45,17 @@
   --fiabilite-2: var(--text-warning);
   --fiabilite-1: var(--text-danger);
 
-  /* ─── Visibilité — famille froide, distincte de la fiabilité ─── */
   --visibilite-public: #66707e;
   --visibilite-restreint: #9295d6;
   --visibilite-prive: #b681cd;
   --bg-restreint: rgba(125, 127, 189, 0.16);
   --bg-prive: rgba(160, 111, 184, 0.16);
 
-  /* ────────────────────────── Typographie ────────────────────────── */
-  --police:
-    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --police: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --police-mono:
     'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
   --font-mono: var(--police-mono);
 
-  /* ──────────────────────────── Rythme ──────────────────────────── */
   --radius: 6px;
   --radius-large: 10px;
   --rayon: var(--radius);
@@ -107,7 +66,6 @@
 
   --transition: 130ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Largeur de la barre latérale, lue par la coquille et par ses écrans. */
   --sidebar: 232px;
 
   color-scheme: dark;
@@ -136,8 +94,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Casse de phrase partout : aucune capitale décorative. Les libellés de
- * section sont la seule exception, traitée au cas par cas. */
 h1,
 h2,
 h3,
@@ -167,8 +123,6 @@ textarea {
   color: inherit;
 }
 
-/* Tout identifiant passe par cette classe : plaques, matricules, numéros de
- * dossier, dates techniques. */
 .mono {
   font-family: var(--police-mono);
   font-variant-ligatures: none;
@@ -176,7 +130,6 @@ textarea {
   letter-spacing: 0.01em;
 }
 
-/* Libellé de section : la seule capitale admise de l'interface. */
 .section {
   font-size: 0.69rem;
   font-weight: 600;
@@ -186,7 +139,6 @@ textarea {
   margin: 0;
 }
 
-/* Un focus toujours visible : l'application se pilote beaucoup au clavier. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -197,7 +149,6 @@ textarea {
   background: var(--accent-bordure);
 }
 
-/* Barres de défilement discrètes, dans les gris de l'interface. */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;

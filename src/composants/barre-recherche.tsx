@@ -8,15 +8,6 @@ import styles from './barre-recherche.module.css';
 import { Icone } from './icones';
 import { PastilleVisibilite } from './pastilles';
 
-/**
- * Recherche globale, présente sur tout écran.
- *
- * Les objets inaccessibles n'y figurent pas, **sans mention ni décompte** :
- * c'est l'API qui en décide, jamais cet écran. Un total qui ne tomberait pas
- * juste serait déjà une information.
- *
- * Aucun « aucun résultat » sec non plus : la liste dit ce qu'elle a cherché.
- */
 export function BarreRecherche() {
   const [saisie, definirSaisie] = useState('');
   const [ouverte, definirOuverte] = useState(false);
@@ -28,8 +19,6 @@ export function BarreRecherche() {
   const resultats = useRecherche(saisie);
   const liste = resultats.data ?? [];
 
-  // Un clic ailleurs referme la liste sans effacer la saisie : l'agent peut
-  // reprendre sa recherche où il l'avait laissée.
   useEffect(() => {
     const auClic = (evenement: MouseEvent) => {
       if (!conteneur.current?.contains(evenement.target as Node)) {
@@ -45,8 +34,6 @@ export function BarreRecherche() {
     definirOuverte(false);
     definirSaisie('');
 
-    // Ouvrir un dossier revient à ouvrir la fiche de sa donnée pivot : la
-    // route de dossier s'en charge, on la laisse rediriger.
     router.push(
       resultat.nature === 'dossier'
         ? `/dossiers/${resultat.id}`
@@ -100,9 +87,7 @@ export function BarreRecherche() {
           onKeyDown={auClavier}
           placeholder="Rechercher une donnée, une plaque, un dossier"
           aria-label="Recherche globale"
-          // Le motif ARIA de la liste déroulante veut `combobox` ; le rôle
-          // natif de `type="search"` ne porte ni `aria-expanded` ni
-          // `aria-controls`.
+
           role="combobox"
           aria-expanded={deployee}
           aria-controls="resultats-recherche"

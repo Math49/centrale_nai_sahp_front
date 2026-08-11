@@ -45,9 +45,6 @@
   text-overflow: ellipsis;
 }
 
-/* Le super-admin est signalé sans couleur d'accent : ce n'est pas une
- * distinction flatteuse mais un pouvoir, et ses consultations sont
- * journalisées comme telles. */
 .superAdmin {
   color: var(--text-secondary);
   letter-spacing: 0.02em;

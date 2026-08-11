@@ -25,13 +25,6 @@ async function attendre<T>(
   return data as T;
 }
 
-/**
- * Grades et leurs permissions.
- *
- * Lisible par tout agent connecté : savoir ce qu'un grade autorise ne révèle
- * rien sur les données. C'est aussi ce qui permet au formulaire de création de
- * compte de proposer les grades sans exiger `role.gerer`.
- */
 export function useRoles() {
   return useQuery({
     queryKey: CLE_ROLES,
@@ -40,7 +33,6 @@ export function useRoles() {
   });
 }
 
-/** Catalogue des permissions attribuables — exige `role.gerer`. */
 export function useCataloguePermissions() {
   return useQuery({
     queryKey: [...CLE_ROLES, 'catalogue'],
@@ -54,13 +46,6 @@ export function useCataloguePermissions() {
   });
 }
 
-/**
- * Configuration d'un grade.
- *
- * `permissions` est un **jeu complet** : il remplace le précédent. Envoyer la
- * différence laisserait deux façons de décrire le même état, et la matrice de
- * l'écran n'aurait plus de source unique.
- */
 export function useModifierRole() {
   const client = useQueryClient();
 

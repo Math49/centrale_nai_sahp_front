@@ -1,5 +1,3 @@
-/* ─────────────────────────── Barre d'outils ─────────────────────────── */
-
 .barre {
   display: flex;
   flex-wrap: wrap;
@@ -63,8 +61,6 @@
   border-radius: var(--radius-large);
 }
 
-/* ─────────────────────────────── Toile ─────────────────────────────── */
-
 .scene {
   position: relative;
 }
@@ -83,7 +79,6 @@
   border-radius: var(--radius-large);
 }
 
-/* Panneau d'inspection du nœud sélectionné, posé sur la toile. */
 .inspecteur {
   position: absolute;
   top: 14px;
@@ -152,8 +147,6 @@
   line-height: 1.6;
   color: var(--text-muted);
 }
-
-/* ──────────────── Suggestions et chemins (partagés) ──────────────── */
 
 .suggestions {
   position: absolute;
@@ -253,8 +246,6 @@
   }
 }
 
-/* ───────────────── Barre de filtre et légendes (Sigma) ───────────────── */
-
 .champRecherche {
   display: flex;
   flex-direction: column;
@@ -298,7 +289,6 @@
   background: var(--surface-survol);
 }
 
-/* Étiquette du nœud sélectionné, posée en bas de la toile. */
 .etiquetteSelection {
   position: absolute;
   left: 14px;

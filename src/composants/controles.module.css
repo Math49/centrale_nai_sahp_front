@@ -28,7 +28,6 @@
   opacity: 0.5;
 }
 
-/* Les identifiants se saisissent en monospace, comme ils s'affichent. */
 .champMono {
   composes: champ;
   font-family: var(--police-mono);
@@ -74,7 +73,6 @@
   color: var(--texte);
 }
 
-/* Un message d'erreur porte du texte, jamais de la seule couleur. */
 .erreur {
   padding: 8px 10px;
   border: 1px solid var(--bordure-forte);

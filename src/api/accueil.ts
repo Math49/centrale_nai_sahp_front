@@ -28,14 +28,6 @@ async function attendre<T>(
   return data as T;
 }
 
-/**
- * L'accueil arrive **assemblé** : signaux, dossiers de l'agent et dernière
- * activité en une requête.
- *
- * Même raison que pour la fiche — les trois blocs dépendent des mêmes règles de
- * visibilité, et les recomposer ici supposerait que la règle existe en deux
- * exemplaires.
- */
 export function useAccueil() {
   return useQuery({
     queryKey: CLE_ACCUEIL,
@@ -43,20 +35,13 @@ export function useAccueil() {
   });
 }
 
-/**
- * Recherche globale.
- *
- * Les objets inaccessibles en sont absents, sans mention ni décompte : c'est
- * l'API qui en décide, jamais cet appel.
- */
 export function useRecherche(q: string) {
   const recherche = q.trim();
 
   return useQuery({
     queryKey: [...CLE_RECHERCHE, recherche],
     enabled: recherche.length >= 2,
-    // Le résultat d'une frappe ne se garde pas : une recherche relancée doit
-    // repartir de l'état courant des habilitations.
+
     staleTime: 0,
     queryFn: () =>
       attendre(

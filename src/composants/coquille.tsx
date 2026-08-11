@@ -15,7 +15,7 @@ interface Zone {
   libelle: string;
   chemin: string;
   icone: NomIcone;
-  /** Sans permission listée, la zone est visible de tous. */
+
   permissions?: string[];
 }
 
@@ -28,9 +28,7 @@ const ZONES: Zone[] = [
     libelle: 'Administration',
     chemin: '/admin',
     icone: 'reglages',
-    // `entite.archiver` y figure pour la seule liste des orphelines : un Senior
-    // qui entre dans la zone n'y voit que cette rubrique, chacune étant filtrée
-    // par ses propres permissions.
+
     permissions: [
       'agent.gerer',
       'role.gerer',
@@ -44,23 +42,10 @@ function estActive(chemin: string, courant: string): boolean {
   return chemin === '/' ? courant === '/' : courant.startsWith(chemin);
 }
 
-/**
- * Coquille de l'application — **barre latérale**, et non barre horizontale.
- *
- * La navigation est verticale parce que les zones sont peu nombreuses et
- * stables, tandis que la largeur est ce dont manquent les écrans denses de la
- * plateforme : un graphe, une fiche à onglets, un journal. Une barre latérale
- * étroite laisse la hauteur au contenu et garde la recherche globale en tête,
- * joignable de partout.
- */
-// `children` garde son nom anglais : c'est une propriété de React, au même
-// titre que `className`, et non un terme du domaine.
 export function Coquille({ children }: { children: ReactNode }) {
   const { agent } = useSession();
   const courant = usePathname();
 
-  // Une zone dont l'agent n'a aucune des permissions n'apparaît pas. Le back
-  // refuse de toute façon ; masquer évite de proposer une porte fermée.
   const zones = ZONES.filter(
     (zone) =>
       !zone.permissions ||

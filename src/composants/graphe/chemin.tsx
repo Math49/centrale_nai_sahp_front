@@ -9,16 +9,6 @@ import { Icone } from '@/composants/icones';
 import { PastilleFiabilite } from '@/composants/pastilles';
 import styles from './graphe.module.css';
 
-/**
- * Restitution d'un chemin - même rendu sur l'accueil et sur le graphe.
- *
- * Extrait plutôt que recopié : deux exemplaires finiraient par diverger, et
- * c'est ici que se lit l'invariant « un chemin vaut son maillon le plus
- * faible ».
- *
- * L'absence de chemin est un résultat comme un autre. La centrale ne dit jamais
- * qu'un chemin existe mais reste hors de portée : ce serait déjà l'avoir dit.
- */
 export function ResultatChemin({
   titre,
   chemin,
@@ -61,12 +51,6 @@ export function ResultatChemin({
   );
 }
 
-/**
- * Les deux chemins, côte à côte.
- *
- * Lorsqu'ils coïncident, l'API renvoie `plusSolide` à nul et un seul est
- * affiché - la place laissée le dit plutôt que de la laisser vide.
- */
 export function DeuxChemins({
   plusCourt,
   plusSolide,
@@ -94,7 +78,6 @@ export function DeuxChemins({
   );
 }
 
-/** Sélecteur d'entité à la frappe, commun aux deux extrémités d'un chemin. */
 export function ChoixEntite({
   etiquette,
   valeurId,

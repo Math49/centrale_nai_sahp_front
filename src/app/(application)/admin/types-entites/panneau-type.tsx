@@ -58,7 +58,6 @@ export function PanneauType({
   );
   const [suppressionDuType, definirSuppressionDuType] = useState(false);
 
-  // Changer de type sélectionné recharge le formulaire de propriétés.
   useEffect(() => {
     definirProprietes({
       libelle: type.libelle,
@@ -395,7 +394,6 @@ function Bascule({
   );
 }
 
-/** Aperçu local du gabarit, avec les libellés des champs existants. */
 function apercu(modele: string, champs: DefinitionChamp[]): string {
   const rendu = modele.replace(/\{([^{}]*)\}/g, (_entier, cle: string) => {
     const champ = champs.find((candidat) => candidat.cle === cle);

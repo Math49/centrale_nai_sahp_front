@@ -7,7 +7,7 @@ import { Coquille } from './coquille';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/',
-  // La barre de recherche navigue vers le résultat choisi.
+
   useRouter: () => ({ push: vi.fn() }),
 }));
 
@@ -71,8 +71,6 @@ describe('Coquille', () => {
   });
 
   it("ouvre l'administration à qui peut archiver, pour la seule liste des orphelines", () => {
-    // Un Senior n'a pas `journal.consulter` : la zone s'ouvre pour l'écran de
-    // ménage, sans lui donner le relevé des consultations.
     magasinSession.ouvrir({
       ...JUNIOR,
       roleCode: 'senior_investigator',

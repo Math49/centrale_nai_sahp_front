@@ -8,13 +8,6 @@ import { PastilleVisibilite } from '@/composants/pastilles';
 import { EnteteZone } from '@/composants/zone';
 import styles from '../administration.module.css';
 
-/**
- * Archives.
- *
- * Rien n'est jamais supprimé : ce qui sort des écrans courants atterrit ici et
- * reste consultable. On y trouve aussi les fiches absorbées par une fusion,
- * qui redirigent vers celle qui subsiste.
- */
 export default function PageArchives() {
   const archivees = useEntites({ etat: 'archive' });
 

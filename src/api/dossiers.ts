@@ -35,13 +35,6 @@ export function useDossiers() {
   });
 }
 
-/**
- * Panneau de dossier.
- *
- * `actif` reste faux tant qu'on n'accède pas à la fiche **par le dossier** :
- * le panneau n'est visible que par cette entrée, et une fiche ouverte
- * directement n'en déclenche aucune requête.
- */
 export function usePanneauDossier(id: string | null) {
   return useQuery({
     queryKey: [...CLE_DOSSIERS, id],
@@ -62,8 +55,6 @@ function useEcriture<Variables, Resultat>(
   return useMutation({
     mutationFn: action,
     onSuccess: async () => {
-      // Le suivi touche les deux côtés : la liste des dossiers et la fiche de
-      // l'entité, qui mentionne ses rattachements.
       await Promise.all([
         client.invalidateQueries({ queryKey: CLE_DOSSIERS }),
         client.invalidateQueries({ queryKey: CLE_ENTITES }),

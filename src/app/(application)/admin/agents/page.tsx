@@ -32,11 +32,10 @@ export default function PageAgents() {
   );
 }
 
-/** Ce qui n'est montré qu'une fois : un mot de passe provisoire et son porteur. */
 interface Secret {
   agent: AgentResume;
   motDePasse: string;
-  /** Vrai après une réinitialisation, faux après une ouverture de compte. */
+
   reinitialise: boolean;
 }
 
@@ -210,14 +209,6 @@ function Comptes() {
   );
 }
 
-/**
- * Ouverture d'un compte.
- *
- * L'administrateur ne choisit pas le mot de passe : l'API en engendre un
- * provisoire, montré une seule fois, et le compte part en changement imposé.
- * Laisser l'administrateur le saisir lui donnerait une connaissance durable
- * d'un secret qui n'appartient qu'à l'agent.
- */
 function Ouverture({
   roles,
   surAnnulation,
@@ -385,7 +376,6 @@ function Ouverture({
   );
 }
 
-/** Fiche d'un compte existant — état, grade, et les deux gestes lourds. */
 function FicheCompte({
   compte,
   roles,
@@ -414,8 +404,6 @@ function FicheCompte({
   const [aAnonymiser, definirAAnonymiser] = useState(false);
   const [saisieMatricule, definirSaisieMatricule] = useState('');
 
-  // On n'envoie que ce qui a bougé : la modale récapitule alors exactement ce
-  // qui va partir, et non l'état complet du formulaire.
   const changements: string[] = [];
   if (prenom !== compte.prenom) changements.push(`prénom → ${prenom}`);
   if (nom !== compte.nom) changements.push(`nom → ${nom}`);
@@ -693,14 +681,6 @@ function FicheCompte({
   );
 }
 
-/**
- * Le mot de passe provisoire, montré une seule fois.
- *
- * Fermé par un bouton unique et explicite : une modale qu'on referme d'un clic
- * dans le vide ferait perdre un secret irrécupérable. D'où `sansAnnulation`,
- * qui retire le voile, l'échappement et le bouton discret, et un libellé de
- * confirmation qui engage.
- */
 function MotDePasseProvisoire({
   secret,
   surFermeture,

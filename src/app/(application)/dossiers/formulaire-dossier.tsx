@@ -17,13 +17,6 @@ const VISIBILITES = [
   { valeur: 'prive', libelle: 'Privé — absent pour qui n’est pas habilité' },
 ] as const;
 
-/**
- * Ouverture d'un dossier.
- *
- * L'donnée pivot est obligatoire : un dossier sans elle n'existe pas. Le
- * classement en restreint ou privé relève d'une permission à part — sans elle,
- * le choix ne s'affiche pas, plutôt que d'être proposé puis refusé.
- */
 export function FormulaireDossier({ onCree }: { onCree: () => void }) {
   const router = useRouter();
   const creer = useCreerDossier();

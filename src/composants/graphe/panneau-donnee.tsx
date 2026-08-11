@@ -11,18 +11,6 @@ import { Icone } from '@/composants/icones';
 import { PastilleFiabilite, PastilleVisibilite } from '@/composants/pastilles';
 import styles from './panneau-donnee.module.css';
 
-/**
- * Fiche d'une donnée, ouverte depuis le graphe — un panneau qui vient de la
- * droite plutôt qu'une navigation.
- *
- * L'agent regarde une carte ; l'envoyer sur une autre page lui ferait perdre sa
- * position, son filtre et sa mise au point. Le panneau lui rend la fiche sans
- * lui prendre le graphe, et un lien reste offert pour l'ouvrir en entier.
- *
- * La fiche arrive **assemblée par l'API**, comme partout ailleurs : ses champs
- * sont recomposés depuis les seuls faits visibles par cet agent, et ce panneau
- * n'en refait aucun calcul.
- */
 export function PanneauDonnee({
   id,
   surFermeture,
@@ -33,8 +21,6 @@ export function PanneauDonnee({
   const fiche = useEntite(id);
   const referentiel = useReferentiel();
 
-  // La touche d'échappement referme : le panneau se superpose au graphe, il
-  // doit se retirer aussi vite qu'il est venu.
   useEffect(() => {
     const auClavier = (evenement: KeyboardEvent): void => {
       if (evenement.key === 'Escape') {

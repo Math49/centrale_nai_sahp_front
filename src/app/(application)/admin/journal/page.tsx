@@ -16,7 +16,6 @@ import styles from '../administration.module.css';
 
 type Onglet = 'consultations' | 'audit';
 
-/** Horodatage technique : monospace, comme tout identifiant. */
 function Horodatage({ valeur }: { valeur: string }) {
   return <span className="mono">{valeur.slice(0, 16).replace('T', ' ')}</span>;
 }
@@ -31,9 +30,7 @@ export default function PageJournal() {
         sousTitre="Toute lecture de fiche et toute écriture y laissent une trace. Les libellés sont recalculés à la lecture : une trace qui aurait figé un nom survivrait à l’anonymisation du compte."
       />
 
-      {/* Des boutons à bascule, non un `tablist` : sans panneaux déclarés ni
-          navigation par flèches, le rôle d'onglet promettrait plus que l'écran
-          ne tient. */}
+      {}
       <div className={styles.formulaireEnLigne}>
         {(['consultations', 'audit'] as const).map((nom) => (
           <button
@@ -116,8 +113,6 @@ function LigneConsultation({ entree }: { entree: EntreeConsultation }) {
         {entree.objetLibelle ? (
           <Link href={chemin}>{entree.objetLibelle}</Link>
         ) : (
-          // Le libellé est résolu filtré : ce qui est masqué pour le lecteur du
-          // journal le reste, même dans le journal.
           <span className={styles.domaine}>objet non consultable</span>
         )}
       </td>

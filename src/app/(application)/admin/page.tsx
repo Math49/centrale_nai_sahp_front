@@ -10,10 +10,10 @@ interface Rubrique {
   libelle: string;
   description: string;
   lot: string;
-  /** Vide : accessible à qui voit la zone. */
+
   permissions: string[];
   superAdminSeul?: boolean;
-  /** Absent tant que l'écran n'est pas construit. */
+
   chemin?: string;
 }
 

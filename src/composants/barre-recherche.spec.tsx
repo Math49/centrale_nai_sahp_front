@@ -123,8 +123,6 @@ describe('BarreRecherche', () => {
   });
 
   it('dit ce qu’il a cherché quand rien ne ressort', async () => {
-    // Jamais « aucun résultat » sec : ce que l'agent ne voit pas ne se
-    // distingue pas de ce qui n'existe pas, et l'écran le formule ainsi.
     repondre([]);
     saisir(afficher(), 'zz');
 

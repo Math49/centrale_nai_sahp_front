@@ -14,7 +14,6 @@
   gap: 10px;
 }
 
-/* Les libellés de section sont la seule exception à la casse de phrase. */
 .section {
   font-size: 0.72rem;
   font-weight: 600;
@@ -66,11 +65,6 @@
   color: var(--texte-faible);
 }
 
-/*
- * La famille d'un signal se lit, elle ne se colore pas : la couleur est
- * réservée à la fiabilité et à la visibilité. Une troisième échelle chromatique
- * rendrait les deux premières illisibles.
- */
 .famille {
   justify-self: start;
   margin-bottom: 4px;

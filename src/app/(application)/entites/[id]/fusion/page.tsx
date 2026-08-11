@@ -16,18 +16,6 @@ import { Modale } from '@/composants/modale';
 import { EnteteZone } from '@/composants/zone';
 import styles from './fusion.module.css';
 
-/**
- * Fusion de doublons.
- *
- * La fiche ouverte est **absorbée** ; celle que l'agent choisit subsiste. Le
- * sens est celui de la redirection : l'absorbée reste en base, archivée, et
- * pointe vers l'autre — un ancien lien vers elle continue de mener quelque
- * part.
- *
- * Le sens compte assez pour que l'écran le répète à chaque étape, y compris
- * dans la modale : se tromper de côté déplacerait l'enquête sur la mauvaise
- * fiche, et rien ne serait perdu, mais tout serait au mauvais endroit.
- */
 export default function PageFusion() {
   const id = useParams<{ id: string }>().id;
   const router = useRouter();
@@ -50,7 +38,6 @@ export default function PageFusion() {
 
   const entite = fiche.data;
 
-  // On ne se fusionne pas avec soi-même, ni avec une fiche déjà absorbée.
   const candidates = (suggestions.data ?? []).filter(
     (candidate) => candidate.id !== id,
   );

@@ -89,8 +89,6 @@
   color: var(--texte-faible);
 }
 
-/* ── Champs ── */
-
 .champs {
   margin: 0;
   display: grid;
@@ -110,7 +108,6 @@
   color: var(--texte-faible);
 }
 
-/* La valeur prime toujours sur ses métadonnées. */
 .champValeur {
   margin: 0;
   display: flex;
@@ -120,7 +117,6 @@
   font-size: 0.95rem;
 }
 
-/* Un champ non renseigné reste affiché : l'absence est une information. */
 .vide {
   color: var(--texte-faible);
   font-style: italic;
@@ -136,14 +132,12 @@
   cursor: default;
 }
 
-/* ── Onglets ── */
-
 .onglets {
   display: flex;
   gap: 2px;
   margin-bottom: 16px;
   padding-bottom: 2px;
-  /* Les onglets débordent en défilement horizontal, sans repli ni menu. */
+
   overflow-x: auto;
   border-bottom: 1px solid var(--bordure);
 }
@@ -172,7 +166,6 @@
   border-bottom-color: var(--accent);
 }
 
-/* Le compteur donne l'échelle de la fiche sans avoir à cliquer. */
 .compteur {
   padding: 0 6px;
   border: 1px solid var(--bordure-forte);
@@ -180,8 +173,6 @@
   font-size: 0.7rem;
   color: var(--texte-faible);
 }
-
-/* ── Liens et historique ── */
 
 .liens,
 .historique {
@@ -233,8 +224,6 @@
   margin-left: 0;
 }
 
-/* ── Note ── */
-
 .note {
   width: 100%;
   padding: 10px;
@@ -258,12 +247,6 @@
   gap: 12px;
 }
 
-/*
- * Bandeau de redirection d'une fiche absorbée par une fusion.
- *
- * Il ne crie pas : la fiche reste consultable et son contenu est intact. Il
- * indique seulement où l'enquête s'est poursuivie.
- */
 .redirection {
   margin: 0 0 16px;
   padding: 10px 14px;

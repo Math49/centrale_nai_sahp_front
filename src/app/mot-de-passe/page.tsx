@@ -25,7 +25,6 @@ export default function PageMotDePasse() {
       return;
     }
 
-    // Le changement fait, l'agent rejoint l'application.
     if (agent && !agent.doitChangerMdp && changement.isSuccess) {
       router.replace('/');
     }

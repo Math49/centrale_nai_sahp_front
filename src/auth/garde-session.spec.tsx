@@ -20,11 +20,6 @@ const AGENT: AgentConnecte = {
   permissions: [],
 };
 
-/**
- * Le drapeau « la session a-t-elle été demandée ? » vit dans le module et ne
- * se remet pas à zéro : chaque cas repart donc d'un module neuf, seule façon de
- * retrouver l'instant où le front ne sait pas encore.
- */
 async function charger() {
   vi.resetModules();
 

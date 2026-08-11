@@ -7,14 +7,6 @@ import { EtatVide } from '@/composants/etat-vide';
 import { EnteteZone } from '@/composants/zone';
 import styles from '../administration.module.css';
 
-/**
- * Données orphelines.
- *
- * Une coupure brutale pendant une saisie en cascade peut laisser une fiche sans
- * aucun lien. L'étude du besoin en veut une **liste discrète en
- * administration**, et surtout pas un signal sur l'accueil : ce n'est pas un
- * rapprochement, c'est du ménage.
- */
 export default function PageOrphelines() {
   const orphelines = useOrphelines();
 

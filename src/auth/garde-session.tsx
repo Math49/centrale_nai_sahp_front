@@ -6,17 +6,6 @@ import { useEffect, type ReactNode } from 'react';
 import { EcranChargement } from '@/composants/chargement';
 import { useSession, useSessionPrete } from './use-session';
 
-/**
- * Porte d'entrée des zones applicatives.
- *
- * Elle **attend la réponse de l'API** avant de conclure quoi que ce soit : le
- * cookie de session est `httpOnly`, donc invisible au front, et rediriger avant
- * d'avoir demandé renverrait vers la connexion à chaque rechargement.
- *
- * Ce garde n'est **pas** une mesure de sécurité — il masque des écrans, il ne
- * protège pas des données. Toute donnée est refusée par l'API elle-même, qui
- * ne fait confiance à rien de ce qui vient du navigateur.
- */
 export function GardeSession({ children }: { children: ReactNode }) {
   const router = useRouter();
   const prete = useSessionPrete();
@@ -37,10 +26,6 @@ export function GardeSession({ children }: { children: ReactNode }) {
     }
   }, [prete, agent, router]);
 
-  // Trois attentes, un seul écran : la question posée à l'API, la redirection
-  // vers la connexion, celle vers le changement imposé. Un blanc laisserait
-  // croire à une page cassée pendant le temps — court, mais réel — où le front
-  // ne sait pas encore s'il a une session.
   if (!prete || !agent || agent.doitChangerMdp) {
     return <EcranChargement />;
   }

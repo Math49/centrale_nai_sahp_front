@@ -1,7 +1,3 @@
-/*
- * Deux colonnes côte à côte, parce que le sens de la fusion est ce qui compte :
- * l'absorbée à gauche, la conservée à droite, jamais mélangées.
- */
 .colonnes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

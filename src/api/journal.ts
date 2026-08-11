@@ -67,8 +67,7 @@ export function useJournalConsultations(filtres: FiltresConsultation) {
             query: {
               agent: filtres.agentId,
               objet: filtres.objetId,
-              // Des drapeaux qui restreignent : absents plutôt que « false »,
-              // pour que l'API distingue « sans filtre » de « seulement ceux-là ».
+
               superAdmin: filtres.superAdmin ? true : undefined,
               derogation: filtres.derogation ? true : undefined,
             },

@@ -55,7 +55,7 @@ export default function PageDossiers() {
           {(dossiers.data ?? []).map((dossier) => (
             <li key={dossier.id} className={styles.ligne}>
               <div className={styles.identite}>
-                {/* Ouvrir le dossier revient à ouvrir la fiche de son pivot. */}
+                {}
                 <Link className={styles.nom} href={`/dossiers/${dossier.id}`}>
                   {dossier.nom}
                 </Link>

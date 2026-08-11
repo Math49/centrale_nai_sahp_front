@@ -3,16 +3,6 @@
 import type { SuggestionDoublon } from '@/api/entites';
 import styles from './formulaire.module.css';
 
-/**
- * Alerte de doublon, à la frappe.
- *
- * Deux signaux distincts, et il faut les distinguer à l'écran : la similarité
- * de libellé est floue, l'identité d'une valeur unique ne laisse aucun doute.
- *
- * Retenir une fiche proposée **bascule la création en sélection** sans perdre
- * ce qui a déjà été saisi — c'est tout l'intérêt d'alerter pendant la frappe
- * plutôt qu'à l'enregistrement.
- */
 export function AlerteDoublon({
   suggestions,
   onRetenir,

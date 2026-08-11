@@ -37,14 +37,6 @@ export function useFichiers(entiteId: string) {
   });
 }
 
-/**
- * Dépôt d'une image.
- *
- * `bodySerializer` rend le `FormData` tel quel : la sérialisation JSON par
- * défaut le viderait. Passer par le client typé plutôt que par un `fetch` nu
- * garde l'intercepteur de session — un 401 doit fermer la session ici comme
- * ailleurs.
- */
 export function useDeposerFichier() {
   const client = useQueryClient();
 
@@ -93,19 +85,12 @@ export function useSupprimerFichier() {
   });
 }
 
-/**
- * L'octet d'une image, en URL locale.
- *
- * Une balise `img` ne porte pas le jeton : l'image se récupère donc par une
- * requête authentifiée, puis s'affiche depuis un `blob:` révoqué au démontage.
- * C'est le prix — assumé — de ne jamais servir un dossier en statique.
- */
 export function useApercuFichier(id: string) {
   const [url, definirUrl] = useState<string | null>(null);
 
   const octets = useQuery({
     queryKey: [...CLE_FICHIERS, 'apercu', id],
-    // Un aperçu ne se recharge pas à chaque retour sur la fiche.
+
     staleTime: 5 * 60 * 1000,
     queryFn: () =>
       attendre(

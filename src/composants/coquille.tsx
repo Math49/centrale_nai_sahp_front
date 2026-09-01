@@ -20,10 +20,30 @@ interface Zone {
 }
 
 const ZONES: Zone[] = [
-  { libelle: 'Accueil', chemin: '/', icone: 'signal' },
-  { libelle: 'Dossiers', chemin: '/dossiers', icone: 'dossier' },
-  { libelle: 'Données', chemin: '/entites', icone: 'entite' },
-  { libelle: 'Graphe', chemin: '/graphe', icone: 'graphe' },
+  {
+    libelle: 'Accueil',
+    chemin: '/',
+    icone: 'signal',
+    permissions: ['entite.consulter'],
+  },
+  {
+    libelle: 'Dossiers',
+    chemin: '/dossiers',
+    icone: 'dossier',
+    permissions: ['dossier.consulter'],
+  },
+  {
+    libelle: 'Données',
+    chemin: '/entites',
+    icone: 'entite',
+    permissions: ['entite.consulter'],
+  },
+  {
+    libelle: 'Graphe',
+    chemin: '/graphe',
+    icone: 'graphe',
+    permissions: ['graphe.consulter'],
+  },
   {
     libelle: 'Administration',
     chemin: '/admin',
@@ -45,6 +65,10 @@ function estActive(chemin: string, courant: string): boolean {
 export function Coquille({ children }: { children: ReactNode }) {
   const { agent } = useSession();
   const courant = usePathname();
+
+  const peutChercher =
+    agent?.superAdmin === true ||
+    agent?.permissions.includes('entite.consulter') === true;
 
   const zones = ZONES.filter(
     (zone) =>
@@ -91,7 +115,9 @@ export function Coquille({ children }: { children: ReactNode }) {
 
       <div className={styles.colonne}>
         <header className={styles.entete}>
-          <BarreRecherche />
+          {/* La recherche globale interroge les données : sans le geste, elle
+              ne rendrait que des refus. */}
+          {peutChercher && <BarreRecherche />}
         </header>
 
         <main className={styles.contenu}>{children}</main>

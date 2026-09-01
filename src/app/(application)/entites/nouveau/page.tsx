@@ -6,6 +6,7 @@ import { Suspense, useState } from 'react';
 
 import { usePanneauDossier } from '@/api/dossiers';
 import { useReferentiel } from '@/api/referentiel';
+import { GardePermission } from '@/auth/garde-permission';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
 import { IconeFontAwesome } from '@/composants/icone-fontawesome';
@@ -19,9 +20,14 @@ import { EnteteZone } from '@/composants/zone';
 
 export default function PageNouvelleEntite() {
   return (
-    <Suspense fallback={<p className={controles.remarque}>Chargement…</p>}>
-      <Saisie />
-    </Suspense>
+    <GardePermission
+      permission="entite.creer"
+      explication="Ouvrir une fiche est un geste de grade. Vous pouvez consulter l’annuaire et les fiches, mais pas y verser de renseignement."
+    >
+      <Suspense fallback={<p className={controles.remarque}>Chargement…</p>}>
+        <Saisie />
+      </Suspense>
+    </GardePermission>
   );
 }
 

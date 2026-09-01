@@ -11,6 +11,7 @@ import {
 } from '@/api/accueil';
 import { useChemins } from '@/api/graphe';
 import { useSession } from '@/auth/use-session';
+import { GardePermission } from '@/auth/garde-permission';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
 import { ChoixEntite, DeuxChemins } from '@/composants/graphe/chemin';
@@ -36,6 +37,17 @@ const FAMILLES: Record<Signal['famille'], { etiquette: string; sens: string }> =
   };
 
 export default function PageAccueil() {
+  return (
+    <GardePermission
+      permission="entite.consulter"
+      explication="L’accueil rassemble ce que la centrale a remarqué sur les données. Sa consultation relève du geste « entite.consulter »."
+    >
+      <Accueil />
+    </GardePermission>
+  );
+}
+
+function Accueil() {
   const { agent } = useSession();
   const accueil = useAccueil();
 

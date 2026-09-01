@@ -1,0 +1,68 @@
+.bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+}
+
+.titre {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+  margin: 0;
+}
+
+.liste {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ligne {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--bordure);
+  font-size: 0.86rem;
+}
+
+.ligne:last-child {
+  border-bottom: none;
+}
+
+.matricule {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+  margin-right: auto;
+}
+
+.retirer {
+  background: none;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  color: var(--texte-faible);
+  cursor: pointer;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+}
+
+.retirer:hover {
+  color: var(--texte);
+  border-color: var(--bordure-forte);
+}
+
+.ajout {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ajout select {
+  flex: 1 1 auto;
+}

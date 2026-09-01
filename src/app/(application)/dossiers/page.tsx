@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { useDossiers } from '@/api/dossiers';
+import { usePermission } from '@/auth/use-permission';
+import { GardePermission } from '@/auth/garde-permission';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
 import { PastilleVisibilite } from '@/composants/pastilles';
@@ -12,8 +14,23 @@ import styles from './dossiers.module.css';
 import { FormulaireDossier } from './formulaire-dossier';
 
 export default function PageDossiers() {
+  return (
+    <GardePermission
+      permission="dossier.consulter"
+      explication="Les dossiers ne s’ouvrent qu’aux grades qui portent le geste « dossier.consulter »."
+    >
+      <ListeDossiers />
+    </GardePermission>
+  );
+}
+
+function ListeDossiers() {
   const dossiers = useDossiers();
   const [creation, definirCreation] = useState(false);
+
+  // Ouvrir un dossier est un geste de grade. Sans lui, l'API répond 403 : le
+  // bouton ne serait qu'une promesse que la centrale ne tient pas.
+  const peutCreer = usePermission('dossier.creer');
 
   return (
     <>
@@ -22,17 +39,21 @@ export default function PageDossiers() {
         sousTitre="Un dossier est un périmètre d’enquête ancré sur une donnée pivot. Il ne contient rien : il contextualise."
       />
 
-      <div className={styles.barre}>
-        <button
-          type="button"
-          className={controles.bouton}
-          onClick={() => definirCreation((ouvert) => !ouvert)}
-        >
-          {creation ? 'Fermer' : 'Nouveau dossier'}
-        </button>
-      </div>
+      {peutCreer && (
+        <div className={styles.barre}>
+          <button
+            type="button"
+            className={controles.bouton}
+            onClick={() => definirCreation((ouvert) => !ouvert)}
+          >
+            {creation ? 'Fermer' : 'Nouveau dossier'}
+          </button>
+        </div>
+      )}
 
-      {creation && <FormulaireDossier onCree={() => definirCreation(false)} />}
+      {peutCreer && creation && (
+        <FormulaireDossier onCree={() => definirCreation(false)} />
+      )}
 
       {dossiers.isLoading && <p className={controles.remarque}>Chargement…</p>}
 
@@ -41,13 +62,15 @@ export default function PageDossiers() {
           titre="Aucun dossier ouvert."
           explication="Un dossier s’ancre sur la donnée qui est au cœur de l’enquête — le groupe, le plus souvent."
           action={
-            <button
-              type="button"
-              className={controles.bouton}
-              onClick={() => definirCreation(true)}
-            >
-              Ouvrir un dossier
-            </button>
+            peutCreer ? (
+              <button
+                type="button"
+                className={controles.bouton}
+                onClick={() => definirCreation(true)}
+              >
+                Ouvrir un dossier
+              </button>
+            ) : undefined
           }
         />
       ) : (

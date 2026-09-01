@@ -17,6 +17,7 @@ export type EvenementHistorique =
 export type ChampDeFiche = components['schemas']['ChampDeFicheDto'];
 export type LienDeFiche = components['schemas']['LienDeFicheDto'];
 export type OngletPeuple = components['schemas']['OngletPeupleDto'];
+export type AgentHabilite = components['schemas']['AgentHabiliteDto'];
 
 export const CLE_ENTITES = ['entites'] as const;
 
@@ -198,6 +199,37 @@ export function useAnnulerCreation() {
         params: { path: { id } },
       }),
       'annulation impossible',
+    ),
+  );
+}
+
+/**
+ * Habilitation nominative sur une donnée.
+ *
+ * Indispensable dès que la donnée est classée : chaque gardien se franchit pour
+ * lui-même, et être habilité sur le dossier qui la suit **n'ouvre pas** la
+ * donnée. C'est précisément ce qui rendait une fiche classée inaccessible à
+ * tout le monde tant que cette porte n'existait pas.
+ */
+export function useHabiliterSurEntite() {
+  return useEcriture(({ id, agentId }: { id: string; agentId: string }) =>
+    attendre(
+      api.POST('/entites/{id}/habilitations', {
+        params: { path: { id } },
+        body: { agentId },
+      }),
+      'habilitation impossible',
+    ),
+  );
+}
+
+export function useRetirerHabilitationSurEntite() {
+  return useEcriture(({ id, agentId }: { id: string; agentId: string }) =>
+    attendre(
+      api.DELETE('/entites/{id}/habilitations/{agentId}', {
+        params: { path: { id, agentId } },
+      }),
+      'retrait impossible',
     ),
   );
 }

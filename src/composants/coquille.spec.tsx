@@ -19,7 +19,14 @@ const JUNIOR: AgentConnecte = {
   roleCode: 'junior_investigator',
   superAdmin: false,
   doitChangerMdp: false,
-  permissions: ['entite.creer', 'fait.creer'],
+  permissions: [
+    // La lecture est devenue un geste : sans elle, aucune zone ne s'ouvre.
+    'entite.consulter',
+    'dossier.consulter',
+    'graphe.consulter',
+    'entite.creer',
+    'fait.creer',
+  ],
 };
 
 function afficher() {
@@ -40,13 +47,30 @@ describe('Coquille', () => {
     magasinSession.oublierRaison();
   });
 
-  it('affiche les quatre zones ouvertes à tous', () => {
+  it('affiche les quatre zones ouvertes aux grades de l’unité', () => {
     magasinSession.ouvrir(JUNIOR);
     afficher();
 
     for (const zone of ['Accueil', 'Dossiers', 'Données', 'Graphe']) {
       expect(screen.getByRole('link', { name: zone })).toBeInTheDocument();
     }
+  });
+
+  it('ne montre au grade de consultation que ce qu’il porte', () => {
+    magasinSession.ouvrir({
+      ...JUNIOR,
+      roleCode: 'visiteur',
+      permissions: ['entite.consulter'],
+    });
+    afficher();
+
+    expect(screen.getByRole('link', { name: 'Données' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Dossiers' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Graphe' }),
+    ).not.toBeInTheDocument();
   });
 
   it("masque l'administration à un junior", () => {
@@ -61,7 +85,7 @@ describe('Coquille', () => {
   it("ouvre l'administration à qui détient une seule de ses permissions", () => {
     magasinSession.ouvrir({
       ...JUNIOR,
-      permissions: ['journal.consulter'],
+      permissions: ['entite.consulter', 'journal.consulter'],
     });
     afficher();
 
@@ -74,7 +98,7 @@ describe('Coquille', () => {
     magasinSession.ouvrir({
       ...JUNIOR,
       roleCode: 'senior_investigator',
-      permissions: ['entite.creer', 'entite.archiver'],
+      permissions: ['entite.consulter', 'entite.creer', 'entite.archiver'],
     });
     afficher();
 

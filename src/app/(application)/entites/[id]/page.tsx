@@ -21,12 +21,14 @@ import {
   type SensLien,
 } from '@/api/referentiel';
 import { useSession } from '@/auth/use-session';
+import { GardePermission } from '@/auth/garde-permission';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
 import { BoutonInfirmer } from '@/composants/infirmation';
 import { IconeFontAwesome } from '@/composants/icone-fontawesome';
 import { Modale } from '@/composants/modale';
 import { PanneauDossier } from '@/composants/panneau-dossier';
+import { HabilitationsDonnee } from '@/composants/habilitations-donnee';
 import { PiecesJointes } from '@/composants/pieces-jointes';
 import { ChampDynamique } from '@/composants/formulaire/champ-dynamique';
 import {
@@ -52,6 +54,17 @@ const LIBELLES_VISIBILITE: Record<(typeof VISIBILITES)[number], string> = {
 };
 
 export default function PageFiche() {
+  return (
+    <GardePermission
+      permission="entite.consulter"
+      explication="Les fiches de données relèvent du geste « entite.consulter »."
+    >
+      <Enveloppe />
+    </GardePermission>
+  );
+}
+
+function Enveloppe() {
   return (
     <Suspense fallback={<p className={controles.remarque}>Chargement…</p>}>
       <Fiche />
@@ -108,6 +121,14 @@ function Fiche() {
     agent?.superAdmin || agent?.permissions.includes('fait.creer') || false;
   const peutFusionner =
     agent?.superAdmin || agent?.permissions.includes('entite.fusionner');
+  const peutArchiver =
+    agent?.superAdmin ||
+    agent?.permissions.includes('entite.archiver') ||
+    false;
+  const peutDesarchiver =
+    agent?.superAdmin ||
+    agent?.permissions.includes('entite.desarchiver') ||
+    false;
   const peutDeposer =
     agent?.superAdmin || agent?.permissions.includes('fait.creer') || false;
 
@@ -259,13 +280,15 @@ function Fiche() {
               Fusionner
             </Link>
           )}
-          <button
-            type="button"
-            className={controles.boutonDiscret}
-            onClick={() => definirConfirmation(true)}
-          >
-            {entite.etat === 'archive' ? 'Désarchiver' : 'Archiver'}
-          </button>
+          {(entite.etat === 'archive' ? peutDesarchiver : peutArchiver) && (
+            <button
+              type="button"
+              className={controles.boutonDiscret}
+              onClick={() => definirConfirmation(true)}
+            >
+              {entite.etat === 'archive' ? 'Désarchiver' : 'Archiver'}
+            </button>
+          )}
         </div>
       </header>
 
@@ -383,6 +406,12 @@ function Fiche() {
         <h2 className={styles.blocTitre}>Pièces jointes</h2>
         <PiecesJointes entiteId={id} peutDeposer={peutDeposer} />
       </section>
+
+      <HabilitationsDonnee
+        entiteId={id}
+        visibilite={entite.visibilite}
+        habilitations={entite.habilitations}
+      />
 
       <section className={styles.bloc}>
         <h2 className={styles.blocTitre}>Note</h2>

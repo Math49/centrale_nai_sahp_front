@@ -5,6 +5,8 @@ import { useState } from 'react';
 
 import { useEntites } from '@/api/entites';
 import { useReferentiel } from '@/api/referentiel';
+import { usePermission } from '@/auth/use-permission';
+import { GardePermission } from '@/auth/garde-permission';
 import controles from '@/composants/controles.module.css';
 import { EtatVide } from '@/composants/etat-vide';
 import { IconeFontAwesome } from '@/composants/icone-fontawesome';
@@ -13,11 +15,26 @@ import { EnteteZone } from '@/composants/zone';
 import styles from './annuaire.module.css';
 
 export default function PageEntites() {
+  return (
+    <GardePermission
+      permission="entite.consulter"
+      explication="L’annuaire et les fiches relèvent du geste « entite.consulter »."
+    >
+      <Annuaire />
+    </GardePermission>
+  );
+}
+
+function Annuaire() {
   const referentiel = useReferentiel();
   const [typeChoisi, definirTypeChoisi] = useState<string | null>(null);
   const [recherche, definirRecherche] = useState('');
 
   const types = referentiel.data?.typesEntites ?? [];
+
+  // Créer une donnée est un geste de grade : sans lui, l'API répond 403 et la
+  // rangée de boutons ne mènerait qu'à un refus.
+  const peutCreer = usePermission('entite.creer');
   const entites = useEntites({
     typeEntiteId: typeChoisi ?? undefined,
     q: recherche,
@@ -82,21 +99,23 @@ export default function PageEntites() {
             />
           </div>
 
-          <div className={styles.creations}>
-            {(typeChoisi
-              ? types.filter((type) => type.id === typeChoisi)
-              : types
-            ).map((type) => (
-              <Link
-                key={type.id}
-                className={`${controles.bouton} ${styles.creation}`}
-                href={`/entites/nouveau?type=${type.id}`}
-              >
-                <Icone nom="plus" taille={12} />
-                {type.libelle}
-              </Link>
-            ))}
-          </div>
+          {peutCreer && (
+            <div className={styles.creations}>
+              {(typeChoisi
+                ? types.filter((type) => type.id === typeChoisi)
+                : types
+              ).map((type) => (
+                <Link
+                  key={type.id}
+                  className={`${controles.bouton} ${styles.creation}`}
+                  href={`/entites/nouveau?type=${type.id}`}
+                >
+                  <Icone nom="plus" taille={12} />
+                  {type.libelle}
+                </Link>
+              ))}
+            </div>
+          )}
 
           {entites.isLoading && (
             <p className={controles.remarque}>Chargement…</p>

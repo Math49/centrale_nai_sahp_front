@@ -15,8 +15,20 @@ import { Toile } from '@/composants/graphe/toile';
 import { Icone } from '@/composants/icones';
 import { LegendeFiabilite } from '@/composants/pastilles';
 import { EnteteZone } from '@/composants/zone';
+import { GardePermission } from '@/auth/garde-permission';
 
 export default function PageGraphe() {
+  return (
+    <GardePermission
+      permission="graphe.consulter"
+      explication="Le graphe relève du geste « graphe.consulter »."
+    >
+      <Carte />
+    </GardePermission>
+  );
+}
+
+function Carte() {
   return (
     <Suspense fallback={<p className={controles.remarque}>Chargement…</p>}>
       <Explorateur />

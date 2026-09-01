@@ -30,6 +30,11 @@ export function PanneauDossier({ dossierId }: { dossierId: string }) {
   const peutHabiliter =
     agent?.superAdmin || agent?.permissions.includes('dossier.habiliter');
 
+  // Retirer une donnée du suivi et reprendre la note relèvent du même geste,
+  // `dossier.modifier` : ce sont deux façons de toucher au périmètre.
+  const peutModifier =
+    agent?.superAdmin || agent?.permissions.includes('dossier.modifier');
+
   if (panneau.isError) {
     return null;
   }
@@ -97,18 +102,20 @@ export function PanneauDossier({ dossierId }: { dossierId: string }) {
                     {suivi.estPivot ? (
                       <span className={styles.marque}>pivot</span>
                     ) : (
-                      <button
-                        type="button"
-                        className={styles.retirer}
-                        onClick={() =>
-                          nePlusSuivre.mutate({
-                            dossierId: dossier.id,
-                            entiteId: suivi.id,
-                          })
-                        }
-                      >
-                        retirer
-                      </button>
+                      peutModifier && (
+                        <button
+                          type="button"
+                          className={styles.retirer}
+                          onClick={() =>
+                            nePlusSuivre.mutate({
+                              dossierId: dossier.id,
+                              entiteId: suivi.id,
+                            })
+                          }
+                        >
+                          retirer
+                        </button>
+                      )
                     )}
                   </li>
                 ))}
@@ -175,7 +182,12 @@ export function PanneauDossier({ dossierId }: { dossierId: string }) {
               value={noteAffichee}
               onChange={(evenement) => definirNote(evenement.target.value)}
               rows={3}
-              placeholder="Ce que l’enquête cherche."
+              readOnly={!peutModifier}
+              placeholder={
+                peutModifier
+                  ? 'Ce que l’enquête cherche.'
+                  : 'Aucune note. La reprendre relève du grade.'
+              }
             />
             {noteModifiee && (
               <div className={styles.actions}>

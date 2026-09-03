@@ -245,6 +245,224 @@ La fiche s'ouvre dans un **panneau venant de la droite**, jamais par une
 navigation : l'agent regarde une carte, et l'envoyer ailleurs lui ferait perdre
 sa position, son filtre et sa mise au point.
 
+## Carte — le socle
+
+**Leaflet en `CRS.Simple`**, jamais un repère géographique : le fond est une image.
+Les tuiles viennent de `fivenet-app/livemap-tiles` (Apache-2.0), style postal, zooms 1 à
+6, 5 460 fichiers pour 16 Mo. Origine, licence et raisons du choix :
+`public/images/carte/CREDITS.md`.
+
+**Aucun niveau au-delà du zoom 6 n'est transporté.** Le `tilemapresource.xml` du jeu le
+dit : le zoom 6 est à une unité par pixel, soit la résolution de la source. Le zoom 7
+n'était qu'un agrandissement 2× — 80 Mo et 16 000 fichiers pour ce que `maxNativeZoom`
+obtient gratuitement en laissant le navigateur agrandir. Vérifié : à partir du zoom 7,
+Leaflet sert du niveau 6 sans une seule tuile manquante.
+
+### Les coordonnées sont normalisées
+
+Un point est `{x, y}` **entre 0 et 1**, jamais un pixel ni un index de tuile. C'est ce qui
+permet de changer de jeu de tuiles, de passer au satellite ou d'ajouter un niveau **sans
+déplacer un seul point déjà posé**.
+
+La conversion vers le repère de Leaflet ne vit qu'à un endroit : `versToile` /
+`versPlan` dans `src/composants/carte/fond.ts`. C'est le piège de coordonnées du graphe,
+déjà payé une fois — ne pas le repayer. L'axe vertical s'y inverse (`y` descend, la
+latitude monte), et cette inversion produit `-0` sur le bord haut : `sansZeroNegatif` le
+ramène, parce que `-0` n'est égal à `0` que pour `===`, jamais pour `Object.is` dont
+dépendent les comparaisons de React.
+
+### Deux pièges du montage, tous deux payés
+
+**L'effet des couches doit dépendre d'un état `prete`.** Leaflet arrive par un `import()` :
+au premier rendu, les effets qui posent marqueurs et zones trouvent une carte encore nulle,
+et leurs dépendances ne bougeant plus jamais, ils ne se rejouent pas. Une carte montée avec
+ses marqueurs s'affiche alors **vide, sans que rien ne le signale**.
+
+**La poignée de développement est un tableau, `window.__cartes`.** Une page porte volontiers
+une carte et sa vignette ; une poignée unique désigne la dernière montée. J'ai mesuré la
+vignette en croyant mesurer la carte, et conclu à un défaut de niveau de tuiles qui
+n'existait pas.
+
+### Marqueurs
+
+Des `divIcon` portant une icône FontAwesome, jamais l'icône par défaut de Leaflet — ce qui
+évite du même coup le grief classique des images de marqueur que les empaqueteurs ne
+résolvent pas. `classesFontAwesome()` est extrait de `icone-fontawesome.tsx` pour que la
+table des préfixes n'existe qu'à un endroit, le HTML d'un `divIcon` n'étant pas rendu par
+React.
+
+**La visibilité se lit au trait, jamais à la couleur** : plein pour public, pointillé pour
+restreint, pointillé serré pour privé — et en toutes lettres dans le panneau. La couleur du
+repère est **celle qu'on lui a choisie à la pose**, seconde entorse bornée à la règle de
+couleur, sur le modèle de celle du graphe.
+
+### Trois formes, tracées en deux clics
+
+`geometrie.ts` est le seul endroit qui les connaît : un point, un rectangle, un rond. Le
+polygone libre a existé et a disparu — on le traçait sommet par sommet, ce que personne ne
+faisait. Une zone se pose maintenant en deux clics : un coin puis le coin opposé, ou le
+centre puis un point du bord.
+
+**Le tracé en cours vit sur sa propre couche Leaflet** (`coucheApercu`). Il change à chaque
+mouvement de souris ; le mêler aux repères ferait reconstruire des centaines de marqueurs
+par seconde pour un rectangle qui grandit.
+
+**Pendant un tracé, tout ce qui est posé devient inerte** (`objetsInertes`). Une zone
+couvre une part du plan et Leaflet lui donne le clic avant la carte : sans cela, poser un
+repère à l'intérieur d'une zone existante est impossible, le clic est avalé, et rien ne
+l'explique.
+
+### Le piège d'empilement, payé cher
+
+`.leaflet-container` est en `position: relative` **sans z-index** : il ne crée aucun
+contexte d'empilement, et les z-index de ses panneaux internes — 400, 800, 1000 —
+concourent dans celui de la racine. Ils y battaient le voile des modales, à 100.
+
+Conséquence, et elle dépassait la carte : **ouvrir une modale sur une page portant un plan
+la peignait sous le plan**, visible seulement au-dessus du bord supérieur de la carte.
+Poser un repère paraissait sans effet alors que le formulaire était bien là, monté et
+rempli. `isolation: isolate` sur `.toile` enferme ces 400 ; ne pas le retirer.
+
+**`L.circle` marche en `CRS.Simple`** — son rayon s'y compte en unités de carte, donc il se
+convertit comme une coordonnée : `rayon * ETENDUE`. Vérifié à la mesure plutôt qu'au
+jugé : à zoom 1, un rayon de 0,12 donne 62 px pour un plan de 512 px.
+
+## L'écran carte
+
+Deux couches sur la même toile : les **repères du service** (posés ici, en
+autant d'exemplaires que nécessaire et **sans passer par une fiche**) et les
+**points portés par les fiches** (lecture seule).
+
+**La pose est un mode explicite**, armé par « Poser un repère » et désarmé par
+« Terminer ». Un outil deviné — poser au clic dès qu'on a la permission — ferait
+naître des repères par mégarde en cliquant pour lire. Une zone se trace en deux
+clics et se voit se dessiner sous le curseur ; le dernier clic ouvre la modale
+où le repère se nomme et se règle.
+
+**Un jeton par type, et la forme d'une zone se choisit à part** — deux boutons
+d'icône, carré et rond, à côté du type armé. Rectangle et rond ne sont pas deux
+sortes de repères, ce sont deux façons de dessiner la même : les mêler doublait
+la liste des types pour une différence qui n'appartient pas au catalogue. La
+forme en main se garde d'un type de zone à l'autre, parce que c'est presque
+toujours la même qu'on répète.
+
+**La barre de filtres a deux étages.** Ce qu'on manipule sans réfléchir — la
+recherche et les deux couches — reste visible ; le reste se déplie. Une carte de
+service s'ouvre pour regarder, pas pour régler sept commandes. Une liste de
+filtre vide veut dire **tout**, jamais **rien** : c'est la lecture naturelle
+d'un filtre qu'on n'a pas touché.
+
+Les filtres ne portent que sur **ce que l'agent voit déjà**, et les compteurs
+qu'ils affichent ne comptent que cela.
+
+**Un repère classé n'est pas grisé, il est absent.** Le back ne l'envoie pas ;
+le front ne doit rien ajouter qui compte, mentionne ou signale ce qui manque.
+Sur une carte, la position est déjà le renseignement.
+
+La visibilité se lit **au trait** — plein, pointillé, pointillé serré — et en
+toutes lettres dans le panneau. La couleur, elle, est celle qu'on a choisie à la
+pose : c'est la seconde entorse bornée à la règle de couleur, sur le modèle de
+celle du graphe. **Le type de repère n'en porte pas** — l'administration ne règle
+que le code, le libellé, la nature et l'icône.
+
+### Les deux panneaux
+
+Un clic ouvre un panneau, et il y en a **deux**, parce que les objets ne sont pas
+de même nature :
+
+- **`PanneauRepere`** — tout ce que la centrale sait du repère : sa sorte, sa
+  forme en toutes lettres, sa visibilité, qui l'a posé et quand, sa note, ses
+  habilitations. Et les deux seuls gestes qui s'y appliquent : le reprendre
+  (même formulaire que la pose, pré-rempli) ou le retirer du plan.
+- **`PanneauPoint`** — un point porté par une fiche. Il ne se reprend ni ne
+  s'archive d'ici : c'est un fait, il appartient à sa fiche, et c'est là qu'il se
+  corrige avec sa source. Le panneau dit ce qu'il est et mène à la fiche. Il
+  existe parce que le clic était mort, et **un marqueur qui ne répond à rien
+  passe pour une panne**.
+
+**Retirer, c'est archiver.** Aucun bouton ne dit « supprimer », ici comme
+partout : le repère quitte le plan, reste en base, se retrouve en cochant
+« archives » dans les filtres avancés et s'y remet d'un bouton.
+
+`zoomMolette` est **ouvert ici** et seulement ici : la carte occupe l'écran, elle
+peut prendre la molette.
+
+## Le tableau des enquêtes
+
+**Assigner et habiliter sont deux gestes distincts, et l'écran doit le dire.**
+Assigner désigne qui travaille ; habiliter donne le droit de lire. Sur une carte
+classée, un assigné non habilité **ne la voit pas** — sa pastille passe en
+pointillé, l'infobulle l'explique, et le panneau propose de l'habiliter. Proposer,
+jamais faire d'office : ouvrir un accès en douce serait une porte dérobée.
+
+Les assignés se lisent **en pastilles d'initiales**, nom au survol : trois noms
+complets par carte rendraient le tableau illisible.
+
+### Le glisser-déposer entre colonnes
+
+`ListeReordonnable` ne convenait pas — elle ne connaît qu'une liste, et son
+`onOrdonner(ids)` ne transporte pas de colonne. On a étendu son motif plutôt que
+d'ajouter une dépendance : événements HTML5 natifs, attributs `data-` pour le
+retour visuel, `onDeplacer(id, colonneCible, rang)` à la place.
+
+**La carte saisie vit au niveau du tableau, pas de la colonne.** Entre deux
+colonnes React distinctes, un état local serait invisible de l'autre côté.
+
+**Le repli clavier des flèches est conservé**, et pas seulement pour
+l'accessibilité : jsdom ne simule pas le glisser-déposer natif, et c'est lui que
+les tests exercent.
+
+## Le champ « carte »
+
+Un point est `{x, y, typeRepereId, couleur}` — **où on l'a posé, ce qu'on a posé
+là, et comment on le signale**. Le type se choisit parmi les types de repères de
+nature « point » ; la couleur, dans une palette ou librement. Les deux se règlent
+avant même que le point existe, et le point déjà posé les suit sans qu'on ait à
+le reposer.
+
+C'est **un fait comme un autre** : il porte source, fiabilité, date de
+constatation et visibilité, il s'infirme avec son motif, et deux sources peuvent
+affirmer deux positions — la projection retient la plus fiable puis la plus
+récente, et le marqueur `multiSources` s'affiche comme ailleurs.
+
+**Sur la fiche, un point ne se lit pas en coordonnées mais en plan** : une
+vignette centrée dessus, `interactif={false}`, les coordonnées écrites dessous en
+`mono`. Un champ multiple montre tous ses points et élargit la vue pour les
+contenir.
+
+Dans le **panneau du graphe**, pas de plan : seulement les coordonnées. Le
+panneau est un résumé posé dans une vue qui est déjà une carte ; y monter une
+seconde instance Leaflet serait une dépense sans lecture gagnée.
+
+### Quatre pièges payés
+
+**`ChoixPoint` ne se met jamais dans un `<label>`.** Un `<label>` renvoie vers la
+commande qu'il étiquette **tout** clic qu'il reçoit — et un `<button>` est une
+commande étiquetable. La carte vivait à l'intérieur : le clic destiné au plan
+repartait vers « Retirer le point », apparu au rendu précédent, qui effaçait
+aussitôt le point qu'on venait de poser. Rien dans la console, aucune erreur en
+réseau — **poser un point depuis une fiche était simplement impossible**, et
+seule la trace des rappels dans l'ordre le montrait : clic, pose, puis un
+`onChange(null)` que personne n'avait demandé.
+
+**La molette est fermée par défaut** (`zoomMolette`). Une carte posée dans une
+page qui défile capture la molette et bloque la lecture — l'agent croit la page
+gelée. On ne l'ouvre que là où la carte occupe l'écran ; les boutons `+` et `−`
+restent partout.
+
+**Le cadrage ne suit pas la saisie.** `ChoixPoint` ne centre que sur le point
+*déjà enregistré*, à l'ouverture. Recentrer à chaque pose ferait sauter le plan
+sous le doigt : l'agent clique sur la carte entière et se retrouve zoomé au
+niveau 5 sur son propre clic, sans repère alentour.
+
+**`valeurRenseignee` remplace le test de vacuité.** Le garde de la modale
+n'éprouvait que `null`, `undefined` et la chaîne vide : un point à moitié posé —
+`{ x: 0.3 }` — les traversait tous les trois et partait se faire refuser en 400.
+Un aller-retour et un message d'erreur, là où le bouton pouvait rester fermé.
+
+La modale d'édition passe en `large` pour un champ carte : 420 px suffisent à
+trois champs de texte, pas à un plan cliquable.
+
 ## Vocabulaire
 
 Ce que le modèle appelle `entite` s'affiche **« donnée »** dans l'interface.
@@ -448,6 +666,10 @@ npm run contrat    # régénère le client typé
 | Lot | État |
 | --- | --- |
 | 1 — Comptes et grades (front) | fait |
+| 13 — Socle cartographique | fait |
+| 14 — Champ « carte » | fait |
+| 15 — Écran carte | fait |
+| 16 — Enquêtes (kanban) | fait |
 | 2 — Socle front | fait |
 | 3 — Référentiel et administration (front) | fait |
 | 6 — Moteur de formulaire dynamique | fait |

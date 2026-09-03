@@ -14,6 +14,8 @@ import {
   faLink,
   faLocationDot,
   faLock,
+  faClipboardList,
+  faMapLocationDot,
   faMagnifyingGlass,
   faPlus,
   faRightFromBracket,
@@ -51,6 +53,8 @@ const ICONES = {
   poignee: faGripVertical,
   haut: faArrowUp,
   bas: faArrowDown,
+  carte: faMapLocationDot,
+  enquetes: faClipboardList,
   verrou: faLock,
 } as const;
 

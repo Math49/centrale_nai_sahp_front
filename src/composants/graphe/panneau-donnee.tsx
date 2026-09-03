@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 
 import { useEntite } from '@/api/entites';
 import { useReferentiel } from '@/api/referentiel';
+import { lirePoints } from '@/composants/carte/choix-point';
+import { libelleDuPoint } from '@/composants/carte/fond';
 import controles from '@/composants/controles.module.css';
 import { IconeFontAwesome } from '@/composants/icone-fontawesome';
 import { Icone } from '@/composants/icones';
@@ -117,9 +119,17 @@ export function PanneauDonnee({
                             champ.typeDonnee === 'texte' ? undefined : 'mono'
                           }
                         >
-                          {Array.isArray(champ.valeur)
-                            ? champ.valeur.map(String).join(' · ')
-                            : String(champ.valeur)}
+                          {/* Pas de plan ici : le panneau est un résumé, posé
+                              dans une vue qui est déjà une carte. Les
+                              coordonnées suffisent ; la carte est sur la
+                              fiche. */}
+                          {champ.typeDonnee === 'carte'
+                            ? lirePoints(champ.valeur)
+                                .map(libelleDuPoint)
+                                .join('  ·  ')
+                            : Array.isArray(champ.valeur)
+                              ? champ.valeur.map(String).join(' · ')
+                              : String(champ.valeur)}
                         </span>
                       )}
                       {meilleur && (

@@ -1,0 +1,212 @@
+.barre {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.mesure {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--texte-faible);
+}
+
+/* ─────────────────────────── Tableau ─────────────────────────── */
+
+.tableau {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.colonne {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+  min-height: 140px;
+  transition: var(--transition);
+  transition-property: border-color, background;
+}
+
+/* La colonne survolée pendant un glissement le dit — sans quoi on lâche à
+   l'aveugle et la carte atterrit on ne sait où. */
+.colonne[data-cible='true'] {
+  border-color: var(--accent-bordure);
+  background: var(--accent-fond);
+}
+
+.enteteColonne {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.titreColonne {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}
+
+.compteur {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}
+
+.videColonne {
+  font-size: 0.78rem;
+  color: var(--texte-faible);
+  padding: 10px 4px;
+  text-align: center;
+}
+
+/* ──────────────────────────── Carte ──────────────────────────── */
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  cursor: grab;
+  text-align: left;
+  width: 100%;
+  transition: var(--transition);
+  transition-property: border-color, opacity, transform;
+}
+
+.carte:hover {
+  border-color: var(--bordure-forte);
+}
+
+.carte[data-saisie='true'] {
+  opacity: 0.4;
+}
+
+.titreCarte {
+  font-size: 0.88rem;
+  color: var(--texte);
+  line-height: 1.35;
+}
+
+.pied {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rattachement {
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.echeance {
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+}
+
+/* ───────────────────────── Assignés ───────────────────────── */
+
+.assignes {
+  display: flex;
+  gap: 3px;
+  margin-left: auto;
+}
+
+/* Pastilles d'initiales : trois noms complets par carte rendraient le tableau
+   illisible. Le nom revient au survol. */
+.pastilleAgent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  border: 1px solid var(--bordure-forte);
+  color: var(--texte-attenue);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Assigné mais pas habilité : il ne voit pas la carte sur laquelle on l'a mis. */
+.pastilleAgent[data-aveugle='true'] {
+  border-style: dashed;
+  border-color: var(--text-warning);
+  color: var(--text-warning);
+}
+
+.deplacements {
+  display: flex;
+  gap: 3px;
+}
+
+.fleche {
+  background: none;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  color: var(--texte-faible);
+  cursor: pointer;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.fleche:hover:not(:disabled) {
+  color: var(--texte);
+  border-color: var(--bordure-forte);
+}
+
+.fleche:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ─────────────────────────── Panneau ─────────────────────────── */
+
+.avertissement {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-warning);
+  border: 1px solid var(--text-warning);
+  border-radius: var(--rayon);
+  font-size: 0.8rem;
+  color: var(--texte);
+}
+
+.listeAgents {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ligneAgent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+
+.matricule {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+  margin-right: auto;
+}

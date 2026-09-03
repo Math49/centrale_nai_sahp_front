@@ -19,6 +19,15 @@ export type LienDeFiche = components['schemas']['LienDeFicheDto'];
 export type OngletPeuple = components['schemas']['OngletPeupleDto'];
 export type AgentHabilite = components['schemas']['AgentHabiliteDto'];
 
+/**
+ * Ce qu'un fait de champ peut porter comme valeur.
+ *
+ * Le point de carte est arrivé avec le type `carte` : sans lui ici, tout appel
+ * qui en transporte un ne compile plus. La forme réelle n'est vérifiée que par
+ * l'API, dont la validation dépend du type du champ — connu à l'exécution seule.
+ */
+export type ValeurDeFait = string | number | boolean | { x: number; y: number };
+
 export const CLE_ENTITES = ['entites'] as const;
 
 async function attendre<T>(
@@ -101,7 +110,7 @@ export function useModifierFait() {
       ...corps
     }: {
       id: string;
-      valeur?: string | number | boolean;
+      valeur?: ValeurDeFait;
       source?: string;
       fiabilite?: number;
       dateConstatation?: string;

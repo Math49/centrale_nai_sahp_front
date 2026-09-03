@@ -1,0 +1,420 @@
+.scene {
+  position: relative;
+}
+
+/* ─────────────────────── Barre de filtres ─────────────────────── */
+
+.filtres {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-large);
+}
+
+.ligneFiltres {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.recherche {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 240px;
+  min-width: 200px;
+  padding: 0 10px;
+  height: 34px;
+  background: var(--surface-2);
+  border: 1px solid var(--bordure);
+  border-radius: 999px;
+  color: var(--texte-faible);
+}
+
+.recherche:focus-within {
+  border-color: var(--accent-bordure);
+  color: var(--texte-attenue);
+}
+
+.champRecherche {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--texte);
+  font-size: 0.84rem;
+  outline: none;
+}
+
+.champRecherche::placeholder {
+  color: var(--texte-faible);
+}
+
+.jetons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Un filtre se lit et se bascule d'un geste : pas de menu à dérouler. */
+.jeton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--bordure);
+  background: transparent;
+  color: var(--texte-faible);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition:
+    border-color 0.12s ease,
+    color 0.12s ease,
+    background 0.12s ease;
+}
+
+.jeton:hover {
+  color: var(--texte);
+  border-color: var(--bordure-forte);
+}
+
+.jeton[data-actif='true'] {
+  background: var(--accent-fond);
+  border-color: var(--accent-bordure);
+  color: var(--texte);
+}
+
+/* La visibilité garde son canal partout, y compris dans un filtre. */
+.jeton[data-niveau='restreint'][data-actif='true'] {
+  background: var(--bg-restreint);
+  border-color: var(--visibilite-restreint);
+}
+
+.jeton[data-niveau='prive'][data-actif='true'] {
+  background: var(--bg-prive);
+  border-color: var(--visibilite-prive);
+}
+
+.compte {
+  font-family: var(--police-mono);
+  font-size: 0.72rem;
+  color: var(--texte-faible);
+}
+
+.jeton[data-actif='true'] .compte {
+  color: var(--texte-attenue);
+}
+
+.forme {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}
+
+.deplier {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--rayon);
+  background: transparent;
+  color: var(--texte-attenue);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.deplier:hover {
+  color: var(--texte);
+  border-color: var(--bordure);
+}
+
+.pastilleCompte {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent-fond);
+  border: 1px solid var(--accent-bordure);
+  color: var(--texte);
+  font-family: var(--police-mono);
+  font-size: 0.68rem;
+}
+
+.avances {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid var(--bordure);
+}
+
+.groupeFiltre {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.titreFiltre {
+  font-size: 0.69rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+}
+
+.bascule {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--texte-attenue);
+  cursor: pointer;
+}
+
+/* ─────────────────────── Atelier de pose ─────────────────────── */
+
+.barrePose {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.atelier {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 14px;
+  margin-bottom: 12px;
+  background: var(--accent-fond);
+  border: 1px solid var(--accent-bordure);
+  border-radius: var(--rayon-large);
+}
+
+.ligneAtelier {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ligneAtelier .titreFiltre {
+  flex-shrink: 0;
+}
+
+.ligneAtelier > button:last-child {
+  margin-left: auto;
+}
+
+/* Deux icônes côte à côte : la forme se compare à l'œil, pas au mot. */
+.formes {
+  display: inline-flex;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.boutonForme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  border: none;
+  background: var(--surface-2);
+  color: var(--texte-faible);
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+}
+
+.boutonForme + .boutonForme {
+  border-left: 1px solid var(--bordure);
+}
+
+.boutonForme:hover {
+  color: var(--texte);
+  background: var(--surface-survol);
+}
+
+.boutonForme[data-actif='true'] {
+  background: var(--accent-sourd);
+  color: var(--texte);
+}
+
+.consigne {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.83rem;
+  color: var(--texte-attenue);
+}
+
+.teinte {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.teinte[data-actif='true'] {
+  border-color: var(--texte);
+  box-shadow: 0 0 0 2px var(--fond);
+}
+
+.pipette {
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  background: transparent;
+  cursor: pointer;
+}
+
+/* ────────────────────── Panneau du repère ────────────────────── */
+
+.panneau {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(360px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--surface-popover);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-large);
+  box-shadow: var(--ombre-haute);
+}
+
+.entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.titre {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.sousTitre {
+  font-size: 0.78rem;
+  color: var(--texte-faible);
+}
+
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #0b0d11;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.fermer {
+  background: none;
+  border: none;
+  color: var(--texte-faible);
+  cursor: pointer;
+  padding: 2px;
+  line-height: 0;
+}
+
+.fermer:hover {
+  color: var(--texte);
+}
+
+/* Ce que la centrale sait du repère, en toutes lettres. Un champ vide reste
+   affiché : l'absence d'information est une information, et un panneau qui se
+   raccourcit d'un repère à l'autre fait douter de ce qu'on lit. */
+.fiche {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+}
+
+.fiche dt {
+  font-size: 0.69rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-faible);
+  margin-bottom: 2px;
+}
+
+.fiche dd {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--texte-attenue);
+  white-space: pre-wrap;
+}
+
+.etatArchive {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px dashed var(--bordure-forte);
+  color: var(--texte-faible);
+  font-size: 0.72rem;
+}
+
+.lienFiche {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--rayon);
+  border: 1px solid var(--accent-bordure);
+  background: var(--accent-fond);
+  color: var(--texte);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.lienFiche:hover {
+  border-color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid var(--bordure);
+}
+
+.aide {
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: var(--texte-faible);
+  line-height: 1.6;
+}

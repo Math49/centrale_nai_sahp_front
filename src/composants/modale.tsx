@@ -13,6 +13,7 @@ export function Modale({
   enCours = false,
   sansAnnulation = false,
   confirmationBloquee = false,
+  large = false,
   onConfirmer,
   onAnnuler,
 }: {
@@ -22,8 +23,17 @@ export function Modale({
   irreversible?: boolean;
   enCours?: boolean;
   sansAnnulation?: boolean;
-
+  /**
+   * Confirmation encore fermée — le corps de la modale porte une condition que
+   * l'agent n'a pas remplie. Un bouton grisé le dit ; un bouton actif qui ne
+   * ferait rien laisserait croire à une panne.
+   */
   confirmationBloquee?: boolean;
+  /**
+   * Élargit la boîte. Pour un corps qui ne se réduit pas à des champs de
+   * texte — une carte à cliquer, par exemple.
+   */
+  large?: boolean;
   onConfirmer: () => void;
   onAnnuler: () => void;
 }) {
@@ -49,6 +59,7 @@ export function Modale({
     >
       <div
         className={styles.boite}
+        data-large={large}
         role="dialog"
         aria-modal="true"
         aria-label={titre}

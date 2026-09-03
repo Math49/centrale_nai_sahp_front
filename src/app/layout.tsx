@@ -4,6 +4,9 @@ import type { ReactNode } from 'react';
 
 import { Fournisseurs } from '@/fournisseurs';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+// Leaflet doit être chargé avant le premier rendu d'une carte : sans sa feuille,
+// les tuiles se positionnent de travers le temps d'un battement.
+import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
 export const metadata: Metadata = {

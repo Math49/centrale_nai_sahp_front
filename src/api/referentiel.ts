@@ -29,6 +29,7 @@ export const LIBELLES_TYPES_DONNEES: Record<TypeDonnee, string> = {
   booleen: 'Oui / non',
   liste: 'Liste fermée',
   fichier: 'Fichier',
+  carte: 'Point sur la carte',
 };
 
 export interface CandidatOnglet {

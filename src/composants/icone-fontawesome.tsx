@@ -81,6 +81,27 @@ export function valeurIconeCanonique(
   return `fas:${propre}`;
 }
 
+/**
+ * Les classes CSS d'une icône, sans passer par un composant React.
+ *
+ * Nécessaire là où le rendu n'est pas fait par React : un marqueur Leaflet est
+ * construit en HTML brut par `L.divIcon`. Extrait ici plutôt que recopié, pour
+ * que la table des préfixes n'existe qu'à un endroit.
+ */
+export function classesFontAwesome(
+  valeur: string | null | undefined,
+): string | null {
+  const canonique = valeurIconeCanonique(valeur);
+
+  if (!canonique) {
+    return null;
+  }
+
+  const [prefixe, nom] = canonique.split(':') as [PrefixeGratuit, string];
+
+  return `${CLASSES_PREFIXE[prefixe]} fa-${nom}`;
+}
+
 export function IconeFontAwesome({
   valeur,
   taille = 18,

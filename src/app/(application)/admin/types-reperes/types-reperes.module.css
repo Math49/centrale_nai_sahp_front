@@ -1,0 +1,15 @@
+/* Le type ne porte plus de couleur : la pastille reste neutre, et c'est juste.
+   Lui en inventer une laisserait croire que les repères de ce type la
+   prendront, alors qu'elle se choisit à la pose, un repère à la fois. */
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--texte-attenue);
+  background: var(--surface-3);
+  flex-shrink: 0;
+  border: 1px solid var(--bordure);
+}

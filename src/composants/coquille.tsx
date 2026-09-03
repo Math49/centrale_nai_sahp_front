@@ -27,6 +27,12 @@ const ZONES: Zone[] = [
     permissions: ['entite.consulter'],
   },
   {
+    libelle: 'Enquêtes',
+    chemin: '/enquetes',
+    icone: 'enquetes',
+    permissions: ['kanban.consulter'],
+  },
+  {
     libelle: 'Dossiers',
     chemin: '/dossiers',
     icone: 'dossier',
@@ -43,6 +49,12 @@ const ZONES: Zone[] = [
     chemin: '/graphe',
     icone: 'graphe',
     permissions: ['graphe.consulter'],
+  },
+  {
+    libelle: 'Carte',
+    chemin: '/carte',
+    icone: 'carte',
+    permissions: ['carte.consulter'],
   },
   {
     libelle: 'Administration',

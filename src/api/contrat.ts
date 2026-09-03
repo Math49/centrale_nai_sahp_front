@@ -1021,6 +1021,379 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/carte/types-reperes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Catalogue des types de repères
+         * @description Lisible par qui consulte la carte : il faut pouvoir nommer et dessiner ce qu’on voit.
+         */
+        get: operations["CarteController_listerTypes"];
+        put?: never;
+        /**
+         * Création d’un type de repère
+         * @description Configuration du modèle métier — réservée au super-admin, comme les types de données et de liens.
+         */
+        post: operations["CarteController_creerType"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/carte/types-reperes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["CarteController_supprimerType"];
+        options?: never;
+        head?: never;
+        patch: operations["CarteController_modifierType"];
+        trace?: never;
+    };
+    "/carte/types-reperes/ordre": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CarteController_ordonnerTypes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/carte/reperes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Repères visibles
+         * @description Un repère classé hors de portée n’est **pas** montré muet : il est absent. Sur une carte, la position est le renseignement.
+         */
+        get: operations["CarteController_listerReperes"];
+        put?: never;
+        /** Poser un repère */
+        post: operations["CarteController_creerRepere"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/carte/donnees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Points portés par les fiches
+         * @description Chaque champ de type carte, filtré par la règle des gardiens comme n’importe quel fait. Exige aussi de pouvoir consulter les données : ce sont elles qu’on lit ici.
+         */
+        get: operations["CarteController_pointsDesDonnees"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/carte/reperes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["CarteController_modifierRepere"];
+        trace?: never;
+    };
+    "/carte/reperes/{id}/archiver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Retirer un repère de la carte
+         * @description Archivage, jamais suppression : ce qu’on a cru savoir d’un terrain fait partie de l’enquête, même quand on cesse d’y croire.
+         */
+        post: operations["CarteController_archiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/carte/reperes/{id}/desarchiver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CarteController_desarchiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/carte/reperes/{id}/habilitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Habiliter un agent sur un repère
+         * @description Nominative, jamais déduite d’un grade. Le seul moyen de rouvrir un repère classé à qui n’a pas de dérogation.
+         */
+        post: operations["CarteController_habiliter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/carte/reperes/{id}/habilitations/{agentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["CarteController_retirerHabilitation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enquetes/colonnes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Colonnes du tableau
+         * @description Lisibles par qui consulte le tableau : sans elles, il n’y a rien à afficher.
+         */
+        get: operations["EnquetesController_listerColonnes"];
+        put?: never;
+        /**
+         * Création d’une colonne
+         * @description L’état d’avancement d’une enquête est une convention de service : sa configuration relève du super-admin, comme le reste du modèle.
+         */
+        post: operations["EnquetesController_creerColonne"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enquetes/colonnes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["EnquetesController_supprimerColonne"];
+        options?: never;
+        head?: never;
+        patch: operations["EnquetesController_modifierColonne"];
+        trace?: never;
+    };
+    "/enquetes/colonnes/ordre": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EnquetesController_ordonnerColonnes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enquetes/cartes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Cartes visibles
+         * @description Une carte classée hors de portée n’apparaît pas — pas même anonyme : son titre nomme souvent ce qu’un dossier restreint protège.
+         */
+        get: operations["EnquetesController_listerCartes"];
+        put?: never;
+        /**
+         * Création d’une carte
+         * @description Les comptes assignés disent qui s’en occupe. **Ils n’ouvrent aucun accès** : une carte classée demande en plus une habilitation nominative.
+         */
+        post: operations["EnquetesController_creerCarte"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enquetes/cartes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["EnquetesController_modifierCarte"];
+        trace?: never;
+    };
+    "/enquetes/cartes/{id}/deplacer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Déplacer une carte
+         * @description Vers une autre colonne ou dans la sienne. Les rangs des colonnes touchées sont réécrits en entier.
+         */
+        post: operations["EnquetesController_deplacerCarte"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enquetes/cartes/{id}/archiver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archiver une carte
+         * @description Archivage, jamais suppression : une carte raconte une décision de travail, et cela se relit.
+         */
+        post: operations["EnquetesController_archiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enquetes/cartes/{id}/desarchiver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EnquetesController_desarchiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enquetes/cartes/{id}/habilitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Habiliter un agent sur une carte
+         * @description Le seul geste qui ouvre l’accès. Assigner ne suffit pas, et c’est délibéré.
+         */
+        post: operations["EnquetesController_habiliter"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enquetes/cartes/{id}/habilitations/{agentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["EnquetesController_retirerHabilitation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/accueil": {
         parameters: {
             query?: never;
@@ -1261,7 +1634,7 @@ export interface components {
             /** @example Plaque */
             libelle: string;
             /** @enum {string} */
-            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier";
+            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier" | "carte";
             obligatoire: boolean;
             estUnique: boolean;
             multiple: boolean;
@@ -1371,7 +1744,7 @@ export interface components {
             /** @example Plaque */
             libelle: string;
             /** @enum {string} */
-            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier";
+            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier" | "carte";
             /** @default false */
             obligatoire: boolean;
             /** @default false */
@@ -1464,7 +1837,10 @@ export interface components {
         FaitDeChampDto: {
             /** Format: uuid */
             id: string;
-            valeur: (string | number | boolean | unknown[]) | null;
+            valeur: (string | number | boolean | {
+                x: number;
+                y: number;
+            } | unknown[]) | null;
             source: string;
             fiabilite: number;
             /** Format: date */
@@ -1483,10 +1859,13 @@ export interface components {
             cle: string;
             libelle: string;
             /** @enum {string} */
-            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier";
+            typeDonnee: "texte" | "nombre" | "date" | "datetime" | "booleen" | "liste" | "fichier" | "carte";
             multiple: boolean;
             /** @description Valeur projetée, celle qui s’affiche en évidence */
-            valeur: (string | number | boolean | unknown[]) | null;
+            valeur: (string | number | boolean | {
+                x: number;
+                y: number;
+            } | unknown[]) | null;
             /** @description Les faits qui la soutiennent. Plus d’un signale un recoupement de sources. */
             faits: components["schemas"]["FaitDeChampDto"][];
             /** @description Plusieurs sources distinctes affirment la même valeur */
@@ -1607,8 +1986,11 @@ export interface components {
             visibilite?: "public" | "restreint" | "prive";
             /** Format: uuid */
             definitionChampId: string;
-            /** @description Texte, nombre, booléen ou valeur de liste, selon le type du champ */
-            valeur: string | number | boolean;
+            /** @description Texte, nombre, booléen, valeur de liste ou point de carte, selon le type du champ */
+            valeur: string | number | boolean | {
+                x: number;
+                y: number;
+            };
         };
         LienSaisiDto: {
             /** @example Rapport d'intervention n°2291 */
@@ -1752,7 +2134,10 @@ export interface components {
              */
             definitionChampId?: string;
             /** @description Si nature = champ */
-            valeur?: string | number | boolean;
+            valeur?: string | number | boolean | {
+                x: number;
+                y: number;
+            };
             /**
              * Format: uuid
              * @description Si nature = lien
@@ -1788,7 +2173,10 @@ export interface components {
             nature: "champ" | "lien";
             /** Format: uuid */
             definitionChampId: string | null;
-            valeur: (string | number | boolean | unknown[]) | null;
+            valeur: (string | number | boolean | {
+                x: number;
+                y: number;
+            } | unknown[]) | null;
             /** Format: uuid */
             typeLienId: string | null;
             /** Format: uuid */
@@ -1815,7 +2203,10 @@ export interface components {
         };
         ModificationFaitDto: {
             /** @description Champ seulement — la cible d’un lien ne se corrige pas */
-            valeur?: string | number | boolean;
+            valeur?: string | number | boolean | {
+                x: number;
+                y: number;
+            };
             source?: string;
             fiabilite?: number;
             /** Format: date */
@@ -1903,6 +2294,233 @@ export interface components {
              */
             dossierId?: string;
             positions: components["schemas"]["PositionDto"][];
+        };
+        TypeRepereDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example labo */
+            code: string;
+            /** @example Laboratoire */
+            libelle: string;
+            /** @enum {string} */
+            nature: "point" | "zone";
+            /** @example fas:flask */
+            icone: string;
+            ordre: number;
+        };
+        CreationTypeRepereDto: {
+            /** @example labo */
+            code: string;
+            /** @example Laboratoire */
+            libelle: string;
+            /**
+             * @description Définitive : un type de point ne devient pas un type de zone, les repères déjà posés en dépendent
+             * @enum {string}
+             */
+            nature: "point" | "zone";
+            /**
+             * @description Le type ne porte pas de couleur : elle se choisit à la pose, sur le repère
+             * @example fas:flask
+             */
+            icone: string;
+        };
+        ModificationTypeRepereDto: {
+            libelle?: string;
+            icone?: string;
+        };
+        RepereDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            typeRepereId: string;
+            typeRepereCode: string;
+            typeRepereLibelle: string;
+            /** @enum {string} */
+            nature: "point" | "zone";
+            /** @description Icône du type */
+            icone: string;
+            /** @description Choisie à la pose ; le type n’en porte pas */
+            couleur: string;
+            opacite: number | null;
+            /** @description Géométrie normalisée : { type:"point", x, y }, { type:"rectangle", a, b } ou { type:"cercle", centre, rayon } */
+            geometrie: {
+                [key: string]: unknown;
+            };
+            libelle: string;
+            note: string | null;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** @enum {string} */
+            etat: "actif" | "archive";
+            /** @description Prêt à l’affichage */
+            auteurLibelle: string;
+            /** Format: date-time */
+            creeLe: string;
+            /** Format: date-time */
+            modifieLe: string;
+            /** @description Whitelist. Nécessaire dès que le repère est classé : un repère restreint est absent de la carte, pas montré muet. */
+            habilitations: components["schemas"]["AgentHabiliteDto"][];
+        };
+        PointDto: {
+            x: number;
+            y: number;
+        };
+        PointDeDonneeDto: {
+            /**
+             * Format: uuid
+             * @description La donnée qui porte le point
+             */
+            entiteId: string;
+            entiteLibelle: string;
+            typeEntiteCode: string;
+            /** @description Icône à afficher : celle du type de repère choisi à la pose, sinon celle du type de donnée */
+            icone: string;
+            /** @description Couleur choisie à la pose, sinon l’accent de la centrale */
+            couleur: string;
+            /**
+             * Format: uuid
+             * @description Type de repère choisi à la pose, s’il y en a un
+             */
+            typeRepereId: string | null;
+            typeRepereLibelle: string | null;
+            /** @description Libellé du champ qui porte le point */
+            champLibelle: string;
+            point: components["schemas"]["PointDto"];
+            fiabilite: number;
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+        };
+        CreationRepereDto: {
+            /** Format: uuid */
+            typeRepereId: string;
+            /** @description { type:"point", x, y } pour un type de nature point ; { type:"rectangle", a, b } ou { type:"cercle", centre, rayon } pour une zone */
+            geometrie: {
+                [key: string]: unknown;
+            };
+            /** @example Labo présumé — hangar 4 */
+            libelle: string;
+            note?: string;
+            /**
+             * @description Obligatoire : c’est le repère qui se signale, pas son type
+             * @example #d99a5b
+             */
+            couleur: string;
+            opacite?: number;
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+        };
+        ModificationRepereDto: {
+            geometrie?: {
+                [key: string]: unknown;
+            };
+            libelle?: string;
+            note?: string | null;
+            couleur?: string;
+            opacite?: number;
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+        };
+        ColonneKanbanDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example en_cours */
+            code: string;
+            /** @example En cours */
+            libelle: string;
+            ordre: number;
+        };
+        CreationColonneDto: {
+            /** @example en_cours */
+            code: string;
+            /** @example En cours */
+            libelle: string;
+        };
+        ModificationColonneDto: {
+            libelle?: string;
+        };
+        RattachementCarteDto: {
+            /** Format: uuid */
+            id: string;
+            /** @description Nul lorsque l’objet rattaché n’est pas consultable — le lien existe, son contenu non */
+            libelle: string | null;
+        };
+        AgentAssigneDto: {
+            /** Format: uuid */
+            agentId: string;
+            /** @description « agent supprimé » si le compte est anonymisé */
+            libelle: string;
+            matricule: string;
+            /** @description Initiales, pour la pastille du tableau. Deux lettres au plus, « ? » si le compte est anonymisé. */
+            initiales: string;
+            /** @description Cet agent peut-il réellement lire la carte ? Assigner n’habilite pas. */
+            peutLire: boolean;
+            /** Format: date-time */
+            assigneLe: string;
+        };
+        CarteEnqueteDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            colonneId: string;
+            rang: number;
+            titre: string;
+            description: string | null;
+            /** Format: date */
+            echeance: string | null;
+            dossier: components["schemas"]["RattachementCarteDto"] | null;
+            entite: components["schemas"]["RattachementCarteDto"] | null;
+            /** @description Qui s’en occupe. Sans effet sur le droit de lire. */
+            assignes: components["schemas"]["AgentAssigneDto"][];
+            /** @enum {string} */
+            visibilite: "public" | "restreint" | "prive";
+            /** @enum {string} */
+            etat: "actif" | "archive";
+            auteurLibelle: string;
+            /** Format: date-time */
+            creeLe: string;
+            /** Format: date-time */
+            modifieLe: string;
+            /** @description Whitelist. C’est elle, et non l’assignation, qui ouvre l’accès. */
+            habilitations: components["schemas"]["AgentHabiliteDto"][];
+        };
+        CreationCarteDto: {
+            /** Format: uuid */
+            colonneId: string;
+            /** @example Identifier le fournisseur de Los Vagos */
+            titre: string;
+            description?: string;
+            /**
+             * Format: date
+             * @example 2026-09-30
+             */
+            echeance?: string;
+            /** Format: uuid */
+            dossierId?: string;
+            /** Format: uuid */
+            entiteId?: string;
+            /** @description Comptes qui s’en occupent. **N’ouvre pas l’accès** : une carte classée demande en plus une habilitation. */
+            assignes?: string[];
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+        };
+        ModificationCarteDto: {
+            titre?: string;
+            description?: string;
+            /** Format: date */
+            echeance?: string;
+            /** Format: uuid */
+            dossierId?: string;
+            /** Format: uuid */
+            entiteId?: string;
+            /** @description Jeu complet — il remplace le précédent */
+            assignes?: string[];
+            /** @enum {string} */
+            visibilite?: "public" | "restreint" | "prive";
+        };
+        DeplacementCarteDto: {
+            /** Format: uuid */
+            colonneId: string;
+            rang: number;
         };
         SignalDto: {
             /** @description Clé stable, pour que le front puisse suivre un signal */
@@ -3552,6 +4170,600 @@ export interface operations {
                 "application/json": components["schemas"]["DispositionDto"];
             };
         };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarteController_listerTypes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeRepereDto"][];
+                };
+            };
+        };
+    };
+    CarteController_creerType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationTypeRepereDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeRepereDto"];
+                };
+            };
+            /** @description Code déjà utilisé */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarteController_supprimerType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Type encore utilisé */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarteController_modifierType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationTypeRepereDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypeRepereDto"];
+                };
+            };
+        };
+    };
+    CarteController_ordonnerTypes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrdreDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarteController_listerReperes: {
+        parameters: {
+            query?: {
+                archives?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepereDto"][];
+                };
+            };
+        };
+    };
+    CarteController_creerRepere: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationRepereDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepereDto"];
+                };
+            };
+        };
+    };
+    CarteController_pointsDesDonnees: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PointDeDonneeDto"][];
+                };
+            };
+        };
+    };
+    CarteController_modifierRepere: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationRepereDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepereDto"];
+                };
+            };
+        };
+    };
+    CarteController_archiver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepereDto"];
+                };
+            };
+        };
+    };
+    CarteController_desarchiver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepereDto"];
+                };
+            };
+        };
+    };
+    CarteController_habiliter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DesignationAgentDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarteController_retirerHabilitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                agentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EnquetesController_listerColonnes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ColonneKanbanDto"][];
+                };
+            };
+        };
+    };
+    EnquetesController_creerColonne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationColonneDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ColonneKanbanDto"];
+                };
+            };
+            /** @description Code déjà utilisé */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EnquetesController_supprimerColonne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Colonne encore utilisée */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EnquetesController_modifierColonne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationColonneDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ColonneKanbanDto"];
+                };
+            };
+        };
+    };
+    EnquetesController_ordonnerColonnes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrdreDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EnquetesController_listerCartes: {
+        parameters: {
+            query?: {
+                archives?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarteEnqueteDto"][];
+                };
+            };
+        };
+    };
+    EnquetesController_creerCarte: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreationCarteDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarteEnqueteDto"];
+                };
+            };
+        };
+    };
+    EnquetesController_modifierCarte: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModificationCarteDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarteEnqueteDto"];
+                };
+            };
+        };
+    };
+    EnquetesController_deplacerCarte: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeplacementCarteDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarteEnqueteDto"];
+                };
+            };
+        };
+    };
+    EnquetesController_archiver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarteEnqueteDto"];
+                };
+            };
+        };
+    };
+    EnquetesController_desarchiver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CarteEnqueteDto"];
+                };
+            };
+        };
+    };
+    EnquetesController_habiliter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DesignationAgentDto"];
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EnquetesController_retirerHabilitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                agentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             204: {
                 headers: {

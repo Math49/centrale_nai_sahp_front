@@ -1,0 +1,100 @@
+/* `isolation` n'est pas cosmétique : c'est ce qui garde Leaflet chez lui.
+   Ses panneaux internes portent des z-index de 400, 800 et 1000, et
+   `.leaflet-container` est en `position: relative` sans z-index — il ne crée
+   donc aucun contexte d'empilement, et ces 400 vont concourir dans celui de la
+   racine. Ils y battaient le voile des modales, à 100 : ouvrir une modale sur
+   une page portant une carte la faisait peindre **sous** le plan, visible
+   seulement au-dessus du bord supérieur de la carte. Poser un repère
+   paraissait sans effet, alors que le formulaire était bien là.
+   Un contexte d'empilement ici enferme les 400 : ils ne se comparent plus
+   qu'entre eux. */
+.toile {
+  width: 100%;
+  height: 70vh;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Une vignette ne se déplace pas : le curseur ne doit pas promettre le contraire. */
+.toile[data-interactif='false'] {
+  cursor: default;
+}
+
+.toile[data-interactif='false'] :global(.leaflet-container) {
+  cursor: default;
+}
+
+/* Leaflet peint un fond clair par défaut — il traverserait l'interface sombre
+   pendant le chargement des tuiles, et à l'extérieur des bornes du plan. */
+.toile :global(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  background: var(--surface-1);
+  font-family: var(--police);
+  outline: none;
+}
+
+/* ─────────────────────────── Marqueur ─────────────────────────── */
+
+.marqueur {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #0b0d11;
+  font-size: 13px;
+  border: 2px solid rgba(0, 0, 0, 0.45);
+  box-sizing: border-box;
+  transition: transform var(--transition);
+}
+
+.marqueur:hover {
+  transform: scale(1.12);
+}
+
+/* ─────────────────── Habillage des contrôles ─────────────────── */
+
+.toile :global(.leaflet-bar) {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--ombre-basse);
+  overflow: hidden;
+}
+
+.toile :global(.leaflet-bar a) {
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  border-bottom-color: var(--border);
+  transition: var(--transition);
+  transition-property: background, color;
+}
+
+.toile :global(.leaflet-bar a:hover) {
+  background: var(--surface-survol);
+  color: var(--text-primary);
+}
+
+.toile :global(.leaflet-bar a.leaflet-disabled) {
+  background: var(--surface-1);
+  color: var(--text-muted);
+}
+
+.toile :global(.leaflet-tooltip) {
+  padding: 4px 8px;
+  background: var(--surface-popover);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--ombre-haute);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.toile :global(.leaflet-tooltip-top::before) {
+  border-top-color: var(--border-strong);
+}

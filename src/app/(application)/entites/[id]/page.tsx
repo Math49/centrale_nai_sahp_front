@@ -29,6 +29,10 @@ import { IconeFontAwesome } from '@/composants/icone-fontawesome';
 import { Modale } from '@/composants/modale';
 import { PanneauDossier } from '@/composants/panneau-dossier';
 import { HabilitationsDonnee } from '@/composants/habilitations-donnee';
+import type { ValeurDeFait } from '@/api/entites';
+import { ApercuPoint } from '@/composants/carte/apercu-point';
+import { lirePoints } from '@/composants/carte/choix-point';
+import { valeurRenseignee } from '@/composants/formulaire/champ-dynamique';
 import { PiecesJointes } from '@/composants/pieces-jointes';
 import { ChampDynamique } from '@/composants/formulaire/champ-dynamique';
 import {
@@ -496,15 +500,17 @@ function Fiche() {
           titre={`${editionChamp.faitId ? 'Modifier' : 'Renseigner'} "${editionChamp.champ.libelle}"`}
           libelleConfirmation="Enregistrer"
           enCours={modifierFait.isPending || creerFait.isPending}
+          large={editionChamp.definition.typeDonnee === 'carte'}
           confirmationBloquee={
             editionChamp.source.trim().length === 0 ||
-            editionChamp.valeur === null ||
-            editionChamp.valeur === undefined ||
-            editionChamp.valeur === ''
+            !valeurRenseignee(
+              editionChamp.valeur,
+              editionChamp.definition.typeDonnee,
+            )
           }
           onAnnuler={() => definirEditionChamp(null)}
           onConfirmer={() => {
-            const valeur = editionChamp.valeur as string | number | boolean;
+            const valeur = editionChamp.valeur as ValeurDeFait;
 
             if (editionChamp.faitId) {
               modifierFait.mutate(
@@ -832,6 +838,8 @@ function LigneChamp({
       <dd className={styles.champValeur}>
         {champ.valeur === null || champ.valeur === undefined ? (
           <span className={styles.vide}>non renseigné</span>
+        ) : champ.typeDonnee === 'carte' ? (
+          <ApercuPoint points={lirePoints(champ.valeur)} />
         ) : (
           <span className={champ.typeDonnee === 'texte' ? undefined : 'mono'}>
             {Array.isArray(champ.valeur)

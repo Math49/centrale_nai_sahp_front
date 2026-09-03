@@ -11,6 +11,8 @@
 .boite {
   width: 100%;
   max-width: 420px;
+  max-height: 88vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -18,6 +20,11 @@
   background: var(--surface-haute);
   border: 1px solid var(--bordure-forte);
   border-radius: var(--rayon-large);
+}
+
+/* 420 px suffisent à trois champs de texte, pas à une carte cliquable. */
+.boite[data-large='true'] {
+  max-width: 720px;
 }
 
 .titre {

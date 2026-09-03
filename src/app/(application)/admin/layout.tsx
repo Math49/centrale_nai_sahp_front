@@ -27,6 +27,16 @@ const RUBRIQUES: Rubrique[] = [
     superAdminSeul: true,
   },
   {
+    libelle: 'Types de repères',
+    chemin: '/admin/types-reperes',
+    superAdminSeul: true,
+  },
+  {
+    libelle: 'Colonnes des enquêtes',
+    chemin: '/admin/colonnes-enquetes',
+    superAdminSeul: true,
+  },
+  {
     libelle: 'Mise en page des fiches',
     chemin: '/admin/fiches',
     superAdminSeul: true,

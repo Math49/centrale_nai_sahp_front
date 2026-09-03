@@ -35,6 +35,24 @@ const RUBRIQUES: Rubrique[] = [
     chemin: '/admin/types-liens',
   },
   {
+    libelle: 'Types de repères',
+    description:
+      'Ce que la centrale sait poser sur le plan : icône, couleur, et si c’est un point ou une zone.',
+    lot: 'Lot 15',
+    permissions: [],
+    superAdminSeul: true,
+    chemin: '/admin/types-reperes',
+  },
+  {
+    libelle: 'Colonnes des enquêtes',
+    description:
+      'Par quels états passe une enquête, et dans quel ordre les colonnes se lisent.',
+    lot: 'Lot 16',
+    permissions: [],
+    superAdminSeul: true,
+    chemin: '/admin/colonnes-enquetes',
+  },
+  {
     libelle: 'Mise en page des fiches',
     description:
       'Quels onglets, quels types de liens dans chacun, dans quel ordre.',

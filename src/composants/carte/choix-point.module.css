@@ -1,0 +1,103 @@
+.cadre {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reglages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.jetons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Un choix se prend d'un coup d'œil : le type se lit, il ne se déroule pas. */
+.jeton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--bordure);
+  background: transparent;
+  color: var(--texte-faible);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition:
+    border-color 0.12s ease,
+    color 0.12s ease,
+    background 0.12s ease;
+}
+
+.jeton:hover {
+  color: var(--texte);
+  border-color: var(--bordure-forte);
+}
+
+.jeton[data-actif='true'] {
+  background: var(--accent-fond);
+  border-color: var(--accent-bordure);
+  color: var(--texte);
+}
+
+.teinte {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.teinte[data-actif='true'] {
+  border-color: var(--texte);
+  box-shadow: 0 0 0 2px var(--fond);
+}
+
+.pipette {
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  background: transparent;
+  cursor: pointer;
+}
+
+.pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ─────────────────────────── Vignette ─────────────────────────── */
+
+.vignette {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+/* Le plan n'occupe pas toute la ligne : une fiche est une lecture, pas une
+   carte. Assez grand pour situer, assez petit pour ne pas prendre la parole. */
+.apercu {
+  width: 100%;
+  max-width: 340px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: block;
+}
+
+.coordonnees {
+  font-size: 0.75rem;
+  color: var(--texte-faible);
+}

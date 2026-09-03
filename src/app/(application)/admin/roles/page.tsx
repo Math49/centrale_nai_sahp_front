@@ -25,6 +25,8 @@ const FAMILLES: Record<string, string> = {
   historique: 'Historique',
   journal: 'Journaux',
   graphe: 'Graphe',
+  carte: 'Carte',
+  kanban: 'Enquêtes',
   agent: 'Comptes',
   role: 'Grades',
 };

@@ -25,7 +25,9 @@ export default function PageDossiers() {
 }
 
 function ListeDossiers() {
-  const dossiers = useDossiers();
+  const [archives, definirArchives] = useState(false);
+
+  const dossiers = useDossiers(archives);
   const [creation, definirCreation] = useState(false);
 
   // Ouvrir un dossier est un geste de grade. Sans lui, l'API répond 403 : le
@@ -39,8 +41,8 @@ function ListeDossiers() {
         sousTitre="Un dossier est un périmètre d’enquête ancré sur une donnée pivot. Il ne contient rien : il contextualise."
       />
 
-      {peutCreer && (
-        <div className={styles.barre}>
+      <div className={styles.barre}>
+        {peutCreer && (
           <button
             type="button"
             className={controles.bouton}
@@ -48,8 +50,19 @@ function ListeDossiers() {
           >
             {creation ? 'Fermer' : 'Nouveau dossier'}
           </button>
-        </div>
-      )}
+        )}
+
+        {/* Une enquête close n'a pas à alourdir la liste courante, mais elle
+            reste entière : on la retrouve en la demandant. */}
+        <label className={styles.bascule}>
+          <input
+            type="checkbox"
+            checked={archives}
+            onChange={(evenement) => definirArchives(evenement.target.checked)}
+          />
+          montrer les dossiers archivés
+        </label>
+      </div>
 
       {peutCreer && creation && (
         <FormulaireDossier onCree={() => definirCreation(false)} />
@@ -92,6 +105,10 @@ function ListeDossiers() {
                 {dossier.nombreSuivis > 1 ? 's' : ''} suivie
                 {dossier.nombreSuivis > 1 ? 's' : ''}
               </span>
+
+              {dossier.etat === 'archive' && (
+                <span className={styles.archive}>archivé</span>
+              )}
 
               <PastilleVisibilite niveau={dossier.visibilite} />
             </li>

@@ -151,20 +151,31 @@
   min-width: 0;
 }
 
+/* La note se lit ici et se reprend en modale : plus un champ, un texte. Les
+   sauts de ligne saisis doivent survivre à l'affichage. */
 .note {
   width: 100%;
-  margin-top: 6px;
+  margin: 6px 0 0;
   padding: 9px;
   background: var(--fond);
   border: 1px solid var(--bordure);
   border-radius: var(--rayon);
-  outline: none;
-  resize: vertical;
-  font-family: inherit;
   font-size: 0.85rem;
   line-height: 1.5;
+  color: var(--texte-attenue);
+  white-space: pre-wrap;
 }
 
-.note:focus {
-  border-color: var(--accent-bordure);
+/* Un dossier archivé le dit en toutes lettres — jamais par la seule couleur. */
+.archive {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px dashed var(--bordure-forte);
+  color: var(--texte-faible);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }

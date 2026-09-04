@@ -103,6 +103,21 @@ function Fiche() {
     dateConstatation: string;
     visibilite: (typeof VISIBILITES)[number];
   } | null>(null);
+  /*
+   * Reprendre un lien déjà posé.
+   *
+   * Sa **valeur** ne se modifie pas — un lien mal posé s'infirme, et l'API le
+   * refuse. Ce qui se reprend, c'est ce qu'on en sait : d'où on le tient, à
+   * quel point on y croit, et depuis quand.
+   */
+  const [editionLien, definirEditionLien] = useState<{
+    faitId: string;
+    quoi: string;
+    source: string;
+    fiabilite: number;
+    dateConstatation: string;
+    visibilite: (typeof VISIBILITES)[number];
+  } | null>(null);
   const [creationLien, definirCreationLien] = useState<{
     typeLienId: string;
     sens: SensLien;
@@ -388,6 +403,8 @@ function Fiche() {
           <ContenuOnglet
             liens={onglets.find((onglet) => onglet.id === actif)?.liens ?? []}
             peutInfirmer={peutInfirmer}
+            peutModifier={peutModifierFait}
+            onModifier={definirEditionLien}
           />
         )}
       </section>
@@ -402,6 +419,8 @@ function Fiche() {
           <ContenuOnglet
             liens={entite.liensHorsOnglet}
             peutInfirmer={peutInfirmer}
+            peutModifier={peutModifierFait}
+            onModifier={definirEditionLien}
           />
         </section>
       )}
@@ -630,6 +649,114 @@ function Fiche() {
           {(modifierFait.isError || creerFait.isError) && (
             <p className={controles.erreur} role="alert">
               {modifierFait.error?.message ?? creerFait.error?.message}
+            </p>
+          )}
+        </Modale>
+      )}
+
+      {editionLien && (
+        <Modale
+          titre={`Reprendre « ${editionLien.quoi} »`}
+          libelleConfirmation="Enregistrer"
+          enCours={modifierFait.isPending}
+          confirmationBloquee={editionLien.source.trim().length === 0}
+          onAnnuler={() => definirEditionLien(null)}
+          onConfirmer={() =>
+            modifierFait.mutate(
+              {
+                id: editionLien.faitId,
+                source: editionLien.source.trim(),
+                fiabilite: editionLien.fiabilite,
+                dateConstatation: editionLien.dateConstatation,
+                visibilite: editionLien.visibilite,
+              },
+              { onSuccess: () => definirEditionLien(null) },
+            )
+          }
+        >
+          <p className={controles.remarque}>
+            Le lien reste le même — c’est ce qu’on en sait qui change. Un lien
+            posé à tort ne se corrige pas ici : il s’infirme, avec son motif.
+          </p>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Source</span>
+            <input
+              className={controles.champ}
+              value={editionLien.source}
+              onChange={(evenement) =>
+                definirEditionLien({
+                  ...editionLien,
+                  source: evenement.target.value,
+                })
+              }
+              placeholder="Observation, renseignement, dossier..."
+            />
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Fiabilite</span>
+            <select
+              className={controles.champ}
+              value={editionLien.fiabilite}
+              onChange={(evenement) =>
+                definirEditionLien({
+                  ...editionLien,
+                  fiabilite: Number(evenement.target.value),
+                })
+              }
+            >
+              {FIABILITES.map((niveau) => (
+                <option key={niveau} value={niveau}>
+                  {niveau} - {NIVEAUX_FIABILITE[niveau]}
+                </option>
+              ))}
+            </select>
+            <span className={controles.remarque}>
+              La fiabilité d’un chemin est celle de son maillon le plus faible :
+              baisser celle-ci affaiblit tout ce qui passe par ce lien.
+            </span>
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Date de constatation</span>
+            <input
+              className={controles.champMono}
+              type="date"
+              value={editionLien.dateConstatation}
+              onChange={(evenement) =>
+                definirEditionLien({
+                  ...editionLien,
+                  dateConstatation: evenement.target.value,
+                })
+              }
+            />
+          </label>
+
+          <label className={controles.groupe}>
+            <span className={controles.etiquette}>Visibilite</span>
+            <select
+              className={controles.champ}
+              value={editionLien.visibilite}
+              onChange={(evenement) =>
+                definirEditionLien({
+                  ...editionLien,
+                  visibilite: evenement.target
+                    .value as (typeof VISIBILITES)[number],
+                })
+              }
+            >
+              {VISIBILITES.map((niveau) => (
+                <option key={niveau} value={niveau}>
+                  {LIBELLES_VISIBILITE[niveau]}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {modifierFait.isError && (
+            <p className={controles.erreur} role="alert">
+              {modifierFait.error.message}
             </p>
           )}
         </Modale>
@@ -889,9 +1016,20 @@ function LigneChamp({
 function ContenuOnglet({
   liens,
   peutInfirmer,
+  peutModifier,
+  onModifier,
 }: {
   liens: LienDeFiche[];
   peutInfirmer: boolean;
+  peutModifier: boolean;
+  onModifier: (edition: {
+    faitId: string;
+    quoi: string;
+    source: string;
+    fiabilite: number;
+    dateConstatation: string;
+    visibilite: (typeof VISIBILITES)[number];
+  }) => void;
 }) {
   if (liens.length === 0) {
     return (
@@ -918,6 +1056,24 @@ function ContenuOnglet({
           </span>
           <PastilleFiabilite niveau={lien.fiabilite} source={lien.source} />
           <PastilleVisibilite niveau={lien.visibiliteEffective} />
+          {peutModifier && (
+            <button
+              type="button"
+              className={styles.actionLien}
+              onClick={() =>
+                onModifier({
+                  faitId: lien.faitId,
+                  quoi: `${lien.libelle} ${lien.autreEntite.libelle}`,
+                  source: lien.source,
+                  fiabilite: lien.fiabilite,
+                  dateConstatation: lien.dateConstatation,
+                  visibilite: lien.visibilite,
+                })
+              }
+            >
+              modifier
+            </button>
+          )}
           {peutInfirmer && (
             <BoutonInfirmer
               faitId={lien.faitId}

@@ -221,6 +221,34 @@
   color: var(--accent-vif);
 }
 
+/* Même retenue que « infirmer » : le geste n'apparaît qu'au survol de sa
+   ligne. Une liste de liens doit se lire, pas se présenter comme une barre
+   d'outils. */
+.actionLien {
+  flex-shrink: 0;
+  padding: 1px 7px;
+  background: none;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  color: var(--texte-faible);
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: var(--transition);
+  transition-property: opacity, color, border-color, background;
+}
+
+.lien:hover > .actionLien,
+.actionLien:focus-visible {
+  opacity: 1;
+}
+
+.actionLien:hover {
+  color: var(--texte);
+  border-color: var(--bordure-forte);
+  background: var(--surface-survol);
+}
+
 .lienDate,
 .auteur {
   margin-left: auto;

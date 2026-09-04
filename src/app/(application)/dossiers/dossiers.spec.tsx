@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { magasinSession, type AgentConnecte } from '@/auth/session';
@@ -34,15 +34,20 @@ const JUNIOR: AgentConnecte = {
 function afficher(agent: AgentConnecte, dossiers: unknown[] = []) {
   magasinSession.ouvrir(agent);
 
+  // Le client appelle `fetch(requete)` avec un seul `Request` : l'URL se lit
+  // sur lui, jamais dans un second argument d'options qui serait vide.
+  const appels: string[] = [];
+
   vi.stubGlobal(
     'fetch',
-    vi.fn(
-      async () =>
-        new Response(JSON.stringify(dossiers), {
-          status: 200,
-          headers: { 'content-type': 'application/json' },
-        }),
-    ),
+    vi.fn(async (requete: Request) => {
+      appels.push(requete.url);
+
+      return new Response(JSON.stringify(dossiers), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }),
   );
 
   const client = new QueryClient({
@@ -54,6 +59,8 @@ function afficher(agent: AgentConnecte, dossiers: unknown[] = []) {
       <PageDossiers />
     </QueryClientProvider>,
   );
+
+  return { appels };
 }
 
 describe('Dossiers — ce que le grade ouvre', () => {
@@ -89,5 +96,35 @@ describe('Dossiers — ce que le grade ouvre', () => {
     expect(
       screen.getByRole('button', { name: 'Ouvrir un dossier' }),
     ).toBeInTheDocument();
+  });
+});
+
+describe('Dossiers — archives', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    magasinSession.fermer('volontaire');
+    magasinSession.oublierRaison();
+  });
+
+  it('ne demande pas les archivés tant qu’on ne les réclame pas', async () => {
+    const { appels } = afficher(JUNIOR);
+
+    await screen.findByText('Aucun dossier ouvert.');
+
+    expect(appels[0]).toContain('archives=false');
+  });
+
+  it('les réclame quand on coche la bascule', async () => {
+    // Une enquête close reste entière : elle sort de la liste courante, elle
+    // ne sort pas de la base. La bascule est le seul chemin pour la revoir.
+    const { appels } = afficher(JUNIOR);
+
+    await screen.findByText('Aucun dossier ouvert.');
+
+    fireEvent.click(screen.getByLabelText('montrer les dossiers archivés'));
+
+    await waitFor(() =>
+      expect(appels.some((url) => url.includes('archives=true'))).toBe(true),
+    );
   });
 });

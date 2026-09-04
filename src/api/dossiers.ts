@@ -27,11 +27,21 @@ async function attendre<T>(
   return data as T;
 }
 
-export function useDossiers() {
+/**
+ * Les dossiers visibles.
+ *
+ * Les archivés en sont exclus par défaut, comme côté API : un dossier archivé
+ * est une enquête close, et la liste courante n'a pas à s'alourdir de ce qu'on
+ * ne cherche plus.
+ */
+export function useDossiers(archives = false) {
   return useQuery({
-    queryKey: CLE_DOSSIERS,
+    queryKey: [...CLE_DOSSIERS, { archives }],
     queryFn: () =>
-      attendre(api.GET('/dossiers'), 'liste des dossiers indisponible'),
+      attendre(
+        api.GET('/dossiers', { params: { query: { archives } } }),
+        'liste des dossiers indisponible',
+      ),
   });
 }
 
@@ -82,6 +92,24 @@ export function useModifierDossier() {
         }),
         'modification impossible',
       ),
+  );
+}
+
+/**
+ * Retrait d'un dossier — **archivage, jamais suppression**.
+ *
+ * Le dossier sort des écrans courants et reste entier : son suivi, ses
+ * habilitations, et les faits qui le citent comme dossier de saisie, dont ils
+ * tiennent leur visibilité. Aucun bouton ne dit « supprimer ».
+ */
+export function useArchiverDossier() {
+  return useEcriture(({ id, archiver }: { id: string; archiver: boolean }) =>
+    attendre(
+      archiver
+        ? api.POST('/dossiers/{id}/archiver', { params: { path: { id } } })
+        : api.POST('/dossiers/{id}/desarchiver', { params: { path: { id } } }),
+      'changement d’état impossible',
+    ),
   );
 }
 

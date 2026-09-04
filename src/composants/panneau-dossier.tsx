@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import {
+  useArchiverDossier,
   useHabiliter,
   useModifierDossier,
   useNePlusSuivre,
@@ -13,27 +14,36 @@ import {
 import { useSession } from '@/auth/use-session';
 import { useAgents } from '@/api/agents';
 import controles from './controles.module.css';
+import { FormulaireModificationDossier } from './formulaire-modification-dossier';
+import { Modale } from './modale';
 import styles from './panneau-dossier.module.css';
 import { PastilleVisibilite } from './pastilles';
 
 export function PanneauDossier({ dossierId }: { dossierId: string }) {
   const panneau = usePanneauDossier(dossierId);
   const modifier = useModifierDossier();
+  const archiver = useArchiverDossier();
   const nePlusSuivre = useNePlusSuivre();
   const habiliter = useHabiliter();
   const retirer = useRetirerHabilitation();
   const { agent } = useSession();
 
-  const [note, definirNote] = useState<string | null>(null);
   const [deplie, definirDeplie] = useState(true);
+  const [aReprendre, definirAReprendre] = useState(false);
+  const [aArchiver, definirAArchiver] = useState(false);
 
   const peutHabiliter =
     agent?.superAdmin || agent?.permissions.includes('dossier.habiliter');
 
-  // Retirer une donnée du suivi et reprendre la note relèvent du même geste,
-  // `dossier.modifier` : ce sont deux façons de toucher au périmètre.
+  // Retirer une donnée du suivi et reprendre le nom ou la note relèvent du même
+  // geste, `dossier.modifier` : ce sont deux façons de toucher au périmètre.
   const peutModifier =
     agent?.superAdmin || agent?.permissions.includes('dossier.modifier');
+
+  // Sortir un dossier de la circulation est un geste à part, comme pour une
+  // donnée : on peut renommer une enquête sans avoir le droit de la clore.
+  const peutArchiver =
+    agent?.superAdmin || agent?.permissions.includes('dossier.archiver');
 
   if (panneau.isError) {
     return null;
@@ -44,8 +54,7 @@ export function PanneauDossier({ dossierId }: { dossierId: string }) {
   }
 
   const dossier = panneau.data;
-  const noteAffichee = note ?? dossier.note ?? '';
-  const noteModifiee = note !== null && note !== (dossier.note ?? '');
+  const archive = dossier.etat === 'archive';
 
   return (
     <aside className={styles.panneau}>
@@ -54,16 +63,46 @@ export function PanneauDossier({ dossierId }: { dossierId: string }) {
           <span className={styles.surtitre}>Dossier</span>
           <h2 className={styles.nom}>
             {dossier.nom} <PastilleVisibilite niveau={dossier.visibilite} />
+            {archive && <span className={styles.archive}>archivé</span>}
           </h2>
         </div>
 
         <div className={styles.actions}>
-          <Link
-            className={controles.boutonDiscret}
-            href={`/entites/nouveau?dossier=${dossier.id}`}
-          >
-            Saisir depuis ce dossier
-          </Link>
+          {!archive && (
+            <Link
+              className={controles.boutonDiscret}
+              href={`/entites/nouveau?dossier=${dossier.id}`}
+            >
+              Saisir depuis ce dossier
+            </Link>
+          )}
+
+          {peutModifier && dossier.contenuLisible && (
+            <button
+              type="button"
+              className={controles.boutonDiscret}
+              onClick={() => definirAReprendre(true)}
+            >
+              Modifier
+            </button>
+          )}
+
+          {peutArchiver && dossier.contenuLisible && (
+            <button
+              type="button"
+              className={controles.boutonDiscret}
+              onClick={() => {
+                if (archive) {
+                  archiver.mutate({ id: dossier.id, archiver: false });
+                  return;
+                }
+                definirAArchiver(true);
+              }}
+            >
+              {archive ? 'Réactiver' : 'Archiver'}
+            </button>
+          )}
+
           <button
             type="button"
             className={styles.replier}
@@ -177,44 +216,64 @@ export function PanneauDossier({ dossierId }: { dossierId: string }) {
 
           <section>
             <h3 className={styles.section}>Note du dossier</h3>
-            <textarea
-              className={styles.note}
-              value={noteAffichee}
-              onChange={(evenement) => definirNote(evenement.target.value)}
-              rows={3}
-              readOnly={!peutModifier}
-              placeholder={
-                peutModifier
-                  ? 'Ce que l’enquête cherche.'
-                  : 'Aucune note. La reprendre relève du grade.'
-              }
-            />
-            {noteModifiee && (
-              <div className={styles.actions}>
-                <button
-                  type="button"
-                  className={controles.boutonDiscret}
-                  onClick={() => definirNote(null)}
-                >
-                  Abandonner
-                </button>
-                <button
-                  type="button"
-                  className={controles.bouton}
-                  disabled={modifier.isPending}
-                  onClick={() =>
-                    modifier.mutate(
-                      { id: dossier.id, note: noteAffichee },
-                      { onSuccess: () => definirNote(null) },
-                    )
-                  }
-                >
-                  Enregistrer
-                </button>
-              </div>
-            )}
+            {/* Un champ non renseigné reste affiché : l'absence d'information
+                est une information. La reprise passe par la modale, comme
+                toute écriture. */}
+            <p className={styles.note}>{dossier.note ?? 'Aucune note.'}</p>
           </section>
         </>
+      )}
+
+      {aReprendre && (
+        <FormulaireModificationDossier
+          valeursInitiales={{
+            nom: dossier.nom,
+            note: dossier.note ?? '',
+            visibilite: dossier.visibilite,
+          }}
+          enCours={modifier.isPending}
+          erreur={modifier.isError ? modifier.error.message : null}
+          onAnnuler={() => definirAReprendre(false)}
+          onEnregistrer={(valeurs) =>
+            modifier.mutate(
+              {
+                id: dossier.id,
+                nom: valeurs.nom,
+                note: valeurs.note,
+                visibilite: valeurs.visibilite,
+              },
+              { onSuccess: () => definirAReprendre(false) },
+            )
+          }
+        />
+      )}
+
+      {aArchiver && (
+        <Modale
+          titre={`Archiver « ${dossier.nom} » ?`}
+          libelleConfirmation="Archiver"
+          enCours={archiver.isPending}
+          onAnnuler={() => definirAArchiver(false)}
+          onConfirmer={() =>
+            archiver.mutate(
+              { id: dossier.id, archiver: true },
+              { onSuccess: () => definirAArchiver(false) },
+            )
+          }
+        >
+          <p>
+            Le dossier quitte la liste courante et <strong>reste entier</strong>{' '}
+            : son suivi, ses habilitations, et les faits qui y ont été saisis,
+            dont il reste le gardien. Rien ne se détache, rien ne se déclasse.
+          </p>
+          <p className={controles.remarque}>
+            Il se retrouve en cochant « archives » sur la liste des dossiers, et
+            se réactive d’un bouton.
+          </p>
+          {archiver.isError && (
+            <p className={controles.erreur}>{archiver.error.message}</p>
+          )}
+        </Modale>
       )}
     </aside>
   );

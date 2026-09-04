@@ -141,6 +141,31 @@ Le dossier de saisie se propage à toute la cascade du formulaire, comme la
 source active : les faits en héritent la visibilité, et l'entité créée entre
 dans son suivi.
 
+### Reprendre et clore
+
+Le panneau porte trois gestes, et ils ne relèvent pas du même grade :
+
+- **Modifier** (`dossier.modifier`) — nom, note et visibilité, dans une seule
+  modale. La note s'éditait en pleine page sans confirmation ; l'invariant 8
+  demande une modale pour toute écriture, et trois champs valaient mieux qu'un
+  formulaire par ligne.
+- **Archiver / Réactiver** (`dossier.archiver`) — un geste à part, comme pour
+  une donnée : on peut renommer une enquête sans avoir le droit de la clore.
+- **Habiliter** (`dossier.habiliter`), inchangé.
+
+**Archiver n'est pas supprimer**, et la modale le dit : le dossier quitte la
+liste courante et reste entier — suivi, habilitations, et les faits qui y ont
+été saisis, dont il reste le gardien. La liste le rend en cochant « montrer les
+dossiers archivés ».
+
+Un dossier archivé perd « Saisir depuis ce dossier » et gagne un jeton
+« archivé » **en toutes lettres** : jamais la couleur seule.
+
+Changer la visibilité depuis la modale affiche un avertissement — le dossier est
+l'un des gardiens des faits qui y ont été saisis, et **une habilitation sur le
+dossier n'ouvre pas ses données**. C'est le malentendu qui donne l'impression
+d'une panne.
+
 ## Accueil et recherche
 
 `GET /accueil` arrive **assemblé** — signaux, mes dossiers, dernière activité —
@@ -568,6 +593,23 @@ Le **super-admin n'est pas un grade** mais un attribut du compte. Aucune case de
 la matrice ne l'accorde, sous peine qu'un grade puisse s'accorder le droit de
 modifier le modèle métier. `GardePermission` le laisse passer partout, comme
 l'API.
+
+## Reprendre un lien
+
+Un lien pose deux gestes distincts, et l'écran doit les séparer :
+
+- **infirmer** (`fait.infirmer`) — le lien n'aurait pas dû être posé. Motif
+  obligatoire, il sort du graphe actif et reste dans l'Historique.
+- **modifier** (`fait.modifier`) — le lien est juste, c'est ce qu'on en sait qui
+  change : sa source, sa **fiabilité**, sa date de constatation, sa visibilité.
+
+La valeur d'un lien, elle, ne se modifie pas : l'API la refuse, et la modale le
+dit plutôt que de laisser découvrir un 400. Les deux boutons n'apparaissent
+**qu'au survol de leur ligne** — une liste de liens se lit, elle ne se présente
+pas comme une barre d'outils.
+
+La modale rappelle que la fiabilité d'un chemin est celle de son maillon le plus
+faible : baisser celle d'un lien affaiblit tout ce qui passe par lui.
 
 ## Cycle de vie et traçabilité
 

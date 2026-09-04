@@ -1,6 +1,8 @@
 .barre {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 }
 
@@ -136,4 +138,24 @@
   font-size: 0.78rem;
   color: var(--texte-faible);
   white-space: nowrap;
+}
+
+.bascule {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--texte-attenue);
+  cursor: pointer;
+}
+
+/* Un dossier archivé le dit en toutes lettres — jamais par la seule couleur. */
+.archive {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px dashed var(--bordure-forte);
+  color: var(--texte-faible);
+  font-size: 0.7rem;
 }

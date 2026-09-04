@@ -761,6 +761,42 @@ export interface paths {
         patch: operations["DossiersController_modifier"];
         trace?: never;
     };
+    "/dossiers/{id}/archiver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archivage
+         * @description Rien n’est jamais supprimé : le dossier sort des écrans courants et reste entier — son suivi, ses habilitations, et les faits qui le citent comme dossier de saisie.
+         */
+        post: operations["DossiersController_archiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dossiers/{id}/desarchiver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DossiersController_desarchiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/dossiers/{id}/suivi": {
         parameters: {
             query?: never;
@@ -3690,7 +3726,10 @@ export interface operations {
     };
     DossiersController_lister: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Inclure les dossiers archivés. Faux par défaut. */
+                archives?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -3779,6 +3818,48 @@ export interface operations {
                 "application/json": components["schemas"]["ModificationDossierDto"];
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanneauDossierDto"];
+                };
+            };
+        };
+    };
+    DossiersController_archiver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PanneauDossierDto"];
+                };
+            };
+        };
+    };
+    DossiersController_desarchiver: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
